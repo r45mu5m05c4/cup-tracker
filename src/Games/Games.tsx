@@ -1,20 +1,33 @@
 import { styled } from "styled-components";
 import { MOCK_GAMES } from "../utils/MOCK_DATA";
 
+interface Game {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  homeTeamGoals: number;
+  awayTeamGoals: number;
+}
+
 const Games = () => {
-  const allGames = MOCK_GAMES;
+  const allGames: Game[] = MOCK_GAMES;
+  const sortedGames: Game[] = allGames.sort(
+    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+  );
+  
   return (
     <Container>
-      {allGames.map((game) => {
+      {sortedGames.map((game: Game) => {
         return (
-          <GameItem>
+          <GameItem key={game.id}>
             <TeamsContainer>
               <TeamName>{game.homeTeam}</TeamName>
               <TeamName>{game.awayTeam}</TeamName>
             </TeamsContainer>
             <GameDetails>
               <Score>{`${game.homeTeamGoals} - ${game.awayTeamGoals}`}</Score>
-              <Time>{game.startTime}</Time>
+              <Time>{new Date(game.startTime).toLocaleString()}</Time>
             </GameDetails>
           </GameItem>
         );
@@ -35,8 +48,8 @@ const GameItem = styled.div`
   margin-top: 20px;
   margin-bottom: 20px;
   width: 50%;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  border: 1px solid #007bff;
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 4px;
@@ -52,15 +65,16 @@ const TeamsContainer = styled.div`
 
 const TeamName = styled.span`
   font-weight: bold;
+  color: #343a40;
 `;
 
 const Score = styled.span`
   padding: 0 10px;
-  font-size: 18px;
+  color: #28a745;
 `;
 const Time = styled.span`
   font-size: 14px;
-  color: #666;
+  color: #343a40;
 `;
 const GameDetails = styled.div`
   display: flex;

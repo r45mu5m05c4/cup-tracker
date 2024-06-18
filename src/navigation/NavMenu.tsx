@@ -63,7 +63,7 @@ const LeftBar = styled.div<LeftBarProps>`
   flex-direction: column;
   width: ${(props) => (props.$expanded ? "20%" : "30px")};
   border-right: solid 1px #007bff;
-  height: 100%;
+  height: 100vh;
 `;
 const StyledChevronRightIcon = styled(ChevronRightIcon)`
   margin: 5%;
