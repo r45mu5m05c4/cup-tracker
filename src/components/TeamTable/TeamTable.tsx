@@ -1,5 +1,5 @@
-import { MOCK_TEAMS } from "../utils/MOCK_DATA";
-import Table from "../molecules/Table";
+import Table from "../../molecules/Table";
+import { MOCK_TEAMS } from "../../utils/MOCK_DATA";
 
 const TeamTable = () => {
   const allTeams = MOCK_TEAMS;

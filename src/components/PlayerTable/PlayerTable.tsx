@@ -1,5 +1,5 @@
-import { MOCK_PLAYERS } from "../utils/MOCK_DATA";
-import Table from "../molecules/Table";
+import Table from "../../molecules/Table";
+import { MOCK_PLAYERS } from "../../utils/MOCK_DATA";
 
 const PlayerTable = () => {
     const allPlayers = MOCK_PLAYERS;
