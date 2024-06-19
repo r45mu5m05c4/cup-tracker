@@ -12,7 +12,7 @@ const NavMenu = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const isTeamAdmin = false;
   const isCupAdmin = false;
-  const isAdmin = false;
+  const isAdmin = true;
 
   return (
     <LeftBar $expanded={isExpanded}>
@@ -24,53 +24,13 @@ const NavMenu = () => {
 
       {isExpanded && (
         <>
-          <StyledLink
-            to="/" //onClick={() => navigate("/")}
-          >
-            News
-          </StyledLink>
-          <StyledLink
-            to="/games"
-            //onClick={() => navigate("/games")}
-          >
-            Games
-          </StyledLink>
-          <StyledLink
-            to="/players"
-            //onClick={() => navigate("/players")}
-          >
-            Player stats
-          </StyledLink>
-          <StyledLink
-            to="/teams"
-            // onClick={() => navigate("/teams")}
-          >
-            Team stats
-          </StyledLink>
-          {isTeamAdmin && (
-            <StyledLink
-              to="/games"
-              // onClick={() => navigate("/my-team")}
-            >
-              My team
-            </StyledLink>
-          )}
-          {isCupAdmin && (
-            <StyledLink
-              to="/games"
-              // onClick={() => navigate("/manage-cup")}
-            >
-              Manage cup
-            </StyledLink>
-          )}
-          {isAdmin && (
-            <StyledLink
-              to="/games"
-              //onClick={() => navigate("/admin")}
-            >
-              Super admin tools
-            </StyledLink>
-          )}
+          <StyledLink to="/">News</StyledLink>
+          <StyledLink to="/games">Games</StyledLink>
+          <StyledLink to="/players">Player stats</StyledLink>
+          <StyledLink to="/teams">Team stats</StyledLink>
+          {isTeamAdmin && <StyledLink to="/games">My team</StyledLink>}
+          {isCupAdmin && <StyledLink to="/games">Manage cup</StyledLink>}
+          {isAdmin && <StyledLink to="/admin">Super admin tools</StyledLink>}
         </>
       )}
     </LeftBar>

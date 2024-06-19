@@ -8,6 +8,7 @@ import PlayerTable from "../PlayerTable";
 import TeamTable from "../TeamTable";
 import { Route, Routes } from "react-router-dom";
 import Games from "../Games/Games";
+import Admin from "../Admin";
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -50,7 +51,7 @@ const Home = () => {
             <Route path="/teams" element={<TeamTable />} />
             <Route path="/my-team" element={<div />} />
             <Route path="/manage-cup" element={<div />} />
-            <Route path="/admin" element={<div />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </Content>
       </Row>
