@@ -1,4 +1,4 @@
-const apiKey =
+const apiKeys =
   "grI1U2z4QgPSpn4PiWz5oUR6l47JSemMvrRQ7sKx4NNHZXLKOuTrLWGLdqG3eizw";
 
 export const user = {
