@@ -24,7 +24,7 @@ const NavMenu = () => {
 
       {isExpanded && (
         <>
-          <Link href="" onClick={() => navigate("")}>
+          <Link href="" onClick={() => navigate("/")}>
             News
           </Link>
           <Link
