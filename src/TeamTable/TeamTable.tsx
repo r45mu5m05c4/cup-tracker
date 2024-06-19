@@ -1,4 +1,4 @@
-import { MOCK_PLAYERS, MOCK_TEAMS } from "../utils/MOCK_DATA";
+import { MOCK_TEAMS } from "../utils/MOCK_DATA";
 import Table from "../molecules/Table";
 
 const TeamTable = () => {

@@ -1,4 +1,4 @@
-import { useState, FC } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router";
