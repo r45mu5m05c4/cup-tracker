@@ -1,8 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router";
-import { ArrowDownTrayIcon, } from "@heroicons/react/20/solid";
-import { NewspaperIcon, BoltIcon, PresentationChartBarIcon, PresentationChartLineIcon, TrophyIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
+import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
+import {
+  NewspaperIcon,
+  BoltIcon,
+  PresentationChartBarIcon,
+  PresentationChartLineIcon,
+  TrophyIcon,
+} from "@heroicons/react/24/outline";
 
 interface LeftBarProps {
   $expanded: boolean;
@@ -10,10 +16,9 @@ interface LeftBarProps {
 
 const NavMenu = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
-  const navigate = useNavigate();
   const isTeamAdmin = false;
   const isCupAdmin = false;
-  const isAdmin = false;
+  const isAdmin = true;
 
   return (
     <LeftBar $expanded={isExpanded}>
@@ -26,43 +31,43 @@ const NavMenu = () => {
         </NavHeader>
 
         <NavLinks>
-          <Link href="/" onClick={() => navigate("/")} $expanded={isExpanded}>
+          <StyledLink to="/" $expanded={isExpanded}>
             <StyledLinkIcon />
             {isExpanded ? "News" : ""}
-          </Link>
-          <Link href="/games" onClick={() => navigate("/games")} $expanded={isExpanded}>
+          </StyledLink>
+          <StyledLink to="/games" $expanded={isExpanded}>
             <StyledGamesIcon />
             {isExpanded ? "Games" : ""}
-          </Link>
-          <Link href="/players" onClick={() => navigate("/players")} $expanded={isExpanded}>
+          </StyledLink>
+          <StyledLink to="/players" $expanded={isExpanded}>
             <StyledPlayerStatsIcon />
             {isExpanded ? "Player stats" : ""}
-          </Link>
-          <Link href="/teams" onClick={() => navigate("/teams")} $expanded={isExpanded}>
+          </StyledLink>
+          <StyledLink to="/teams" $expanded={isExpanded}>
             <StyledTeamStatsIcon />
             {isExpanded ? "Team stats" : ""}
-          </Link>
+          </StyledLink>
           {isTeamAdmin && (
-            <Link href="/my-team" onClick={() => navigate("/my-team")} $expanded={isExpanded}>
+            <StyledLink to="/admin" $expanded={isExpanded}>
               {isExpanded ? "My team" : ""}
-            </Link>
+            </StyledLink>
           )}
           {isCupAdmin && (
-            <Link href="/manage-cup" onClick={() => navigate("/manage-cup")} $expanded={isExpanded}>
+            <StyledLink to="/admin" $expanded={isExpanded}>
               Manage cup
-            </Link>
+            </StyledLink>
           )}
           {isAdmin && (
-            <Link href="/admin" onClick={() => navigate("/admin")} $expanded={isExpanded}>
+            <StyledLink to="/admin" $expanded={isExpanded}>
               Super admin tools
-            </Link>
+            </StyledLink>
           )}
         </NavLinks>
       </NavContent>
 
       <NavFooter>
         {isExpanded ? (
-          <HideSideMenuButton onClick={() => setIsExpanded(!isExpanded)} >
+          <HideSideMenuButton onClick={() => setIsExpanded(!isExpanded)}>
             <StyledChevronRightIcon />
             Hide sidemenu
           </HideSideMenuButton>
@@ -71,7 +76,7 @@ const NavMenu = () => {
         )}
       </NavFooter>
     </LeftBar>
-  )
+  );
 };
 export default NavMenu;
 
@@ -85,25 +90,25 @@ const LeftBar = styled.div<LeftBarProps>`
   height: 100vh;
   justify-content: space-between;
 `;
-const NavContent = styled('div')`
-display: flex;
-flex-direction: column;
+const NavContent = styled("div")`
+  display: flex;
+  flex-direction: column;
 `;
-const NavHeader = styled('div')`
-display: flex;
-gap: 12px;
-align-items: center;
-padding: 16px;
-color: var(--color-text-primary);
+const NavHeader = styled("div")`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  color: var(--color-text-primary);
 `;
-const LogoContainer = styled('div')`
-  background-color: #20286B;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
+const LogoContainer = styled("div")`
+  background-color: #20286b;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 `;
 const StyledTrophyIcon = styled(TrophyIcon)`
   width: 24px;
@@ -152,9 +157,8 @@ const StyledTeamStatsIcon = styled(PresentationChartLineIcon)`
   width: 24px;
   height: 24px;
 `;
-const NavLinks = styled('div')`
-`;
-const Link = styled.a<LeftBarProps>`
+const NavLinks = styled("div")``;
+const StyledLink = styled(Link)<LeftBarProps>`
   height: 40px;
   display: flex;
   gap: 10px;
@@ -167,25 +171,25 @@ const Link = styled.a<LeftBarProps>`
   color: var(--color-text-primary);
 
   &:hover {
-    background-color: #20286B;
+    background-color: #20286b;
     color: #fff;
     cursor: pointer;
   }
 `;
-const HideSideMenuButton = styled('button')`
-display: flex;
-font-size: 14px;
-white-space: nowrap;
-align-items: center;
-padding: 2px 14px;
-background-color: transparent;
-color: var(--color-text-primary);
+const HideSideMenuButton = styled("button")`
+  display: flex;
+  font-size: 14px;
+  white-space: nowrap;
+  align-items: center;
+  padding: 2px 14px;
+  background-color: transparent;
+  color: var(--color-text-primary);
 
-&:hover {
-  border-color: var(--color-text-primary);
-}
+  &:hover {
+    border-color: var(--color-text-primary);
+  }
 `;
-const NavFooter = styled('div')`
-display: flex;
-padding: 16px;
+const NavFooter = styled("div")`
+  display: flex;
+  padding: 16px;
 `;

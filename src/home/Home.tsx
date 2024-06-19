@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useRef, useState } from "react";
 import LoginModal from "./LoginModal";
 import { Route, Routes } from "react-router-dom";
+import Admin from "../Admin";
 import Games from "../components/Games/Games";
 import PlayerTable from "../components/PlayerTable";
 import TeamTable from "../components/TeamTable";
@@ -48,7 +49,7 @@ const Home = () => {
               <Route path="/teams" element={<TeamTable />} />
               <Route path="/my-team" element={<div />} />
               <Route path="/manage-cup" element={<div />} />
-              <Route path="/admin" element={<div />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </Content>
         </Row>

@@ -1,19 +1,33 @@
 import Table from "../../molecules/Table";
-import { MOCK_TEAMS } from "../../utils/MOCK_DATA";
+import { getTeams } from "../../utils/queries";
+import { useEffect, useState } from "react";
 
 const TeamTable = () => {
-  const allTeams = MOCK_TEAMS;
+  const [teams, setTeams] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchAllTeams = async () => {
+      try {
+        const teamsFromAPI = await getTeams();
+        console.log(teamsFromAPI);
+        setTeams(teamsFromAPI);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
+    };
+
+    fetchAllTeams();
+  }, []);
   const teamColumns = [
     { key: "name", header: "Name" },
     { key: "points", header: "Points" },
     { key: "wins", header: "Wins" },
     { key: "draws", header: "Draws" },
     { key: "losses", header: "Losses" },
-    { key: "gamesPlayed", header: "Games Played" },
   ];
   return (
     <>
-      <Table data={allTeams} columns={teamColumns}></Table>
+      <Table data={teams} columns={teamColumns}></Table>
     </>
   );
 };
