@@ -24,30 +24,48 @@ const NavMenu = () => {
 
       {isExpanded && (
         <>
-          <Link href="/" onClick={() => navigate("/")}>
+          <Link href="" onClick={() => navigate("")}>
             News
           </Link>
-          <Link href="/games" onClick={() => navigate("/games")}>
+          <Link
+            href=""
+            onClick={() => navigate("/games")}
+          >
             Games
           </Link>
-          <Link href="/players" onClick={() => navigate("/players")}>
+          <Link
+            href=""
+            onClick={() => navigate("/players")}
+          >
             Player stats
           </Link>
-          <Link href="/teams" onClick={() => navigate("/teams")}>
+          <Link
+            href=""
+            onClick={() => navigate("/teams")}
+          >
             Team stats
           </Link>
           {isTeamAdmin && (
-            <Link href="/my-team" onClick={() => navigate("/my-team")}>
+            <Link
+              href=""
+              onClick={() => navigate("/my-team")}
+            >
               My team
             </Link>
           )}
           {isCupAdmin && (
-            <Link href="/manage-cup" onClick={() => navigate("/manage-cup")}>
+            <Link
+              href=""
+              onClick={() => navigate("/manage-cup")}
+            >
               Manage cup
             </Link>
           )}
           {isAdmin && (
-            <Link href="/admin" onClick={() => navigate("/admin")}>
+            <Link
+              href=""
+              onClick={() => navigate("/admin")}
+            >
               Super admin tools
             </Link>
           )}
