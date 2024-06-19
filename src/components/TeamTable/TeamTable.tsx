@@ -1,5 +1,5 @@
-import Table from "../molecules/Table";
-import { getTeams } from "../utils/queries";
+import Table from "../../molecules/Table";
+import { getTeams } from "../../utils/queries";
 import { useEffect, useState } from "react";
 
 const TeamTable = () => {

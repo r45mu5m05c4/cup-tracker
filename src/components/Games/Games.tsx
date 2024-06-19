@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { MOCK_GAMES } from "../utils/MOCK_DATA";
+import { MOCK_GAMES } from "../../utils/MOCK_DATA";
 
 interface Game {
   id: string;
