@@ -9,6 +9,7 @@ import PlayerTable from "../components/PlayerTable";
 import TeamTable from "../components/TeamTable";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import News from "../components/News/News";
+import { ROUTE_PATH_ADMIN, ROUTE_PATH_GAMES, ROUTE_PATH_MANAGE_CUP, ROUTE_PATH_MY_TEAM, ROUTE_PATH_NEWS, ROUTE_PATH_PLAYERS, ROUTE_PATH_TEAMS } from "../constants/routes";
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -43,13 +44,13 @@ const Home = () => {
         <Row>
           <Content>
             <Routes>
-              <Route path="/" element={<News />} />
-              <Route path="/games" element={<Games />} />
-              <Route path="/players" element={<PlayerTable />} />
-              <Route path="/teams" element={<TeamTable />} />
-              <Route path="/my-team" element={<div />} />
-              <Route path="/manage-cup" element={<div />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path={ROUTE_PATH_NEWS} element={<News />} />
+              <Route path={ROUTE_PATH_GAMES} element={<Games />} />
+              <Route path={ROUTE_PATH_PLAYERS} element={<PlayerTable />} />
+              <Route path={ROUTE_PATH_TEAMS} element={<TeamTable />} />
+              <Route path={ROUTE_PATH_MY_TEAM} element={<div />} />
+              <Route path={ROUTE_PATH_MANAGE_CUP} element={<div />} />
+              <Route path={ROUTE_PATH_ADMIN} element={<Admin />} />
             </Routes>
           </Content>
         </Row>
@@ -60,19 +61,17 @@ const Home = () => {
 export default Home;
 
 const Container = styled.div`
-  height: 100%;
   width: 100%;
   display: flex;
 `;
 const PageContainer = styled.div`
-  height: 100%;
   width: 100%;
   background-color: var(--color-background-secondary-darker);
   margin: 16px;
+  margin-left: 0;
   border-radius: 16px;
 `;
 const Row = styled.div`
-  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -99,8 +98,8 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-width: 48px;
-height: 48px;
+  width: 48px;
+  height: 48px;
 
   &:hover {
     border-color: #E0E0E0;

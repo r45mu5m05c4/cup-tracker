@@ -12,6 +12,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  margin: 0;
+}
+
 a {
   font-weight: 500;
   color: #C8C8C8;
@@ -28,24 +32,43 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #0E0C1A;
-  
-  --color-background-primary: #18142C;
-  --color-background-primary-darker: #231D40;
-  --color-background-secondary: #0E0C1A;
-  --color-background-secondary-darker: #18142C;
+  background-color: #041D24;
+
+  --color-background-primary: #041416;
+  --color-background-primary-darker: #0E2025;
+  --color-background-secondary-darker: #041416;
 
   --color-text-primary: #C8C8C8;
+
+  --color-divider-primary: #1C3731;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: normal;
+  font-style: normal;
 }
 
 h1 {
   font-size: 3.2em;
-  line-height: 1.1;
+  font-weight: 500;
 }
 
 h2 {
   font-size: 1.8em;
-  line-height: 1.1;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 1.4em;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
 button {
@@ -72,13 +95,14 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   body {
     color: #0E0C1A;
-    background-color: #F9F9F9;
+    background-color: #041D24;
 
     --color-background-primary: #F9F9F9;
     --color-background-primary-darker: #fff;
-    --color-background-secondary: #001144;
     --color-background-secondary-darker: #F9F9F9;
 
     --color-text-primary: #fff;
+
+    --color-divider-primary: #1C3731;
   }
 }
