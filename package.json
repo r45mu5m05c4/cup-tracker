@@ -1,6 +1,6 @@
 {
   "name": "cup-tracker",
-  "private": true,
+  "private": false,
   "homepage": "https://r45mu5m05c4.github.io/cup-tracker",
   "version": "0.0.1",
   "type": "module",
