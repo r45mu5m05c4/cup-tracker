@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 interface LeftBarProps {
   $expanded: boolean;
@@ -24,47 +25,48 @@ const NavMenu = () => {
 
       {isExpanded && (
         <>
-          <Link href="" onClick={() => navigate("/")}>
+          <Link  to="/"//onClick={() => navigate("/")}
+          >
             News
           </Link>
           <Link
-            href=""
-            onClick={() => navigate("/games")}
+          to="/games"
+            //onClick={() => navigate("/games")}
           >
             Games
           </Link>
           <Link
-            href=""
-            onClick={() => navigate("/players")}
+             to="/players"
+             //onClick={() => navigate("/players")}
           >
             Player stats
           </Link>
           <Link
-            href=""
-            onClick={() => navigate("/teams")}
+            to="/teams"
+            // onClick={() => navigate("/teams")}
           >
             Team stats
           </Link>
           {isTeamAdmin && (
             <Link
-              href=""
-              onClick={() => navigate("/my-team")}
+            to="/games"
+            // onClick={() => navigate("/my-team")}
             >
               My team
             </Link>
           )}
           {isCupAdmin && (
             <Link
-              href=""
-              onClick={() => navigate("/manage-cup")}
+            to="/games"
+            // onClick={() => navigate("/manage-cup")}
             >
               Manage cup
             </Link>
           )}
           {isAdmin && (
             <Link
-              href=""
-              onClick={() => navigate("/admin")}
+            to="/games"
+            //onClick={() => navigate("/admin")}
             >
               Super admin tools
             </Link>
@@ -101,7 +103,7 @@ const StyledChevronLeftIcon = styled(ChevronLeftIcon)`
     cursor: pointer;
   }
 `;
-const Link = styled.a`
+const StyledLink = styled(Link)`
   width: 100%;
   height: 64px;
   display: flex;
