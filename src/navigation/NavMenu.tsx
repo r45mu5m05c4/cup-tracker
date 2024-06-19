@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router";
+
 import { Link } from "react-router-dom";
 
 interface LeftBarProps {
@@ -10,7 +10,6 @@ interface LeftBarProps {
 
 const NavMenu = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
-  const navigate = useNavigate();
   const isTeamAdmin = false;
   const isCupAdmin = false;
   const isAdmin = false;
@@ -25,51 +24,52 @@ const NavMenu = () => {
 
       {isExpanded && (
         <>
-          <Link  to="/"//onClick={() => navigate("/")}
+          <StyledLink
+            to="/" //onClick={() => navigate("/")}
           >
             News
-          </Link>
-          <Link
-          to="/games"
+          </StyledLink>
+          <StyledLink
+            to="/games"
             //onClick={() => navigate("/games")}
           >
             Games
-          </Link>
-          <Link
-             to="/players"
-             //onClick={() => navigate("/players")}
+          </StyledLink>
+          <StyledLink
+            to="/players"
+            //onClick={() => navigate("/players")}
           >
             Player stats
-          </Link>
-          <Link
+          </StyledLink>
+          <StyledLink
             to="/teams"
             // onClick={() => navigate("/teams")}
           >
             Team stats
-          </Link>
+          </StyledLink>
           {isTeamAdmin && (
-            <Link
-            to="/games"
-            // onClick={() => navigate("/my-team")}
+            <StyledLink
+              to="/games"
+              // onClick={() => navigate("/my-team")}
             >
               My team
-            </Link>
+            </StyledLink>
           )}
           {isCupAdmin && (
-            <Link
-            to="/games"
-            // onClick={() => navigate("/manage-cup")}
+            <StyledLink
+              to="/games"
+              // onClick={() => navigate("/manage-cup")}
             >
               Manage cup
-            </Link>
+            </StyledLink>
           )}
           {isAdmin && (
-            <Link
-            to="/games"
-            //onClick={() => navigate("/admin")}
+            <StyledLink
+              to="/games"
+              //onClick={() => navigate("/admin")}
             >
               Super admin tools
-            </Link>
+            </StyledLink>
           )}
         </>
       )}
