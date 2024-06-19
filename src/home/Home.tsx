@@ -67,7 +67,7 @@ const Container = styled.div`
 const PageContainer = styled.div`
   height: 100%;
   width: 100%;
-  background-color: var(--color-page-container-background);
+  background-color: var(--color-background-secondary-darker);
   margin: 16px;
   border-radius: 16px;
 `;

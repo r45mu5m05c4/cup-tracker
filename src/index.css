@@ -33,8 +33,7 @@ body {
   --color-background-primary: #18142C;
   --color-background-primary-darker: #231D40;
   --color-background-secondary: #0E0C1A;
-  --color-background-secondary-darker: #fff;
-  --color-page-container-background: #fff;
+  --color-background-secondary-darker: #18142C;
 
   --color-text-primary: #C8C8C8;
 }
@@ -78,8 +77,7 @@ button:focus-visible {
     --color-background-primary: #F9F9F9;
     --color-background-primary-darker: #fff;
     --color-background-secondary: #001144;
-    --color-background-secondary-darker: #fff;
-    --color-page-container-background: #fff;
+    --color-background-secondary-darker: #F9F9F9;
 
     --color-text-primary: #fff;
   }
