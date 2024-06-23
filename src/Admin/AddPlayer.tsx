@@ -2,9 +2,9 @@ import { styled } from "styled-components";
 
 import React, { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
-import { addPlayer, getTeams, updateTeamStats } from "../utils/queries";
+import { addPlayer, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
-import { Player, PlayerPosition } from "../utils/types/Player";
+import { PlayerPosition } from "../utils/types/Player";
 
 export type NewPlayer = {
   name: string;
@@ -52,8 +52,6 @@ const AddPlayer: React.FC = () => {
 
   const handleAddPlayer = () => {
     if (user?.accessToken) {
-      console.log("access provided");
-      console.log(position);
       if (selectedTeam && position) {
         const newPlayer: NewPlayer = {
           name: playerName,

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Table from "../../molecules/Table";
-import { MOCK_PLAYERS } from "../../utils/MOCK_DATA";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
 
