@@ -9,18 +9,27 @@ import PlayerTable from "../components/PlayerTable";
 import TeamTable from "../components/TeamTable";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import News from "../components/News/News";
-import { ROUTE_PATH_ADMIN, ROUTE_PATH_GAMES, ROUTE_PATH_MANAGE_CUP, ROUTE_PATH_MY_TEAM, ROUTE_PATH_NEWS, ROUTE_PATH_PLAYERS, ROUTE_PATH_TEAMS } from "../constants/routes";
+import {
+  ROUTE_PATH_ADMIN,
+  ROUTE_PATH_GAMES,
+  ROUTE_PATH_MANAGE_CUP,
+  ROUTE_PATH_MY_TEAM,
+  ROUTE_PATH_NEWS,
+  ROUTE_PATH_PLAYERS,
+  ROUTE_PATH_TEAMS,
+} from "../constants/routes";
+import { useUser } from "../utils/context/UserContext";
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState(0);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const { user } = useUser();
 
   const togglePopup = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setPopupPosition(rect.bottom + window.scrollY);
-      console.log(popupPosition);
     }
     setShowLoginModal(!showLoginModal);
   };
@@ -50,7 +59,9 @@ const Home = () => {
               <Route path={ROUTE_PATH_TEAMS} element={<TeamTable />} />
               <Route path={ROUTE_PATH_MY_TEAM} element={<div />} />
               <Route path={ROUTE_PATH_MANAGE_CUP} element={<div />} />
-              <Route path={ROUTE_PATH_ADMIN} element={<Admin />} />
+              {user && user.providerType !== "anon-user" && (
+                <Route path={ROUTE_PATH_ADMIN} element={<Admin />} />
+              )}
             </Routes>
           </Content>
         </Row>
@@ -102,15 +113,15 @@ const IconButton = styled.button`
   height: 48px;
 
   &:hover {
-    border-color: #E0E0E0;
+    border-color: #e0e0e0;
   }
 
   &:active {
-    border-color: #E0E0E0;
+    border-color: #e0e0e0;
   }
 `;
 const HamburgerMenuIcon = styled(UserCircleIcon)`
-  color: #E0E0E0;
+  color: #e0e0e0;
   width: 28px;
-  height: 28px; 
+  height: 28px;
 `;

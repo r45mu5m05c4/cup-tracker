@@ -10,11 +10,9 @@ interface LeftBarProps {
 const NavMenu = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  console.log("location", location)
-
   const handleCollapse = () => {
     setCollapsed(!collapsed);
-  }
+  };
 
   return (
     <LeftBar $collapsed={collapsed}>
@@ -66,7 +64,7 @@ const StyledChevronLeftIcon = styled(ChevronRightIcon)`
   width: 24px;
   min-width: 24px;
   color: var(--color-text-primary);
-  
+
   &:hover {
     cursor: pointer;
   }
@@ -84,14 +82,14 @@ const CollapseSideMenuButton = styled("button")`
   padding: 6px 8px;
   border-radius: 50%;
   color: var(--color-text-primary);
-  background-color: #0F4644;
+  background-color: #0f4644;
   width: 40px;
   min-width: 40px;
   height: 40px;
   border: none;
 
   &:hover {
-    background-color: #1D715D;
+    background-color: #1d715d;
     border: none;
   }
 

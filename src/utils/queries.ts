@@ -1,24 +1,10 @@
 import axios from "axios";
-import * as Realm from "realm-web";
-import { user as USER } from "./apiKey";
 import { Team } from "./types/Team";
+import { Player } from "./types/Player";
+import { NewPlayer } from "../Admin/AddPlayer";
 
-const app = new Realm.App({ id: "data-lcjxaso" });
-
-async function loginEmailPassword() {
-  const credentials = Realm.Credentials.emailPassword(
-    USER.username,
-    USER.password
-  );
-  const user = await app.logIn(credentials);
-  console.assert(user.id === app.currentUser?.id);
-  return user;
-}
-
-export const getTeams = async () => {
+export const getTeams = async (accessToken: string) => {
   try {
-    const user = await loginEmailPassword();
-
     const data = {
       collection: "teams",
       database: "folkets-cup",
@@ -30,7 +16,7 @@ export const getTeams = async () => {
       url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       data: JSON.stringify(data),
     };
@@ -43,10 +29,34 @@ export const getTeams = async () => {
   }
 };
 
-export const getTeamByName = async (teamName: string) => {
+export const getPlayers = async (accessToken: string) => {
   try {
-    const user = await loginEmailPassword();
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+    };
 
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data.documents;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
+
+export const getTeamByName = async (teamName: string, accessToken: string) => {
+  try {
     const data = {
       collection: "teams",
       database: "folkets-cup",
@@ -59,7 +69,7 @@ export const getTeamByName = async (teamName: string) => {
       url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       data: JSON.stringify(data),
     };
@@ -72,9 +82,8 @@ export const getTeamByName = async (teamName: string) => {
   }
 };
 
-export const updateTeamStats = async (team: Team) => {
+export const updateTeamStats = async (team: Team, accessToken: string) => {
   try {
-    const user = await loginEmailPassword();
     const data = {
       collection: "teams",
       database: "folkets-cup",
@@ -96,7 +105,7 @@ export const updateTeamStats = async (team: Team) => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       data: JSON.stringify(data),
     };
@@ -105,6 +114,87 @@ export const updateTeamStats = async (team: Team) => {
     return response.data;
   } catch (error) {
     console.error("Error updating team:", error);
+    throw error;
+  }
+};
+
+export const updatePlayerStats = async (
+  player: Player,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { name: player.name },
+      update: {
+        $set: {
+          goals: player.goals,
+          assists: player.assists,
+          points: player.points,
+          penaltyMinutes: player.penaltyMinutes,
+          gamesPlayed: player.gamesPlayed,
+          position: player.position,
+          team: player.teamName,
+          jerseyNumber: player.jerseyNumber,
+        },
+      },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player:", error);
+    throw error;
+  }
+};
+
+export const addPlayer = async (player: NewPlayer, accessToken: string) => {
+  try {
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      document: {
+        name: player.name,
+        goals: player.goals,
+        assists: player.assists,
+        points: player.points,
+        penaltyMinutes: player.penaltyMinutes,
+        gamesPlayed: player.gamesPlayed,
+        position: player.position,
+        team: player.teamName,
+        jerseyNumber: player.jerseyNumber,
+      },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding player:", error);
     throw error;
   }
 };

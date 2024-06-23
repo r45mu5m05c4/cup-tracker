@@ -1,12 +1,15 @@
 import "./App.css";
 import Home from "./home/Home";
 import { HashRouter as Router } from "react-router-dom";
+import { UserProvider } from "./utils/context/UserContext";
 
 function App() {
   return (
-    <Router>
-      <Home />
-    </Router>
+    <UserProvider>
+      <Router>
+        <Home />
+      </Router>
+    </UserProvider>
   );
 }
 

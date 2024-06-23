@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import React, { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { getTeams, updateTeamStats } from "../utils/queries";
+import { useUser } from "../utils/context/UserContext";
 
 const AddTeamStats: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -12,16 +13,18 @@ const AddTeamStats: React.FC = () => {
   const [updatedPoints, setUpdatedPoints] = useState<number>(0);
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      try {
-        const teamsFromAPI = await getTeams();
-        console.log(teamsFromAPI);
-        setTeams(teamsFromAPI);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
+      if (user?.accessToken)
+        try {
+          const teamsFromAPI = await getTeams(user.accessToken);
+          console.log(teamsFromAPI);
+          setTeams(teamsFromAPI);
+        } catch (error) {
+          console.error("Error fetching teams:", error);
+        }
     };
 
     fetchAllTeams();
@@ -40,17 +43,18 @@ const AddTeamStats: React.FC = () => {
   };
 
   const handleUpdateTeam = () => {
-    if (selectedTeam) {
-      const updatedTeam: Team = {
-        ...selectedTeam,
-        wins: updatedWins,
-        draws: updatedDraws,
-        losses: updatedLosses,
-        points: updatedPoints,
-      };
-      updateTeamStats(updatedTeam);
-      setMessage(`Successfully updated ${selectedTeam.name}`);
-    }
+    if (user?.accessToken)
+      if (selectedTeam) {
+        const updatedTeam: Team = {
+          ...selectedTeam,
+          wins: updatedWins,
+          draws: updatedDraws,
+          losses: updatedLosses,
+          points: updatedPoints,
+        };
+        updateTeamStats(updatedTeam, user?.accessToken);
+        setMessage(`Successfully updated ${selectedTeam.name}`);
+      }
   };
 
   return (

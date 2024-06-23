@@ -6,6 +6,15 @@ export type Player = {
   points: number;
   penaltyMinutes: number;
   gamesPlayed: number;
-  position: string;
-  jerseyNumber: string;
+  position: PlayerPosition;
+  jerseyNumber: number;
+  teamName: string;
 };
+
+export enum PlayerPosition {
+  Center = "C",
+  Defense = "D",
+  LeftWing = "LW",
+  RightWing = "RW",
+  Goalie = "G",
+}

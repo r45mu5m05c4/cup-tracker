@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import React, { useState } from "react";
 import AddTeamStats from "./AddTeamStats";
+import AddPlayer from "./AddPlayer";
 
 const Admin: React.FC = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
@@ -11,7 +12,7 @@ const Admin: React.FC = () => {
       case "playerStats":
         return <div />;
       case "addPlayer":
-        return <div />;
+        return <AddPlayer />;
       case "addGame":
         return <div />;
       case "updateGame":
