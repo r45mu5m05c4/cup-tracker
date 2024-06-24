@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import React, { useState } from "react";
 import AddTeamStats from "./AddTeamStats";
 import AddPlayer from "./AddPlayer";
+import UpdatePlayers from "./UpdatePlayers";
+import ScheduleGame from "./ScheduleGame";
 
 const Admin: React.FC = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
@@ -10,11 +12,11 @@ const Admin: React.FC = () => {
       case "teamStats":
         return <AddTeamStats />;
       case "playerStats":
-        return <div />;
+        return <UpdatePlayers />;
       case "addPlayer":
         return <AddPlayer />;
       case "addGame":
-        return <div />;
+        return <ScheduleGame />;
       case "updateGame":
         return <div />;
       default:
@@ -34,7 +36,7 @@ const Admin: React.FC = () => {
             Update a teams stats
           </AdminButton>
           <AdminButton onClick={() => setCurrentAdminPage("playerStats")}>
-            Update a player's stats
+            Update a player
           </AdminButton>
           <AdminButton onClick={() => setCurrentAdminPage("addPlayer")}>
             Add player

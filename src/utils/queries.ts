@@ -2,6 +2,7 @@ import axios from "axios";
 import { Team } from "./types/Team";
 import { Player } from "./types/Player";
 import { NewPlayer } from "../Admin/AddPlayer";
+import { NewGame } from "../Admin/ScheduleGame";
 
 export const getTeams = async (accessToken: string) => {
   try {
@@ -136,7 +137,7 @@ export const updatePlayerStats = async (
           penaltyMinutes: player.penaltyMinutes,
           gamesPlayed: player.gamesPlayed,
           position: player.position,
-          team: player.teamName,
+          teamName: player.teamName,
           jerseyNumber: player.jerseyNumber,
         },
       },
@@ -175,8 +176,73 @@ export const addPlayer = async (player: NewPlayer, accessToken: string) => {
         penaltyMinutes: player.penaltyMinutes,
         gamesPlayed: player.gamesPlayed,
         position: player.position,
-        team: player.teamName,
+        teamName: player.teamName,
         jerseyNumber: player.jerseyNumber,
+      },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding player:", error);
+    throw error;
+  }
+};
+export const getPlayerByTeam = async (
+  teamName: string,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { teamName: teamName },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data.documents;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
+export const addGame = async (game: NewGame, accessToken: string) => {
+  try {
+    const data = {
+      collection: "games",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      document: {
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        startTime: game.startTime,
+        homeTeamGoals: game.homeTeamGoals,
+        awayTeamGoals: game.awayTeamGoals,
+        ended: game.ended,
+        gameType: game.gameType,
+        gameStage: game.gameStage,
       },
     };
 

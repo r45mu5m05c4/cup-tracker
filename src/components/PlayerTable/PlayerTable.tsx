@@ -24,7 +24,7 @@ const PlayerTable = () => {
 
   const playerColumns = [
     { key: "name", header: "Name" },
-    { key: "team", header: "Team" },
+    { key: "teamName", header: "Team" },
     { key: "position", header: "Position" },
     { key: "goals", header: "Goals" },
     { key: "assists", header: "Assists" },

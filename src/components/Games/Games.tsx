@@ -1,21 +1,12 @@
 import { styled } from "styled-components";
-import { MOCK_GAMES } from "../../utils/MOCK_DATA";
-
-interface Game {
-  id: string;
-  homeTeam: string;
-  awayTeam: string;
-  startTime: string;
-  homeTeamGoals: number;
-  awayTeamGoals: number;
-}
+import { Game } from "../../utils/types/Game";
 
 const Games = () => {
-  const allGames: Game[] = MOCK_GAMES;
+  const allGames: Game[] = [];
   const sortedGames: Game[] = allGames.sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
-  
+
   return (
     <Container>
       {sortedGames.map((game: Game) => {
@@ -26,7 +17,7 @@ const Games = () => {
               <TeamName>{game.awayTeam}</TeamName>
             </TeamsContainer>
             <GameDetails>
-              <Score>{`${game.homeTeamGoals} - ${game.awayTeamGoals}`}</Score>
+              <Score>{`${game.homeTeamGoals.length} - ${game.awayTeamGoals.length}`}</Score>
               <Time>{new Date(game.startTime).toLocaleString()}</Time>
             </GameDetails>
           </GameItem>
