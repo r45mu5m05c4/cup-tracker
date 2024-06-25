@@ -40,7 +40,6 @@ const UpdatePlayerModal: React.FC<Props> = ({
         jerseyNumber: jerseyNumber,
         teamName: player.teamName,
       };
-      console.log(updatedPlayer);
       updatePlayerStats(updatedPlayer, user?.accessToken);
       setMessage(`Successfully updated ${updatedPlayer.name}`);
       setTimeout(() => {
@@ -149,7 +148,7 @@ const UpdatePlayerModal: React.FC<Props> = ({
                 </select>
               </label>
               <br />
-              <button type="submit">Add Player</button>
+              <Button type="submit">Add Player</Button>
             </form>
           </div>
         )}
@@ -176,4 +175,17 @@ const Modal = styled.div`
   border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+`;
+const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  margin:auto;
 `;

@@ -1,11 +1,11 @@
 import { styled } from "styled-components";
-
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { addGame, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { GameStage, GameType, Goal } from "../utils/types/Game";
-import DateTimePicker from "react-datetime-picker";
+import DatePicker from "react-datepicker";
 
 export type NewGame = {
   homeTeam: string;
@@ -21,7 +21,7 @@ export type NewGame = {
 const ScheduleGame: React.FC = () => {
   const [homeTeam, setHomeTeam] = useState<string | null>(null);
   const [awayTeam, setAwayTeam] = useState<string | null>(null);
-  const [startTime, setStartTime] = useState<Date>();
+  const [startTime, setStartTime] = useState<Date | null>(new Date());
   const [gameType, setGameType] = useState<GameType>();
   const [gameStage, setGameStage] = useState<GameStage>();
   const [message, setMessage] = useState("");
@@ -65,6 +65,7 @@ const ScheduleGame: React.FC = () => {
   const handleAddGame = () => {
     console.log(awayTeam, "@", homeTeam);
     if (user?.accessToken) {
+      console.log(startTime, gameType, gameStage);
       if (awayTeam && homeTeam && startTime && gameType && gameStage) {
         const newGame: NewGame = {
           homeTeam: homeTeam,
@@ -84,76 +85,79 @@ const ScheduleGame: React.FC = () => {
       }
     }
   };
-  const handleDateChange = (date: Date) => {
-    setStartTime(date);
-  };
+
   return (
     <Container>
       <h2>Admin Page - Add Game</h2>
-      <div>
-        <form
+      <>
+        <StyledForm
           onSubmit={(e) => {
             e.preventDefault();
             handleAddGame();
           }}
         >
-          <select onChange={(e) => handleTeamSelect(e.target.value, false)}>
+          <Select onChange={(e) => handleTeamSelect(e.target.value, false)}>
             <option value="">Select away team</option>
             {teams.map((team) => (
               <option key={team._id} value={team.name}>
                 {team.name}
               </option>
             ))}
-          </select>
-          <select onChange={(e) => handleTeamSelect(e.target.value, true)}>
+          </Select>
+          @
+          <Select onChange={(e) => handleTeamSelect(e.target.value, true)}>
             <option value="">Select home team</option>
             {teams.map((team) => (
               <option key={team._id} value={team.name}>
                 {team.name}
               </option>
             ))}
-          </select>
-          <label>
-            Start time:
-            <DateTimePicker
-              id="dateTimePicker"
-              onChange={() => handleDateChange}
-              value={startTime}
+          </Select>
+          <DateContainer>
+            <p>
+              Selected Date and Time:
+              <br />
+              {startTime && format(startTime, "HH:mm - dd, MMMM, yyyy")}
+            </p>
+            <DatePicker
+              showTimeInput
+              dateFormat="MMMM d, yyyy HH:mm"
+              onChange={(date) => setStartTime(date)}
+              selected={startTime}
             />
-          </label>
-          <br />
-          <label>
+          </DateContainer>
+          <Label>
             Game type:
-            <select
+            <Select
               value={gameType}
               onChange={(e) => setGameType(e.target.value as GameType)}
             >
+              <option value="">Select type</option>
               {possibleGameType.map((pos) => (
                 <option key={pos} value={pos}>
                   {pos}
                 </option>
               ))}
-            </select>
-          </label>
-          <br />
-          <label>
+            </Select>
+          </Label>
+          <Label>
             Game stage:
-            <select
+            <Select
               value={gameStage}
               onChange={(e) => setGameStage(e.target.value as GameStage)}
             >
+              <option value="">Select stage</option>
               {possibleGameStage.map((pos) => (
                 <option key={pos} value={pos}>
                   {pos}
                 </option>
               ))}
-            </select>
-          </label>
-          <button type="submit">Add Game</button>
-        </form>
-      </div>
-
-      {message !== "" && <span>{message}</span>}
+            </Select>
+          </Label>
+          <Button type="submit">Add Game</Button>
+          {message !== "" && <span>{message}</span>}
+        </StyledForm>
+      </>
     </Container>
   );
 };
@@ -161,8 +165,50 @@ const ScheduleGame: React.FC = () => {
 export default ScheduleGame;
 
 const Container = styled.div`
+  margin: auto;
   height: 100%;
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+`;
+const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  margin: 24px;
+  margin-right: 0;
+  margin-left: auto;
+`;
+const Label = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: 12px;
+`;
+const Select = styled.select`
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: auto;
+  width: 45%;
+  padding: 8px;
+`;
+const DateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+`;
+const StyledForm = styled.form`
+  width: 100%;
 `;

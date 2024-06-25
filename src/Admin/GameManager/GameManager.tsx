@@ -131,227 +131,271 @@ const GameManager = () => {
   return (
     <Container>
       {games && !game && (
-        <label>
+        <Label>
           Select game to manage:
-          <select value={game} onChange={(e) => gamePicker(e.target.value)}>
+          <Select value={game} onChange={(e) => gamePicker(e.target.value)}>
             {games.map((g) => (
               <option key={g.id} value={g.id}>
                 {g.awayTeam} @ {g.homeTeam}
               </option>
             ))}
-          </select>
-        </label>
+          </Select>
+        </Label>
       )}
-      <AwayContainer>
-        <label>
-          Event:
-          <select
-            value={awayEvent}
-            onChange={(e) => setAwayEvent(e.target.value)}
-          >
-            <option key={"goal"} value={"goal"}>
-              Goal
-            </option>
-            <option key={"pim"} value={"pim"}>
-              Penalty
-            </option>
-          </select>
-        </label>
-        {awayEvent !== "" && awayEvent === "pim" ? (
-          <div>
-            <label>
-              Player:
-              <select
+      {game && (
+        <>
+          <h2>
+            {game.awayTeam} @ {game.homeTeam}
+          </h2>
+          <AwayContainer>
+            <Label>
+              Event:
+              <Select
                 value={awayEvent}
-                onChange={(e) => setAwayPlayer(e.target.value)}
+                onChange={(e) => setAwayEvent(e.target.value)}
               >
-                <option value="">Select a player</option>
-                {awayPlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Penalty Minutes:
-              <input
-                type="number"
-                value={awayPenaltyMinutes}
-                onChange={(e) =>
-                  setAwayPenaltyMinutes(parseInt(e.target.value))
-                }
-              />
-            </label>
-          </div>
-        ) : (
-          <div>
-            <label>
-              Scorer:
-              <select
-                value={awayPlayer}
-                onChange={(e) => setAwayPlayer(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {awayPlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Primary assist:
-              <select
-                value={awayAssister}
-                onChange={(e) => setAwayAssister(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {awayPlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Secondary assist:
-              <select
-                value={awaySecondaryAssister}
-                onChange={(e) => setAwaySecondaryAssister(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {awayPlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        )}
-        {awayEvent === "goal" ? (
-          <Button onClick={() => addAwayGoalHandler()}>Add goal</Button>
-        ) : (
-          <Button onClick={() => addAwayPenaltyHandler()}>Add penalty</Button>
-        )}
-      </AwayContainer>
-      <HomeContainer>
-        <label>
-          Event:
-          <select
-            value={homeEvent}
-            onChange={(e) => setHomeEvent(e.target.value)}
-          >
-            <option key={"goal"} value={"goal"}>
-              Goal
-            </option>
-            <option key={"pim"} value={"pim"}>
-              Penalty
-            </option>
-          </select>
-        </label>
-        {homeEvent !== "" && homeEvent === "pim" ? (
-          <div>
-            <label>
-              Player:
-              <select
+                <option key={"goal"} value={"goal"}>
+                  Goal
+                </option>
+                <option key={"pim"} value={"pim"}>
+                  Penalty
+                </option>
+              </Select>
+            </Label>
+            {awayEvent !== "" && awayEvent === "pim" ? (
+              <div>
+                <Label>
+                  Player:
+                  <Select
+                    value={awayEvent}
+                    onChange={(e) => setAwayPlayer(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {awayPlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+                <Label>
+                  Penalty Minutes:
+                  <input
+                    type="number"
+                    value={awayPenaltyMinutes}
+                    onChange={(e) =>
+                      setAwayPenaltyMinutes(parseInt(e.target.value))
+                    }
+                  />
+                </Label>
+              </div>
+            ) : (
+              <div>
+                <Label>
+                  Scorer:
+                  <Select
+                    value={awayPlayer}
+                    onChange={(e) => setAwayPlayer(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {awayPlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+                <Label>
+                  Primary assist:
+                  <Select
+                    value={awayAssister}
+                    onChange={(e) => setAwayAssister(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {awayPlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+                <Label>
+                  Secondary assist:
+                  <Select
+                    value={awaySecondaryAssister}
+                    onChange={(e) => setAwaySecondaryAssister(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {awayPlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+              </div>
+            )}
+            {awayEvent === "goal" ? (
+              <Button onClick={() => addAwayGoalHandler()}>Add goal</Button>
+            ) : (
+              <Button onClick={() => addAwayPenaltyHandler()}>
+                Add penalty
+              </Button>
+            )}
+          </AwayContainer>
+          <HomeContainer>
+            <Label>
+              Event:
+              <Select
                 value={homeEvent}
-                onChange={(e) => setHomePlayer(e.target.value)}
+                onChange={(e) => setHomeEvent(e.target.value)}
               >
-                <option value="">Select a player</option>
-                {homePlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>{" "}
-            <label>
-              Penalty Minutes:
-              <input
-                type="number"
-                value={homePenaltyMinutes}
-                onChange={(e) =>
-                  setHomePenaltyMinutes(parseInt(e.target.value))
-                }
-              />
-            </label>
-          </div>
-        ) : (
-          <div>
-            <label>
-              Scorer:
-              <select
-                value={homePlayer}
-                onChange={(e) => setHomePlayer(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {homePlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Primary assist:
-              <select
-                value={homeAssister}
-                onChange={(e) => setHomeAssister(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {homePlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Secondary assist:
-              <select
-                value={homeSecondaryAssister}
-                onChange={(e) => setHomeSecondaryAssister(e.target.value)}
-              >
-                <option value="">Select a player</option>
-                {homePlayers.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.jerseyNumber} - {player.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        )}
-        {homeEvent === "goal" ? (
-          <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
-        ) : (
-          <Button onClick={() => addHomePenaltyHandler()}>Add penalty</Button>
-        )}
-      </HomeContainer>
+                <option key={"goal"} value={"goal"}>
+                  Goal
+                </option>
+                <option key={"pim"} value={"pim"}>
+                  Penalty
+                </option>
+              </Select>
+            </Label>
+            {homeEvent !== "" && homeEvent === "pim" ? (
+              <div>
+                <Label>
+                  Player:
+                  <Select
+                    value={homeEvent}
+                    onChange={(e) => setHomePlayer(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {homePlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>{" "}
+                <Label>
+                  Penalty Minutes:
+                  <input
+                    type="number"
+                    value={homePenaltyMinutes}
+                    onChange={(e) =>
+                      setHomePenaltyMinutes(parseInt(e.target.value))
+                    }
+                  />
+                </Label>
+              </div>
+            ) : (
+              <div>
+                <Label>
+                  Scorer:
+                  <Select
+                    value={homePlayer}
+                    onChange={(e) => setHomePlayer(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {homePlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+                <Label>
+                  Primary assist:
+                  <Select
+                    value={homeAssister}
+                    onChange={(e) => setHomeAssister(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {homePlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+                <Label>
+                  Secondary assist:
+                  <Select
+                    value={homeSecondaryAssister}
+                    onChange={(e) => setHomeSecondaryAssister(e.target.value)}
+                  >
+                    <option value="">Select a player</option>
+                    {homePlayers.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.jerseyNumber} - {player.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Label>
+              </div>
+            )}
+            {homeEvent === "goal" ? (
+              <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
+            ) : (
+              <Button onClick={() => addHomePenaltyHandler()}>
+                Add penalty
+              </Button>
+            )}
+          </HomeContainer>
+        </>
+      )}
     </Container>
   );
 };
 export default GameManager;
 
 const Container = styled.div`
+  margin: auto;
   height: 100%;
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: row;
+  align-items: center;
 `;
 const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
   color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
   margin: 24px;
 `;
 const HomeContainer = styled.div`
   height: 100%;
+  width: 45%;
+  padding: 2.5%;
   display: flex;
   flex-direction: column;
 `;
 const AwayContainer = styled.div`
   height: 100%;
+  width: 45%;
+  padding: 2.5%;
   display: flex;
   flex-direction: column;
+`;
+const Label = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: 5px;
+`;
+const Select = styled.select`
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: auto;
+  margin-right: 0;
+  width: 70%;
+  padding: 8px;
 `;

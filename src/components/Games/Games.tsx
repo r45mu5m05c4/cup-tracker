@@ -1,15 +1,34 @@
 import { styled } from "styled-components";
 import { Game } from "../../utils/types/Game";
+import { getGames } from "../../utils/queries";
+import { useEffect, useState } from "react";
+import { useUser } from "../../utils/context/UserContext";
 
 const Games = () => {
-  const allGames: Game[] = [];
-  const sortedGames: Game[] = allGames.sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-  );
+  const [games, setGames] = useState<Game[]>();
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fetchAllGames = async () => {
+      if (user?.accessToken)
+        try {
+          const gamesFromAPI = await getGames(user.accessToken);
+          const sortedGames: Game[] = gamesFromAPI.sort(
+            (a: Game, b: Game) =>
+              new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+          );
+          setGames(sortedGames);
+        } catch (error) {
+          console.error("Error fetching games:", error);
+        }
+    };
+
+    fetchAllGames();
+  }, []);
 
   return (
     <Container>
-      {sortedGames.map((game: Game) => {
+      {games?.map((game: Game) => {
         return (
           <GameItem key={game.id}>
             <TeamsContainer>
@@ -46,6 +65,9 @@ const GameItem = styled.div`
   border-radius: 4px;
   display: flex;
   flex-direction: column;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const TeamsContainer = styled.div`
