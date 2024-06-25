@@ -4,6 +4,7 @@ import AddTeamStats from "./AddTeamStats";
 import AddPlayer from "./AddPlayer";
 import UpdatePlayers from "./UpdatePlayers";
 import ScheduleGame from "./ScheduleGame";
+import GameManager from "./GameManager";
 
 const Admin: React.FC = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
@@ -18,7 +19,7 @@ const Admin: React.FC = () => {
       case "addGame":
         return <ScheduleGame />;
       case "updateGame":
-        return <div />;
+        return <GameManager />;
       default:
         break;
     }
@@ -45,7 +46,7 @@ const Admin: React.FC = () => {
             Add game
           </AdminButton>
           <AdminButton onClick={() => setCurrentAdminPage("updateGame")}>
-            Update game
+            Live game manager
           </AdminButton>
         </>
       ) : (

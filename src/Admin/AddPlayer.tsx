@@ -129,7 +129,7 @@ const AddPlayer: React.FC = () => {
               </select>
             </label>
             <br />
-            <button type="submit">Add Player</button>
+            <Button type="submit">Add Player</Button>
           </form>
         </div>
       )}
@@ -145,4 +145,8 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`;
+const Button = styled.button`
+  color: #fff;
+  margin: 24px;
 `;

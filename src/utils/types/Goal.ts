@@ -1,8 +1,9 @@
 export type Goal = {
-  id: string;
+  id?: string;
   playerId: string;
   assistPlayerId: string;
   secondaryAssistPlayerId: string;
   matchId: string;
-  teamId: string;
+  scoringTeamId: string;
+  concedingTeamId: string;
 };

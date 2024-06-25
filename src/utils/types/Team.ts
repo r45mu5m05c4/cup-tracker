@@ -6,4 +6,6 @@ export type Team = {
   losses: number;
   points: number;
   logo?: string;
+  goals: number;
+  goalsAgainst: number;
 };
