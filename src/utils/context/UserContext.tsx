@@ -1,4 +1,3 @@
-// UserContext.tsx
 import React, {
   createContext,
   useContext,
@@ -19,23 +18,37 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<Realm.User | null>(null);
+  const [user, setUserState] = useState<Realm.User | null>(null);
   const app = new Realm.App({ id: "data-lcjxaso" });
 
   useEffect(() => {
-    const loginAnonymously = async () => {
-      const user = await app.logIn(Realm.Credentials.anonymous());
-      setUser(user);
-    };
-
-    if (!user) {
+    const storedUser = sessionStorage.getItem("realmUser");
+    if (storedUser) {
+      const parsedUser = app.currentUser;
+      setUserState(parsedUser);
+    } else {
       loginAnonymously();
     }
-  }, [user]);
+  }, []);
+
+  const loginAnonymously = async () => {
+    const user = await app.logIn(Realm.Credentials.anonymous());
+    setUser(user);
+  };
+
+  const setUser = (user: Realm.User | null) => {
+    if (user) {
+      sessionStorage.setItem("realmUser", JSON.stringify(user));
+    } else {
+      sessionStorage.removeItem("realmUser");
+    }
+    setUserState(user);
+  };
 
   const logout = async () => {
     if (user) {
       await user.logOut();
+      sessionStorage.removeItem("realmUser");
       const anonymousUser = await app.logIn(Realm.Credentials.anonymous());
       setUser(anonymousUser);
     }

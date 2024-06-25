@@ -24,7 +24,6 @@ const LoginModal: FC<Props> = ({ popupPosition, showLoginModal }) => {
       const credentials = Realm.Credentials.emailPassword(email, password);
       const user = await app.logIn(credentials);
 
-      console.log("User logged in:", user);
       setUser(user);
     } catch (err) {
       setError("Could not log you in, please contact admin");
