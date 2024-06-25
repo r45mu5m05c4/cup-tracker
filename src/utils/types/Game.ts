@@ -6,7 +6,7 @@ export interface Goal {
   gameMinute: number;
 }
 export interface Game {
-  id?: string;
+  _id?: string;
   homeTeam: string;
   awayTeam: string;
   startTime: string;
@@ -15,6 +15,7 @@ export interface Game {
   ended: boolean;
   gameType: GameType;
   gameStage: GameStage;
+  penalty: { playerName: string; minutes: number };
 }
 
 export enum GameType {

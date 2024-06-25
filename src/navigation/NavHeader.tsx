@@ -12,7 +12,7 @@ const NavHeader = ({ collapsed }: NavHeaderProps) => (
     <LogoContainer>
       <StyledTrophyIcon />
     </LogoContainer>
-    {!collapsed && <Typography variant="h4" style={{ whiteSpace: "nowrap" }}>cup tracker</Typography>}
+    {!collapsed && <Typography variant="h4" style={{ whiteSpace: "nowrap" }}>Folkets cup</Typography>}
   </Container>
 );
 

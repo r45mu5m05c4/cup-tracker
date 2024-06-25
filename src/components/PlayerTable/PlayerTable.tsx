@@ -12,7 +12,6 @@ const PlayerTable = () => {
       if (user?.accessToken)
         try {
           const teamsFromAPI = await getPlayers(user?.accessToken);
-          console.log(teamsFromAPI);
           setPlayers(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);

@@ -117,7 +117,7 @@ const ScheduleGame: React.FC = () => {
             <p>
               Selected Date and Time:
               <br />
-              {startTime && format(startTime, "HH:mm - dd, MMMM, yyyy")}
+              {startTime && format(startTime, "HH:mm - dd MMMM, yyyy")}
             </p>
             <DatePicker
               showTimeInput

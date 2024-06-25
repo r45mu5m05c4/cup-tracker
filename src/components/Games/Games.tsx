@@ -3,9 +3,13 @@ import { Game } from "../../utils/types/Game";
 import { getGames } from "../../utils/queries";
 import { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
+import { format, isToday, isTomorrow, isYesterday } from "date-fns";
+import GameModal from "./GameModal";
 
 const Games = () => {
   const [games, setGames] = useState<Game[]>();
+  const [openGame, setOpenGame] = useState<Game>();
+  const [showModal, setShowModal] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -26,22 +30,37 @@ const Games = () => {
     fetchAllGames();
   }, []);
 
+  const getDateString = (date: string) => {
+    if (isYesterday(date))
+      return `Yesterday ${format(new Date(date), "HH:mm")} `;
+    if (isToday(date)) return `Today ${format(new Date(date), "HH:mm")} `;
+    if (isTomorrow(date)) return `Tomorrow ${format(new Date(date), "HH:mm")} `;
+    else return format(new Date(date), "HH:mm - dd MMMM");
+  };
+  const handleOpenGame = (gameId: string | undefined) => {
+    const foundGame = gameId && games?.find((g) => g._id === gameId);
+    if (foundGame) {
+      setOpenGame(foundGame);
+      setShowModal(true);
+    }
+  };
   return (
     <Container>
       {games?.map((game: Game) => {
         return (
-          <GameItem key={game.id}>
+          <GameItem key={game._id} onClick={() => handleOpenGame(game._id)}>
             <TeamsContainer>
               <TeamName>{game.homeTeam}</TeamName>
               <TeamName>{game.awayTeam}</TeamName>
             </TeamsContainer>
             <GameDetails>
               <Score>{`${game.homeTeamGoals.length} - ${game.awayTeamGoals.length}`}</Score>
-              <Time>{new Date(game.startTime).toLocaleString()}</Time>
+              <Time>{getDateString(game.startTime)}</Time>
             </GameDetails>
           </GameItem>
         );
       })}
+      {openGame && <GameModal setShowModal={setShowModal} game={openGame} />}
     </Container>
   );
 };
@@ -65,6 +84,7 @@ const GameItem = styled.div`
   border-radius: 4px;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
   @media (max-width: 768px) {
     width: 90%;
   }

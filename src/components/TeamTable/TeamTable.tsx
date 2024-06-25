@@ -6,13 +6,12 @@ import { useEffect, useState } from "react";
 const TeamTable = () => {
   const [teams, setTeams] = useState<any[]>([]);
   const { user } = useUser();
-  
+
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken)
         try {
           const teamsFromAPI = await getTeams(user?.accessToken);
-          console.log(teamsFromAPI);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
