@@ -251,9 +251,9 @@ const GameManager = () => {
         return (
           <EventsRow key={index} home={event.home}>
             <>
-              <h3>
+              <GoalHeader>
                 {event.gameMinute}' GOAL by {event.scorer}
-              </h3>
+              </GoalHeader>
               <EventText>
                 Assisted by: {event.primaryAssist}, {event.secondaryAssist}
               </EventText>
@@ -667,8 +667,16 @@ const EventsRow = styled.p.withConfig({
 })<{ home: boolean }>`
   text-align: ${(props) => (props.home ? "right" : "left")};
   border-top: 1px solid;
+  margin: 0;
 `;
-const EventText = styled.p``;
+const EventText = styled.p`
+  margin: 0;
+`;
 const EventHeader = styled.p`
+  margin: 0;
+  font-weight: 500;
+`;
+const GoalHeader = styled.p`
+  margin: 0;
   font-weight: bold;
 `;

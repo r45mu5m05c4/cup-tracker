@@ -80,9 +80,9 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
         return (
           <EventsRow key={index} home={event.home}>
             <>
-              <h3>
+              <GoalHeader>
                 {event.gameMinute}' GOAL by {event.scorer}
-              </h3>
+              </GoalHeader>
               <EventText>
                 {event.primaryAssist !== "Unassisted"
                   ? `Assisted by: ${event.primaryAssist}`
@@ -161,6 +161,9 @@ const Overlay = styled.div`
 `;
 
 const Modal = styled.div`
+  top: 5%;
+  left: 25%;
+  width: 50%;
   z-index: 100;
   position: absolute;
   margin: auto;
@@ -174,8 +177,7 @@ const Modal = styled.div`
   @media (max-width: 768px) {
     top: 0;
     left: 0;
-    height: 100%;
-    width: 100%;
+    width: 90%;
   }
 `;
 
@@ -214,6 +216,7 @@ const EventsRow = styled.p.withConfig({
 })<{ home: boolean }>`
   text-align: ${(props) => (props.home ? "right" : "left")};
   border-top: 1px solid;
+  margin: 0;
 `;
 
 const ErrorMessage = styled.p`
@@ -221,7 +224,18 @@ const ErrorMessage = styled.p`
   font-size: 1em;
   margin: 16px 0;
 `;
-const EventText = styled.p``;
+
+const EventText = styled.p`
+  margin: 0;
+  font-size: 0.8rem;
+`;
+
 const EventHeader = styled.p`
+  margin: 0;
+  font-weight: 500;
+`;
+
+const GoalHeader = styled.p`
+  margin: 0;
   font-weight: bold;
 `;
