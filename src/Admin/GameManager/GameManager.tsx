@@ -263,14 +263,7 @@ const GameManager = () => {
           {eventRenderer()}
         </LiveGame>
       )}
-      <Label>
-        Game Minute:
-        <input
-          type="number"
-          value={gameMinute}
-          onChange={(e) => setGameMinute(parseInt(e.target.value))}
-        />
-      </Label>
+
       <Container>
         {games.length > 0 && !game && (
           <Label>
@@ -290,6 +283,15 @@ const GameManager = () => {
         {game && (
           <>
             <AwayContainer>
+              <h3>Away</h3>
+              <Label>
+                Game Minute:
+                <input
+                  type="number"
+                  value={gameMinute}
+                  onChange={(e) => setGameMinute(parseInt(e.target.value))}
+                />
+              </Label>
               <Label>
                 Event:
                 <Select
@@ -406,6 +408,15 @@ const GameManager = () => {
               )}
             </AwayContainer>
             <HomeContainer>
+              <h3>Home</h3>
+              <Label>
+                Game Minute:
+                <input
+                  type="number"
+                  value={gameMinute}
+                  onChange={(e) => setGameMinute(parseInt(e.target.value))}
+                />
+              </Label>
               <Label>
                 Event:
                 <Select
@@ -536,6 +547,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 const Button = styled.button`
   border-radius: 8px;
@@ -556,6 +570,10 @@ const HomeContainer = styled.div`
   padding: 2.5%;
   display: flex;
   flex-direction: column;
+  flex-direction: column;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 const AwayContainer = styled.div`
   height: 100%;
@@ -563,6 +581,9 @@ const AwayContainer = styled.div`
   padding: 2.5%;
   display: flex;
   flex-direction: column;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 const Label = styled.div`
   width: 100%;
@@ -572,6 +593,9 @@ const Label = styled.div`
   font-weight: 500;
   font-family: inherit;
   margin: 5px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+  }
 `;
 const Select = styled.select`
   font-size: 1em;
@@ -581,6 +605,9 @@ const Select = styled.select`
   margin-right: 0;
   width: 70%;
   padding: 8px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+  }
 `;
 const LiveGame = styled.div`
   width: 100%;
