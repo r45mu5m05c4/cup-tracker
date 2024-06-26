@@ -28,7 +28,9 @@ const TableContainer = styled.table`
   border-collapse: collapse;
 `;
 
-const TableHeader = styled.th<{ sticky?: boolean }>`
+const TableHeader = styled.th.withConfig({
+  shouldForwardProp: (prop) => prop !== "sticky",
+})<{ sticky: boolean }>`
   padding: 8px;
   text-align: left;
   border-bottom: 2px solid #ddd;
@@ -39,7 +41,9 @@ const TableHeader = styled.th<{ sticky?: boolean }>`
   cursor: pointer;
 `;
 
-const TableCell = styled.td<{ sticky?: boolean }>`
+const TableCell = styled.td.withConfig({
+  shouldForwardProp: (prop) => prop !== "sticky",
+})<{ sticky: boolean }>`
   padding: 8px;
   border-bottom: 1px solid #ddd;
   background: #fff;

@@ -7,7 +7,7 @@ interface Props {
   small: boolean;
 }
 
-const TeamTable: FC<Props> = (small) => {
+const TeamTable: FC<Props> = ({ small }) => {
   const [teams, setTeams] = useState<any[]>([]);
   const { user } = useUser();
 
@@ -25,23 +25,25 @@ const TeamTable: FC<Props> = (small) => {
     fetchAllTeams();
   }, []);
 
-  const teamColumns = small ? [
-    { key: "name", header: "Team" },
-    { key: "points", header: "P" },
-    { key: "wins", header: "W" },
-    { key: "draws", header: "D" },
-    { key: "losses", header: "L" },
-    { key: "gamesPlayed", header: "GP" },
-  ]:[
-    { key: "name", header: "Team" },
-    { key: "points", header: "P" },
-    { key: "wins", header: "W" },
-    { key: "draws", header: "D" },
-    { key: "losses", header: "L" },
-    { key: "goals", header: "GF" },
-    { key: "goalsAgainst", header: "GA" },
-    { key: "gamesPlayed", header: "GP" },
-  ];
+  const teamColumns = small
+    ? [
+        { key: "name", header: "Team" },
+        { key: "points", header: "P" },
+        { key: "wins", header: "W" },
+        { key: "draws", header: "D" },
+        { key: "losses", header: "L" },
+        { key: "gamesPlayed", header: "GP" },
+      ]
+    : [
+        { key: "name", header: "Team" },
+        { key: "points", header: "P" },
+        { key: "wins", header: "W" },
+        { key: "draws", header: "D" },
+        { key: "losses", header: "L" },
+        { key: "goals", header: "GF" },
+        { key: "goalsAgainst", header: "GA" },
+        { key: "gamesPlayed", header: "GP" },
+      ];
   return (
     <>
       <Table data={teams} columns={teamColumns}></Table>
