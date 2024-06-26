@@ -29,7 +29,8 @@ const UpdatePlayerModal: React.FC<Props> = ({
   const handleUpdatePlayer = () => {
     if (user?.accessToken) {
       const updatedPlayer: Player = {
-        id: player.id,
+        _id: player._id,
+        generatedId: player.generatedId,
         name: playerName,
         goals: goals,
         assists: assists,
@@ -148,7 +149,7 @@ const UpdatePlayerModal: React.FC<Props> = ({
                 </select>
               </label>
               <br />
-              <Button type="submit">Add Player</Button>
+              <Button type="submit">Update Player</Button>
             </form>
           </div>
         )}
@@ -187,5 +188,5 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
-  margin:auto;
+  margin: auto;
 `;

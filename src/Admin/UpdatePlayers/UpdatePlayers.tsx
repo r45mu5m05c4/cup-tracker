@@ -73,7 +73,7 @@ const UpdatePlayers: React.FC = () => {
       </select>
       {players.length &&
         players.map((p: Player) => (
-          <PlayerCard key={p.id} onClick={() => editPlayer(p)}>
+          <PlayerCard key={p._id} onClick={() => editPlayer(p)}>
             <PlayerCell>{p.name}</PlayerCell>
             <PlayerCell>{p.jerseyNumber}</PlayerCell>
             <PlayerCell>{p.position}</PlayerCell>

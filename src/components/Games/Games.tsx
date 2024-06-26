@@ -60,7 +60,9 @@ const Games = () => {
           </GameItem>
         );
       })}
-      {openGame && <GameModal setShowModal={setShowModal} game={openGame} />}
+      {openGame && showModal && (
+        <GameModal setShowModal={setShowModal} game={openGame} />
+      )}
     </Container>
   );
 };

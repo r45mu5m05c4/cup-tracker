@@ -8,6 +8,7 @@ import { GameStage, GameType, Goal } from "../utils/types/Game";
 import DatePicker from "react-datepicker";
 
 export type NewGame = {
+  gameId: string;
   homeTeam: string;
   awayTeam: string;
   startTime: string;
@@ -66,8 +67,11 @@ const ScheduleGame: React.FC = () => {
     console.log(awayTeam, "@", homeTeam);
     if (user?.accessToken) {
       console.log(startTime, gameType, gameStage);
+
       if (awayTeam && homeTeam && startTime && gameType && gameStage) {
+        const generatedId = `${awayTeam}vs${homeTeam}${startTime.toString()}`;
         const newGame: NewGame = {
+          gameId: generatedId,
           homeTeam: homeTeam,
           awayTeam: awayTeam,
           startTime: startTime.toString(),

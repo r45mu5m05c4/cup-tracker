@@ -25,6 +25,7 @@ const LoginModal: FC<Props> = ({ popupPosition, showLoginModal }) => {
       const user = await app.logIn(credentials);
 
       setUser(user);
+      showLoginModal(false);
     } catch (err) {
       setError("Could not log you in, please contact admin");
     }
@@ -84,7 +85,9 @@ const Overlay = styled.div`
   background-color: #000;
   z-index: 50;
 `;
-const Modal = styled.div<{ top: number }>`
+const Modal = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "top",
+})<{ top: number }>`
   z-index: 100;
   position: absolute;
   display: flex;
@@ -98,7 +101,16 @@ const Modal = styled.div<{ top: number }>`
   background-color: #fff;
 `;
 const LoginOrOutButton = styled.a`
-  border-radius: 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
 `;
 const Input = styled.input`
   margin: auto;

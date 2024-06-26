@@ -3,8 +3,8 @@ import { Team } from "./types/Team";
 import { Player } from "./types/Player";
 import { NewPlayer } from "../Admin/AddPlayer";
 import { NewGame } from "../Admin/ScheduleGame";
-import { Game } from "./types/Game";
-import { Goal } from "./types/Goal";
+import { Game, Penalty } from "./types/Game";
+import { Goal } from "./types/Game";
 
 export const getTeams = async (accessToken: string) => {
   try {
@@ -76,6 +76,33 @@ export const getGames = async (accessToken: string) => {
     };
 
     const response = await axios(config);
+    console.log(response.data.documents);
+    return response.data.documents;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
+export const getGameById = async (accessToken: string, gameId: string) => {
+  try {
+    const data = {
+      collection: "games",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { gameId: gameId },
+    };
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/findOne",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    console.log(response.data.documents);
     return response.data.documents;
   } catch (error) {
     console.error("Error fetching teams:", error);
@@ -154,7 +181,7 @@ export const updatePlayerStats = async (
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { name: player.name },
+      filter: { generatedId: player.generatedId },
       update: {
         $set: {
           goals: player.goals,
@@ -195,6 +222,7 @@ export const addPlayer = async (player: NewPlayer, accessToken: string) => {
       database: "folkets-cup",
       dataSource: "folketsCup",
       document: {
+        generatedId: player.generatedId,
         name: player.name,
         goals: player.goals,
         assists: player.assists,
@@ -261,6 +289,7 @@ export const addGame = async (game: NewGame, accessToken: string) => {
       database: "folkets-cup",
       dataSource: "folketsCup",
       document: {
+        gameId: game.gameId,
         homeTeam: game.homeTeam,
         awayTeam: game.awayTeam,
         startTime: game.startTime,
@@ -286,7 +315,7 @@ export const addGame = async (game: NewGame, accessToken: string) => {
     const response = await axios(config);
     return response.data;
   } catch (error) {
-    console.error("Error adding player:", error);
+    console.error("Error adding game:", error);
     throw error;
   }
 };
@@ -297,7 +326,7 @@ export const updateGame = async (game: Game, accessToken: string) => {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { id: game.id },
+      filter: { gameId: game.gameId },
       update: {
         $set: {
           homeTeam: game.homeTeam,
@@ -308,6 +337,7 @@ export const updateGame = async (game: Game, accessToken: string) => {
           ended: game.ended,
           gameType: game.gameType,
           gameStage: game.gameStage,
+          penalty: game.penalty,
         },
       },
     };
@@ -382,7 +412,7 @@ export const addSingularStatToPlayer = async (
 };
 export const addPenaltyToPlayer = async (
   pims: number,
-  playerName: string,
+  generatedId: string,
   accessToken: string
 ) => {
   try {
@@ -390,7 +420,7 @@ export const addPenaltyToPlayer = async (
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { name: playerName },
+      filter: { generatedId: generatedId },
       update: {
         $set: {
           penaltyMinutes: pims,
@@ -418,7 +448,7 @@ export const addPenaltyToPlayer = async (
 };
 export const addSingularStatToTeam = async (
   goalFor: boolean,
-  teamId: string,
+  teamName: string,
   accessToken: string
 ) => {
   try {
@@ -427,7 +457,7 @@ export const addSingularStatToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { id: teamId },
+          filter: { name: teamName },
           update: {
             $inc: {
               goals: 1,
@@ -438,7 +468,7 @@ export const addSingularStatToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { id: teamId },
+          filter: { name: teamName },
           update: {
             $inc: {
               goalsAgainst: 1,
@@ -465,6 +495,7 @@ export const addSingularStatToTeam = async (
   }
 };
 export const addGoalToGame = async (
+  gameId: string,
   goal: Goal,
   homeTeam: boolean,
   accessToken: string
@@ -475,7 +506,7 @@ export const addGoalToGame = async (
           collection: "games",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { id: goal.matchId },
+          filter: { gameId: gameId },
           update: {
             $push: {
               homeTeamGoals: goal,
@@ -483,16 +514,52 @@ export const addGoalToGame = async (
           },
         }
       : {
-          collection: "teams",
+          collection: "games",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { id: goal.matchId },
+          filter: { gameId: gameId },
           update: {
             $push: {
               awayTeamGoals: goal,
             },
           },
         };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding goal:", error);
+    throw error;
+  }
+};
+export const addPenaltyToGame = async (
+  gameId: string,
+  penalty: Penalty,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "games",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { gameId: gameId },
+      update: {
+        $push: {
+          penalty: penalty,
+        },
+      },
+    };
 
     const config = {
       method: "post",

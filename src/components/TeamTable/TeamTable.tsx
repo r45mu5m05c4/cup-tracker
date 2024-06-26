@@ -22,11 +22,13 @@ const TeamTable = () => {
   }, []);
 
   const teamColumns = [
-    { key: "name", header: "Name" },
-    { key: "points", header: "Points" },
-    { key: "wins", header: "Wins" },
-    { key: "draws", header: "Draws" },
-    { key: "losses", header: "Losses" },
+    { key: "name", header: "Team" },
+    { key: "points", header: "P" },
+    { key: "wins", header: "W" },
+    { key: "draws", header: "D" },
+    { key: "losses", header: "L" },
+    { key: "goals", header: "GF" },
+    { key: "goalsAgainst", header: "GA" },
   ];
   return (
     <>

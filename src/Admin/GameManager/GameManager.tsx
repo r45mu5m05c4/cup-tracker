@@ -2,27 +2,43 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
-import { Game } from "../../utils/types/Game";
+import { Game, Penalty } from "../../utils/types/Game";
 import { getGames, getPlayerByTeam } from "../../utils/queries";
+import { Goal } from "../../utils/types/Game";
+import {
+  addGoalToAwayTeamCurrentGame,
+  addGoalToHomeTeamCurrentGame,
+  addPenalty,
+  addPenaltyToMatch,
+} from "./helperFunctions";
 import addGoal from "./addGoal";
-import { Goal } from "../../utils/types/Goal";
-import { addPenalty } from "./helperFunctions";
 
 const GameManager = () => {
-  const [games, setGames] = useState<Game[]>();
+  const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
   const [homeEvent, setHomeEvent] = useState("");
-  const [homePlayer, setHomePlayer] = useState<string>();
-  const [homeAssister, setHomeAssister] = useState<string>();
-  const [homeSecondaryAssister, setHomeSecondaryAssister] = useState<string>();
-  const [homePenaltyMinutes, setHomePenaltyMinutes] = useState<number>();
+  const [homePlayer, setHomePlayer] = useState<string | null>(null);
+  const [homeAssister, setHomeAssister] = useState<string | null>(null);
+  const [homeSecondaryAssister, setHomeSecondaryAssister] = useState<
+    string | null
+  >(null);
+  const [homePenaltyMinutes, setHomePenaltyMinutes] = useState<number | null>(
+    null
+  );
+  const [homePenaltyType, setHomePenaltyType] = useState("");
 
   const [awayEvent, setAwayEvent] = useState("");
-  const [awayPlayer, setAwayPlayer] = useState<string>();
-  const [awayAssister, setAwayAssister] = useState<string>();
-  const [awaySecondaryAssister, setAwaySecondaryAssister] = useState<string>();
-  const [awayPenaltyMinutes, setAwayPenaltyMinutes] = useState<number>();
+  const [awayPlayer, setAwayPlayer] = useState<string>("");
+  const [awayAssister, setAwayAssister] = useState<string | null>(null);
+  const [awaySecondaryAssister, setAwaySecondaryAssister] = useState<
+    string | null
+  >(null);
+  const [awayPenaltyMinutes, setAwayPenaltyMinutes] = useState<number | null>(
+    null
+  );
+  const [awayPenaltyType, setAwayPenaltyType] = useState("");
 
+  const [gameMinute, setGameMinute] = useState<number>();
   const [homePlayers, setHomePlayers] = useState<Player[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
   const { user } = useUser();
@@ -82,44 +98,157 @@ const GameManager = () => {
   };
 
   const addHomeGoalHandler = () => {
-    if (homePlayer && homeAssister && homeSecondaryAssister && game?._id) {
+    console.log(homePlayer, homeAssister, homeSecondaryAssister);
+    if (
+      homePlayer &&
+      homeAssister &&
+      homeSecondaryAssister &&
+      game?.gameId &&
+      gameMinute &&
+      user?.accessToken
+    ) {
       const goal: Goal = {
-        playerId: homePlayer,
-        assistPlayerId: homeAssister,
-        secondaryAssistPlayerId: homeSecondaryAssister,
-        matchId: game._id,
+        scorer: homePlayer,
+        primaryAssist: homeAssister,
+        secondaryAssist: homeSecondaryAssister,
         scoringTeamId: game.homeTeam,
         concedingTeamId: game.awayTeam,
+        gameMinute: gameMinute,
       };
-      addGoal(goal);
+      addGoal(goal, user.accessToken);
+
+      addGoalToHomeTeamCurrentGame(game.gameId, goal, user.accessToken);
     }
   };
 
   const addAwayGoalHandler = () => {
-    if (awayPlayer && awayAssister && awaySecondaryAssister && game?._id) {
+    console.log(awayPlayer, awayAssister, awaySecondaryAssister);
+    console.log(game);
+    if (awayPlayer && game?.gameId && gameMinute && user?.accessToken) {
       const goal: Goal = {
-        playerId: awayPlayer,
-        assistPlayerId: awayAssister,
-        secondaryAssistPlayerId: awaySecondaryAssister,
-        matchId: game._id,
+        scorer: awayPlayer,
+        primaryAssist: awayAssister ? awayAssister : "Unassisted",
+        secondaryAssist: awaySecondaryAssister ? awaySecondaryAssister : "",
         scoringTeamId: game.awayTeam,
         concedingTeamId: game.homeTeam,
+        gameMinute: gameMinute,
       };
-      addGoal(goal);
+      console.log(goal);
+      addGoal(goal, user?.accessToken);
+
+      addGoalToAwayTeamCurrentGame(game.gameId, goal, user.accessToken);
     }
   };
   const addHomePenaltyHandler = () => {
-    if (homePlayer && game?._id && homePenaltyMinutes) {
-      addPenalty(homePenaltyMinutes, homePlayer);
+    const foundHomePlayer = homePlayers.find(
+      (p) => p.generatedId === homePlayer
+    );
+    if (
+      homePlayer &&
+      foundHomePlayer &&
+      game?.gameId &&
+      homePenaltyMinutes &&
+      gameMinute &&
+      user?.accessToken &&
+      homePenaltyType
+    ) {
+      const penalty: Penalty = {
+        playerId: homePlayer,
+        playerName: foundHomePlayer.name,
+        team: game.homeTeam,
+        minutes: homePenaltyMinutes,
+        gameMinute: gameMinute,
+        penaltyType: homePenaltyType,
+      };
+      addPenalty(homePenaltyMinutes, homePlayer, user.accessToken);
+      addPenaltyToMatch(game?.gameId, penalty, user.accessToken);
     }
   };
 
   const addAwayPenaltyHandler = () => {
-    if (awayPlayer && game?._id && awayPenaltyMinutes) {
-      addPenalty(awayPenaltyMinutes, awayPlayer);
+    const foundAwayPlayer = awayPlayers.find(
+      (p) => p.generatedId === awayPlayer
+    );
+    if (
+      awayPlayer &&
+      foundAwayPlayer &&
+      game?.gameId &&
+      awayPenaltyMinutes &&
+      gameMinute &&
+      user?.accessToken &&
+      awayPenaltyType
+    ) {
+      const penalty: Penalty = {
+        playerId: awayPlayer,
+        playerName: foundAwayPlayer.name,
+        team: game.awayTeam,
+        minutes: awayPenaltyMinutes,
+        gameMinute: gameMinute,
+        penaltyType: awayPenaltyType,
+      };
+      addPenalty(awayPenaltyMinutes, awayPlayer, user.accessToken);
+      addPenaltyToMatch(game?.gameId, penalty, user.accessToken);
     }
   };
-
+  const eventRenderer = () => {
+    if (!game) return;
+    const penalties = game.penalty?.length
+      ? game.penalty.map((p) => ({
+          type: "penalty",
+          home: p.team === game.homeTeam,
+          ...p,
+        }))
+      : [];
+    const homeGoals =
+      game.homeTeamGoals &&
+      game.homeTeamGoals.map((g) => ({
+        type: "goal",
+        home: true,
+        ...g,
+      }));
+    const awayGoals =
+      game.awayTeamGoals &&
+      game.awayTeamGoals.map((g) => ({
+        type: "goal",
+        home: false,
+        ...g,
+      }));
+    const allEvents = [...penalties, ...homeGoals, ...awayGoals];
+    allEvents.sort((a, b) => a.gameMinute - b.gameMinute);
+    const isGoal = (event: Goal | Penalty): event is Goal => {
+      return (event as Goal).scorer !== undefined;
+    };
+    const isPenalty = (event: Goal | Penalty): event is Penalty => {
+      return (event as Penalty).playerName !== undefined;
+    };
+    const eventItems = allEvents.map((event, index) => {
+      if (isGoal(event))
+        return (
+          <EventsRow key={index} home={event.home}>
+            <>
+              <h3>
+                {event.gameMinute}' GOAL by {event.scorer}
+              </h3>
+              <EventText>
+                Assisted by: {event.primaryAssist}, {event.secondaryAssist}
+              </EventText>
+            </>
+          </EventsRow>
+        );
+      else if (isPenalty(event))
+        return (
+          <EventsRow key={index} home={event.home}>
+            <EventHeader>
+              {event.gameMinute}' Penalty for {event.playerName}
+            </EventHeader>
+            <EventText>
+              {event.minutes} minutes, {event.penaltyType}
+            </EventText>
+          </EventsRow>
+        );
+    });
+    return eventItems;
+  };
   return (
     <>
       {game && (
@@ -128,15 +257,22 @@ const GameManager = () => {
             {game.awayTeam} @ {game.homeTeam}
           </Header>
           <GoalsRow>
-            <AwayGoals>0{game.awayTeamGoals.toString()}</AwayGoals>
-            <HomeGoals>1{game.homeTeamGoals.toString()}</HomeGoals>
+            <AwayGoals>{game.awayTeamGoals.length}</AwayGoals>
+            <HomeGoals>{game.homeTeamGoals.length}</HomeGoals>
           </GoalsRow>
-          <EventsRow home>GOAL - #56 Evan Farbstein</EventsRow>
-          <EventsRow home={false}>GOAL - #56 Evan Farbstein</EventsRow>
+          {eventRenderer()}
         </LiveGame>
       )}
+      <Label>
+        Game Minute:
+        <input
+          type="number"
+          value={gameMinute}
+          onChange={(e) => setGameMinute(parseInt(e.target.value))}
+        />
+      </Label>
       <Container>
-        {games && !game && (
+        {games.length > 0 && !game && (
           <Label>
             Select game to manage:
             <Select value={game} onChange={(e) => gamePicker(e.target.value)}>
@@ -160,6 +296,9 @@ const GameManager = () => {
                   value={awayEvent}
                   onChange={(e) => setAwayEvent(e.target.value)}
                 >
+                  <option key={""} value={""}>
+                    Select event
+                  </option>
                   <option key={"goal"} value={"goal"}>
                     Goal
                   </option>
@@ -168,17 +307,19 @@ const GameManager = () => {
                   </option>
                 </Select>
               </Label>
-              {awayEvent !== "" && awayEvent === "pim" ? (
+              {awayEvent === "pim" ? (
                 <div>
                   <Label>
                     Player:
                     <Select
-                      value={awayEvent}
+                      value={awayPlayer}
                       onChange={(e) => setAwayPlayer(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {awayPlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.generatedId}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -188,10 +329,18 @@ const GameManager = () => {
                     Penalty Minutes:
                     <input
                       type="number"
-                      value={awayPenaltyMinutes}
+                      value={awayPenaltyMinutes || ""}
                       onChange={(e) =>
                         setAwayPenaltyMinutes(parseInt(e.target.value))
                       }
+                    />
+                  </Label>
+                  <Label>
+                    Penalty Type:
+                    <input
+                      type="text"
+                      value={awayPenaltyType || ""}
+                      onChange={(e) => setAwayPenaltyType(e.target.value)}
                     />
                   </Label>
                 </div>
@@ -200,12 +349,14 @@ const GameManager = () => {
                   <Label>
                     Scorer:
                     <Select
-                      value={awayPlayer}
+                      value={awayPlayer || ""}
                       onChange={(e) => setAwayPlayer(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {awayPlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -214,12 +365,14 @@ const GameManager = () => {
                   <Label>
                     Primary assist:
                     <Select
-                      value={awayAssister}
+                      value={awayAssister || ""}
                       onChange={(e) => setAwayAssister(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {awayPlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -228,12 +381,14 @@ const GameManager = () => {
                   <Label>
                     Secondary assist:
                     <Select
-                      value={awaySecondaryAssister}
+                      value={awaySecondaryAssister || ""}
                       onChange={(e) => setAwaySecondaryAssister(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {awayPlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -241,6 +396,7 @@ const GameManager = () => {
                   </Label>
                 </div>
               )}
+
               {awayEvent === "goal" ? (
                 <Button onClick={() => addAwayGoalHandler()}>Add goal</Button>
               ) : (
@@ -256,6 +412,9 @@ const GameManager = () => {
                   value={homeEvent}
                   onChange={(e) => setHomeEvent(e.target.value)}
                 >
+                  <option key={""} value={""}>
+                    Select event
+                  </option>
                   <option key={"goal"} value={"goal"}>
                     Goal
                   </option>
@@ -269,25 +428,35 @@ const GameManager = () => {
                   <Label>
                     Player:
                     <Select
-                      value={homeEvent}
+                      value={homePlayer || ""}
                       onChange={(e) => setHomePlayer(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {homePlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.generatedId}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
                     </Select>
-                  </Label>{" "}
+                  </Label>
                   <Label>
                     Penalty Minutes:
                     <input
                       type="number"
-                      value={homePenaltyMinutes}
+                      value={homePenaltyMinutes || ""}
                       onChange={(e) =>
                         setHomePenaltyMinutes(parseInt(e.target.value))
                       }
+                    />
+                  </Label>
+                  <Label>
+                    Penalty Type:
+                    <input
+                      type="text"
+                      value={homePenaltyType || ""}
+                      onChange={(e) => setHomePenaltyType(e.target.value)}
                     />
                   </Label>
                 </div>
@@ -296,12 +465,14 @@ const GameManager = () => {
                   <Label>
                     Scorer:
                     <Select
-                      value={homePlayer}
+                      value={homePlayer || ""}
                       onChange={(e) => setHomePlayer(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {homePlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -310,12 +481,14 @@ const GameManager = () => {
                   <Label>
                     Primary assist:
                     <Select
-                      value={homeAssister}
+                      value={homeAssister || ""}
                       onChange={(e) => setHomeAssister(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {homePlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -324,12 +497,14 @@ const GameManager = () => {
                   <Label>
                     Secondary assist:
                     <Select
-                      value={homeSecondaryAssister}
+                      value={homeSecondaryAssister || ""}
                       onChange={(e) => setHomeSecondaryAssister(e.target.value)}
                     >
-                      <option value="">Select a player</option>
+                      <option key={""} value="">
+                        Select a player
+                      </option>
                       {homePlayers.map((player) => (
-                        <option key={player.id} value={player.id}>
+                        <option key={player._id} value={player.name}>
                           {player.jerseyNumber} - {player.name}
                         </option>
                       ))}
@@ -337,6 +512,7 @@ const GameManager = () => {
                   </Label>
                 </div>
               )}
+
               {homeEvent === "goal" ? (
                 <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
               ) : (
@@ -431,8 +607,13 @@ const AwayGoals = styled.h1`
   margin-right: auto;
   margin-left: 5%;
 `;
-const EventsRow = styled.p<{ home: boolean }>`
+const EventsRow = styled.p.withConfig({
+  shouldForwardProp: (prop) => prop !== "home",
+})<{ home: boolean }>`
   text-align: ${(props) => (props.home ? "right" : "left")};
   border-top: 1px solid;
-  border-bottom: 1px solid;
+`;
+const EventText = styled.p``;
+const EventHeader = styled.p`
+  font-weight: bold;
 `;

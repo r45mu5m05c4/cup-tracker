@@ -1,5 +1,6 @@
 export type Player = {
-  id: string;
+  _id: string;
+  generatedId: string;
   name: string;
   goals: number;
   assists: number;

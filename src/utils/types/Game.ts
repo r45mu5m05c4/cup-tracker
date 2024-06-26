@@ -2,11 +2,21 @@ export interface Goal {
   scorer: string;
   primaryAssist: string;
   secondaryAssist: string;
+  scoringTeamId: string;
+  concedingTeamId: string;
+  gameMinute: number;
+}
+export interface Penalty {
+  playerId: string;
+  playerName: string;
+  minutes: number;
   team: string;
   gameMinute: number;
+  penaltyType: string;
 }
 export interface Game {
   _id?: string;
+  gameId: string;
   homeTeam: string;
   awayTeam: string;
   startTime: string;
@@ -15,7 +25,7 @@ export interface Game {
   ended: boolean;
   gameType: GameType;
   gameStage: GameStage;
-  penalty: { playerName: string; minutes: number };
+  penalty: Penalty[];
 }
 
 export enum GameType {

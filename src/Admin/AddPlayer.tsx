@@ -7,6 +7,7 @@ import { useUser } from "../utils/context/UserContext";
 import { PlayerPosition } from "../utils/types/Player";
 
 export type NewPlayer = {
+  generatedId: string;
   name: string;
   goals: number;
   assists: number;
@@ -54,6 +55,7 @@ const AddPlayer: React.FC = () => {
     if (user?.accessToken) {
       if (selectedTeam && position) {
         const newPlayer: NewPlayer = {
+          generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
           name: playerName,
           goals: 0,
           assists: 0,
@@ -80,14 +82,14 @@ const AddPlayer: React.FC = () => {
   return (
     <Container>
       <h2>Admin Page - Add Player</h2>
-      <select onChange={(e) => handleTeamSelect(e.target.value)}>
+      <Select onChange={(e) => handleTeamSelect(e.target.value)}>
         <option value="">Select a team to add a player to</option>
         {teams.map((team) => (
           <option key={team._id} value={team._id}>
             {team.name}
           </option>
         ))}
-      </select>
+      </Select>
       {selectedTeam && (
         <div>
           <h3>Add player to: {selectedTeam.name}</h3>
@@ -97,27 +99,25 @@ const AddPlayer: React.FC = () => {
               handleAddPlayer();
             }}
           >
-            <label>
+            <Label>
               Name:
               <input
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
               />
-            </label>
-            <br />
-            <label>
+            </Label>
+            <Label>
               Jersey Number:
               <input
                 type="number"
                 value={jerseyNumber}
                 onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
               />
-            </label>
-            <br />
-            <label>
+            </Label>
+            <Label>
               Position:
-              <select
+              <Select
                 value={position}
                 onChange={(e) => setPosition(e.target.value as PlayerPosition)}
               >
@@ -126,9 +126,8 @@ const AddPlayer: React.FC = () => {
                     {pos}
                   </option>
                 ))}
-              </select>
-            </label>
-            <br />
+              </Select>
+            </Label>
             <Button type="submit">Add Player</Button>
           </form>
         </div>
@@ -142,7 +141,7 @@ export default AddPlayer;
 
 const Container = styled.div`
   height: 100%;
-  width: 100%;
+  width: 60%;
   display: flex;
   flex-direction: column;
 `;
@@ -157,4 +156,22 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
+`;
+const Label = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: 5px;
+`;
+const Select = styled.select`
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: auto;
+  margin-right: 0;
+  width: 70%;
+  padding: 8px;
 `;
