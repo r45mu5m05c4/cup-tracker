@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FC, useState } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { Game, Goal, Penalty } from "../../utils/types/Game";
 import { getGameById } from "../../utils/queries";
@@ -10,12 +10,13 @@ interface Props {
 }
 
 const GameModal: FC<Props> = ({ setShowModal, game }) => {
-  const [activeGame, setActiveGame] = useState<Game | null>(game);
+  const [activeGame, setActiveGame] = useState<Game>(game);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
 
-  const refetchGame = async () => {
+  const refetchGame = useCallback(async () => {
+    console.log("Fetching game with ID:", game.gameId);
     console.log(game.gameId);
     if (!user?.accessToken || !game.gameId) return;
 
@@ -24,36 +25,44 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
 
     try {
       const gameFromAPI = await getGameById(user.accessToken, game.gameId);
+      console.log("Fetched game data:", gameFromAPI);
       setActiveGame(gameFromAPI);
+      setLoading(false);
     } catch (error) {
       setError("Error fetching game data. Please try again.");
       console.error("Error fetching games:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [game.gameId, user?.accessToken]);
+
+  useEffect(() => {
+    refetchGame();
+  }, [refetchGame]);
 
   const handleClose = () => {
     setShowModal(false);
   };
+
   const eventRenderer = () => {
-    const penalties = game.penalty?.length
-      ? game.penalty.map((p) => ({
+    console.log(activeGame);
+    if (!activeGame) return null;
+
+    const penalties = activeGame.penalty?.length
+      ? activeGame.penalty.map((p) => ({
           type: "penalty",
-          home: p.team === game.homeTeam,
+          home: p.team === activeGame.homeTeam,
           ...p,
         }))
       : [];
     const homeGoals =
-      game.homeTeamGoals &&
-      game.homeTeamGoals.map((g) => ({
+      activeGame.homeTeamGoals &&
+      activeGame.homeTeamGoals.map((g) => ({
         type: "goal",
         home: true,
         ...g,
       }));
     const awayGoals =
-      game.awayTeamGoals &&
-      game.awayTeamGoals.map((g) => ({
+      activeGame.awayTeamGoals &&
+      activeGame.awayTeamGoals.map((g) => ({
         type: "goal",
         home: false,
         ...g,
@@ -75,7 +84,10 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
                 {event.gameMinute}' GOAL by {event.scorer}
               </h3>
               <EventText>
-                Assisted by: {event.primaryAssist}, {event.secondaryAssist}
+                {event.primaryAssist !== "Unassisted"
+                  ? `Assisted by: ${event.primaryAssist}`
+                  : "Unassisted"}
+                {event.secondaryAssist && `, ${event.secondaryAssist}`}
               </EventText>
             </>
           </EventsRow>
@@ -94,16 +106,14 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
     });
     return eventItems;
   };
+
   return (
     <>
       <Overlay onClick={handleClose} />
       <Modal onClick={(e) => e.stopPropagation()}>
         <LiveGame>
-          <Header>
-            {activeGame
-              ? `${activeGame.awayTeam} @ ${activeGame.homeTeam}`
-              : "Loading..."}
-          </Header>
+          <Header>{`${game.awayTeam} @ ${game.homeTeam}`}</Header>
+          {loading && <p>"Loading..."</p>}
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <GoalsRow>
             <AwayGoals>{activeGame?.awayTeamGoals.length}</AwayGoals>

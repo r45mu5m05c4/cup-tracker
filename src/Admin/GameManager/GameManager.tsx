@@ -10,6 +10,10 @@ import {
   addGoalToHomeTeamCurrentGame,
   addPenalty,
   addPenaltyToMatch,
+  endMatch,
+  giveDraw,
+  giveLoss,
+  giveWin,
 } from "./helperFunctions";
 import addGoal from "./addGoal";
 
@@ -188,6 +192,27 @@ const GameManager = () => {
       };
       addPenalty(awayPenaltyMinutes, awayPlayer, user.accessToken);
       addPenaltyToMatch(game?.gameId, penalty, user.accessToken);
+    }
+  };
+  const endMatchHandler = () => {
+    if (game && user?.accessToken) {
+      game.ended = true;
+      endMatch(game, user.accessToken);
+      if (game.awayTeamGoals.length === game.homeTeamGoals.length) {
+        giveDraw(game.awayTeam, user.accessToken);
+        giveDraw(game.homeTeam, user.accessToken);
+      } else {
+        const winner =
+          game.awayTeamGoals.length > game.homeTeamGoals.length
+            ? game.awayTeam
+            : game.homeTeam;
+        const loser =
+          game.awayTeamGoals.length < game.homeTeamGoals.length
+            ? game.awayTeam
+            : game.homeTeam;
+        giveWin(winner, user.accessToken);
+        giveLoss(loser, user.accessToken);
+      }
     }
   };
   const eventRenderer = () => {
@@ -535,6 +560,7 @@ const GameManager = () => {
           </>
         )}
       </Container>
+      <Button onClick={() => endMatchHandler()}>End Game</Button>
     </>
   );
 };
@@ -595,6 +621,7 @@ const Label = styled.div`
   margin: 5px;
   @media (max-width: 768px) {
     font-size: 0.8em;
+    flex-direction: column;
   }
 `;
 const Select = styled.select`
@@ -607,6 +634,7 @@ const Select = styled.select`
   padding: 8px;
   @media (max-width: 768px) {
     font-size: 0.8em;
+    width: 100%;
   }
 `;
 const LiveGame = styled.div`

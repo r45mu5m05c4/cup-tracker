@@ -29,6 +29,7 @@ const TeamTable = () => {
     { key: "losses", header: "L" },
     { key: "goals", header: "GF" },
     { key: "goalsAgainst", header: "GA" },
+    { key: "gamesPlayed", header: "GP" },
   ];
   return (
     <>

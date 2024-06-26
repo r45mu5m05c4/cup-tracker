@@ -1,16 +1,21 @@
-import { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useState } from "react";
 import styled from "styled-components";
 
 type TableColumn<T> = {
-  key: keyof T; 
-  header: string; 
-  render?: (value: T[keyof T]) => ReactNode; 
+  key: keyof T;
+  header: string;
+  render?: (value: T[keyof T]) => ReactNode;
 };
 
 type TableProps<T> = {
-  data: T[]; 
+  data: T[];
   columns: TableColumn<T>[];
-  className?: string; 
+  className?: string;
+};
+
+type SortConfig<T> = {
+  key: keyof T;
+  direction: "asc" | "desc";
 };
 
 const ScrollableWrapper = styled.div`
@@ -23,33 +28,78 @@ const TableContainer = styled.table`
   border-collapse: collapse;
 `;
 
-const TableHeader = styled.th`
+const TableHeader = styled.th<{ sticky?: boolean }>`
   padding: 8px;
   text-align: left;
   border-bottom: 2px solid #ddd;
+  background: #fff;
+  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
+  left: ${({ sticky }) => (sticky ? "0" : "auto")};
+  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
+  cursor: pointer;
 `;
 
-const TableCell = styled.td`
+const TableCell = styled.td<{ sticky?: boolean }>`
   padding: 8px;
   border-bottom: 1px solid #ddd;
+  background: #fff;
+  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
+  left: ${({ sticky }) => (sticky ? "0" : "auto")};
+  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
+  text-wrap: nowrap;
 `;
 
 const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig<any> | null>(null);
+
+  const sortedData = React.useMemo(() => {
+    if (sortConfig !== null) {
+      return [...data].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return data;
+  }, [data, sortConfig]);
+
+  const requestSort = (key: keyof any) => {
+    let direction: "asc" | "desc" = "desc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "desc"
+    ) {
+      direction = "asc";
+    }
+    setSortConfig({ key, direction });
+  };
+
   return (
     <ScrollableWrapper>
       <TableContainer className={className}>
         <thead>
           <tr>
             {columns.map((column, index) => (
-              <TableHeader key={index}>{column.header}</TableHeader>
+              <TableHeader
+                key={index}
+                sticky={index === 0}
+                onClick={() => requestSort(column.key)}
+              >
+                {column.header}
+              </TableHeader>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.map((item, rowIndex) => (
+          {sortedData.map((item, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((column, colIndex) => (
-                <TableCell key={colIndex}>
+                <TableCell key={colIndex} sticky={colIndex === 0}>
                   {column.render
                     ? column.render(item[column.key])
                     : item[column.key]}

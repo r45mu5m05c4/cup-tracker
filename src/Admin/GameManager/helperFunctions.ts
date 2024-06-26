@@ -1,10 +1,13 @@
-import { useUser } from "../../utils/context/UserContext";
+
 import {
+  addDrawToTeam,
   addGoalToGame,
   addPenaltyToGame,
   addPenaltyToPlayer,
+  addWinOrLossToTeam,
+  updateGame,
 } from "../../utils/queries";
-import { Goal, Penalty } from "../../utils/types/Game";
+import { Game, Goal, Penalty } from "../../utils/types/Game";
 
 export const addGoalToHomeTeamCurrentGame = async (
   gameId: string,
@@ -58,6 +61,46 @@ export const addPenaltyToMatch = async (
 ) => {
   try {
     const statUpdate = await addPenaltyToGame(gameId, penalty, userAccessToken);
+    console.log(statUpdate);
+  } catch (error) {
+    console.error("Error adding penalty:", error);
+  }
+};
+export const endMatch = async (game: Game, userAccessToken: string) => {
+  try {
+    const statUpdate = await updateGame(game, userAccessToken);
+    console.log(statUpdate);
+  } catch (error) {
+    console.error("Error adding penalty:", error);
+  }
+};
+export const giveWin = async (teamName: string, userAccessToken: string) => {
+  try {
+    const statUpdate = await addWinOrLossToTeam(
+      true,
+      teamName,
+      userAccessToken
+    );
+    console.log(statUpdate);
+  } catch (error) {
+    console.error("Error adding penalty:", error);
+  }
+};
+export const giveLoss = async (teamName: string, userAccessToken: string) => {
+  try {
+    const statUpdate = await addWinOrLossToTeam(
+      false,
+      teamName,
+      userAccessToken
+    );
+    console.log(statUpdate);
+  } catch (error) {
+    console.error("Error adding penalty:", error);
+  }
+};
+export const giveDraw = async (teamName: string, userAccessToken: string) => {
+  try {
+    const statUpdate = await addDrawToTeam(teamName, userAccessToken);
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);

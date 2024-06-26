@@ -76,7 +76,6 @@ export const getGames = async (accessToken: string) => {
     };
 
     const response = await axios(config);
-    console.log(response.data.documents);
     return response.data.documents;
   } catch (error) {
     console.error("Error fetching teams:", error);
@@ -102,8 +101,8 @@ export const getGameById = async (accessToken: string, gameId: string) => {
     };
 
     const response = await axios(config);
-    console.log(response.data.documents);
-    return response.data.documents;
+    console.log(response);
+    return response.data.document;
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
@@ -422,7 +421,7 @@ export const addPenaltyToPlayer = async (
       dataSource: "folketsCup",
       filter: { generatedId: generatedId },
       update: {
-        $set: {
+        $inc: {
           penaltyMinutes: pims,
         },
       },
@@ -475,6 +474,91 @@ export const addSingularStatToTeam = async (
             },
           },
         };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player:", error);
+    throw error;
+  }
+};
+export const addWinOrLossToTeam = async (
+  win: boolean,
+  teamName: string,
+  accessToken: string
+) => {
+  try {
+    const data = win
+      ? {
+          collection: "teams",
+          database: "folkets-cup",
+          dataSource: "folketsCup",
+          filter: { name: teamName },
+          update: {
+            $inc: {
+              wins: 1,
+              points: 3,
+              gamesPlayed: 1,
+            },
+          },
+        }
+      : {
+          collection: "teams",
+          database: "folkets-cup",
+          dataSource: "folketsCup",
+          filter: { name: teamName },
+          update: {
+            $inc: {
+              losses: 1,
+              gamesPlayed: 1,
+            },
+          },
+        };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player:", error);
+    throw error;
+  }
+};
+export const addDrawToTeam = async (teamName: string, accessToken: string) => {
+  try {
+    const data = {
+      collection: "teams",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { name: teamName },
+      update: {
+        $inc: {
+          draws: 1,
+          points: 1,
+          gamesPlayed: 1,
+        },
+      },
+    };
 
     const config = {
       method: "post",
