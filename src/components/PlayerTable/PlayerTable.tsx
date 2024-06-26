@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
+interface Props {
+  small: boolean;
+}
 
-const PlayerTable = () => {
+const PlayerTable: FC<Props> = (small) => {
   const [players, setPlayers] = useState<any[]>([]);
   const { user } = useUser();
 
@@ -21,17 +24,24 @@ const PlayerTable = () => {
     fetchAllPlayers();
   }, []);
 
-  const playerColumns = [
-    { key: "name", header: "Name" },
-    { key: "jerseyNumber", header: "#" },
-    { key: "teamName", header: "Team" },
-    { key: "position", header: "Pos" },
-    { key: "goals", header: "G" },
-    { key: "assists", header: "A" },
-    { key: "points", header: "P" },
-    { key: "gamesPlayed", header: "GP" },
-    { key: "penaltyMinutes", header: "PIM" },
-  ];
+  const playerColumns = small
+    ? [
+        { key: "name", header: "Name" },
+        { key: "goals", header: "G" },
+        { key: "assists", header: "A" },
+        { key: "points", header: "P" },
+      ]
+    : [
+        { key: "name", header: "Name" },
+        { key: "jerseyNumber", header: "#" },
+        { key: "teamName", header: "Team" },
+        { key: "position", header: "Pos" },
+        { key: "goals", header: "G" },
+        { key: "assists", header: "A" },
+        { key: "points", header: "P" },
+        { key: "gamesPlayed", header: "GP" },
+        { key: "penaltyMinutes", header: "PIM" },
+      ];
   return (
     <>
       <Table data={players} columns={playerColumns}></Table>

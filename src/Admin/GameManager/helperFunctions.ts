@@ -1,4 +1,3 @@
-
 import {
   addDrawToTeam,
   addGoalToGame,

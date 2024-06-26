@@ -55,8 +55,14 @@ const Home = () => {
             <Routes>
               <Route path={ROUTE_PATH_NEWS} element={<News />} />
               <Route path={ROUTE_PATH_GAMES} element={<Games />} />
-              <Route path={ROUTE_PATH_PLAYERS} element={<PlayerTable />} />
-              <Route path={ROUTE_PATH_TEAMS} element={<TeamTable />} />
+              <Route
+                path={ROUTE_PATH_PLAYERS}
+                element={<PlayerTable small={false} />}
+              />
+              <Route
+                path={ROUTE_PATH_TEAMS}
+                element={<TeamTable small={false} />}
+              />
               <Route path={ROUTE_PATH_MY_TEAM} element={<div />} />
               <Route path={ROUTE_PATH_MANAGE_CUP} element={<div />} />
               {user && user.providerType !== "anon-user" && (
