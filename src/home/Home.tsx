@@ -11,6 +11,7 @@ import { UserCircleIcon } from "@heroicons/react/20/solid";
 import News from "../components/News/News";
 import {
   ROUTE_PATH_ADMIN,
+  ROUTE_PATH_BRACKET,
   ROUTE_PATH_GAMES,
   ROUTE_PATH_MANAGE_CUP,
   ROUTE_PATH_MY_TEAM,
@@ -19,6 +20,7 @@ import {
   ROUTE_PATH_TEAMS,
 } from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
+import Bracket from "../components/Bracket/Bracket";
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -63,6 +65,7 @@ const Home = () => {
                 path={ROUTE_PATH_TEAMS}
                 element={<TeamTable small={false} />}
               />
+              <Route path={ROUTE_PATH_BRACKET} element={<Bracket />} />
               <Route path={ROUTE_PATH_MY_TEAM} element={<div />} />
               <Route path={ROUTE_PATH_MANAGE_CUP} element={<div />} />
               {user && user.providerType !== "anon-user" && (

@@ -6,10 +6,12 @@ import {
   PresentationChartBarIcon,
   PresentationChartLineIcon,
   WrenchScrewdriverIcon,
+  TrophyIcon,
 } from "@heroicons/react/24/outline";
 import Typography from "../molecules/Typography";
 import {
   ROUTE_PATH_ADMIN,
+  ROUTE_PATH_BRACKET,
   ROUTE_PATH_GAMES,
   ROUTE_PATH_NEWS,
   ROUTE_PATH_PLAYERS,
@@ -68,6 +70,14 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
       >
         <StyledTeamStatsIcon />
         {!collapsed && <Typography variant="p">Team stats</Typography>}
+      </StyledLink>
+      <StyledLink
+        to={ROUTE_PATH_BRACKET}
+        $active={isActive(ROUTE_PATH_BRACKET)}
+        $collapsed={collapsed}
+      >
+        <StyledPlayoffBracketIcon />
+        {!collapsed && <Typography variant="p">Playoff bracket</Typography>}
       </StyledLink>
       {showAdminSection && (
         <>
@@ -144,7 +154,11 @@ const StyledSuperAdminIcon = styled(WrenchScrewdriverIcon)`
   min-width: 20px;
   height: 20px;
 `;
-
+const StyledPlayoffBracketIcon = styled(TrophyIcon)`
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+`;
 const StyledLink = styled(Link)<{ $active: boolean; $collapsed: boolean }>`
   height: 38px;
   display: flex;
