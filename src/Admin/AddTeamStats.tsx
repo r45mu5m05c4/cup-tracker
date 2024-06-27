@@ -11,6 +11,11 @@ const AddTeamStats: React.FC = () => {
   const [updatedDraws, setUpdatedDraws] = useState<number>(0);
   const [updatedLosses, setUpdatedLosses] = useState<number>(0);
   const [updatedPoints, setUpdatedPoints] = useState<number>(0);
+  const [updatedGoals, setUpdatedGoals] = useState<number>(0);
+  const [updatedGoalsAgainst, setUpdatedGoalsAgainst] = useState<number>(0);
+  const [updatedGamesPlayed, setUpdatedGamesPlayed] = useState<number>(0);
+  const [updatedGroup, setUpdatedGroup] = useState<string>("");
+  const [updatedPlayoffGroup, setUpdatedPlayoffGroup] = useState<string>("");
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
   const { user } = useUser();
@@ -39,6 +44,11 @@ const AddTeamStats: React.FC = () => {
       setUpdatedDraws(foundTeam.draws);
       setUpdatedLosses(foundTeam.losses);
       setUpdatedPoints(foundTeam.points);
+      setUpdatedGoals(foundTeam.goals);
+      setUpdatedGoalsAgainst(foundTeam.goalsAgainst);
+      setUpdatedGamesPlayed(foundTeam.gamesPlayed);
+      setUpdatedGroup(foundTeam.group);
+      setUpdatedPlayoffGroup(foundTeam.playoffGroup);
     }
   };
 
@@ -51,6 +61,11 @@ const AddTeamStats: React.FC = () => {
           draws: updatedDraws,
           losses: updatedLosses,
           points: updatedPoints,
+          goals: updatedGoals,
+          goalsAgainst: updatedGoalsAgainst,
+          gamesPlayed: updatedGamesPlayed,
+          group: updatedGroup,
+          playoffGroup: updatedPlayoffGroup,
         };
         updateTeamStats(updatedTeam, user?.accessToken);
         setMessage(`Successfully updated ${selectedTeam.name}`);
@@ -111,6 +126,61 @@ const AddTeamStats: React.FC = () => {
                 value={updatedPoints}
                 onChange={(e) => setUpdatedPoints(parseInt(e.target.value))}
               />
+            </label>
+            <br />
+            <label>
+              Goals:
+              <input
+                type="number"
+                value={updatedGoals}
+                onChange={(e) => setUpdatedGoals(parseInt(e.target.value))}
+              />
+            </label>
+            <br />
+            <label>
+              Goals against:
+              <input
+                type="number"
+                value={updatedGoalsAgainst}
+                onChange={(e) =>
+                  setUpdatedGoalsAgainst(parseInt(e.target.value))
+                }
+              />
+            </label>
+            <br />
+            <label>
+              Games played:
+              <input
+                type="number"
+                value={updatedGamesPlayed}
+                onChange={(e) =>
+                  setUpdatedGamesPlayed(parseInt(e.target.value))
+                }
+              />
+            </label>
+            <br />
+            <label>
+              Group:
+              <select
+                value={updatedGroup}
+                onChange={(e) => setUpdatedGroup(e.target.value)}
+              >
+                <option value="">Select group</option>
+                <option value="A">Group A</option>
+                <option value="B">Group B</option>
+              </select>
+            </label>
+            <br />
+            <label>
+              Playoff group:
+              <select
+                value={updatedPlayoffGroup}
+                onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
+              >
+                <option value="">Select group</option>
+                <option value="A">Playoff group A</option>
+                <option value="B">Playoff group B</option>
+              </select>
             </label>
             <br />
             <Button type="submit">Update Team</Button>

@@ -8,6 +8,7 @@ export type Team = {
   logo?: string;
   goals: number;
   goalsAgainst: number;
+  gamesPlayed: number;
   group: string;
   playoffGroup: string;
 };

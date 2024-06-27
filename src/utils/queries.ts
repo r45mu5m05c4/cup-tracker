@@ -200,6 +200,11 @@ export const updateTeamStats = async (team: Team, accessToken: string) => {
           draws: team.draws,
           losses: team.losses,
           points: team.points,
+          goals: team.goals,
+          goalsAgainst: team.goalsAgainst,
+          gamesPlayed: team.gamesPlayed,
+          group: team.group,
+          playoffGroup: team.playoffGroup,
         },
       },
     };
