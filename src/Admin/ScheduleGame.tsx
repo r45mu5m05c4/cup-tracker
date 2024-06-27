@@ -22,7 +22,8 @@ export type NewGame = {
 const ScheduleGame: React.FC = () => {
   const [homeTeam, setHomeTeam] = useState<string | null>(null);
   const [awayTeam, setAwayTeam] = useState<string | null>(null);
-  const [startTime, setStartTime] = useState<Date | null>(new Date());
+  const initialStartTime = new Date("2024-11-16T08:00:00"); // Hardcoded for MVP - start date of folkets cup
+  const [startTime, setStartTime] = useState<Date | null>(initialStartTime);
   const [gameType, setGameType] = useState<GameType>();
   const [gameStage, setGameStage] = useState<GameStage>();
   const [message, setMessage] = useState("");

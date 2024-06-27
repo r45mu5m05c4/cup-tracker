@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Game } from "../utils/types/Game";
-import { format, isToday, isTomorrow, isYesterday } from "date-fns";
+import { format, isToday, isTomorrow, isYesterday, isBefore } from "date-fns";
 import { FC } from "react";
 
 interface Props {
@@ -16,6 +16,7 @@ const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
     if (isTomorrow(date)) return `Tomorrow ${format(new Date(date), "HH:mm")} `;
     else return format(new Date(date), "HH:mm - dd MMMM");
   };
+  const $isActive = isBefore(game.startTime, new Date()) && !game.ended;
 
   return (
     <GameItemCard key={game._id} onClick={() => handleOpenGame(game._id)}>
@@ -24,8 +25,14 @@ const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
         <TeamName>{game.awayTeam}</TeamName>
       </TeamsContainer>
       <GameDetails>
-        <Score>{`${game.homeTeamGoals.length} - ${game.awayTeamGoals.length}`}</Score>
-        <Time>{getDateString(game.startTime)}</Time>
+        <Score
+          $isActive={$isActive}
+        >{`${game.homeTeamGoals.length} - ${game.awayTeamGoals.length}`}</Score>
+        {game.ended ? (
+          <Time>Final</Time>
+        ) : (
+          <Time>{$isActive ? "Live" : getDateString(game.startTime)}</Time>
+        )}
       </GameDetails>
     </GameItemCard>
   );
@@ -63,9 +70,9 @@ const TeamName = styled.span`
   color: #343a40;
 `;
 
-const Score = styled.span`
+const Score = styled.span<{ $isActive: boolean }>`
   padding: 0 10px;
-  color: #28a745;
+  color: ${(props) => (props.$isActive ? "#28a745" : "#343a40")};
 `;
 const Time = styled.span`
   font-size: 14px;
