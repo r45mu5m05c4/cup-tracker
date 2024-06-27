@@ -44,6 +44,7 @@ const ScheduleGame: React.FC = () => {
   }, []);
 
   const handleTeamSelect = (teamName: string, home: boolean) => {
+    if (teamName === "TBD") home ? setHomeTeam("TBD") : setAwayTeam("TBD");
     const foundTeam = teams.find((team) => team.name === teamName);
     if (foundTeam) {
       home ? setHomeTeam(foundTeam.name) : setAwayTeam(foundTeam.name);
@@ -68,7 +69,7 @@ const ScheduleGame: React.FC = () => {
     if (user?.accessToken) {
       console.log(startTime, gameType, gameStage);
 
-      if (awayTeam && homeTeam && startTime && gameType && gameStage) {
+      if (homeTeam && awayTeam && startTime && gameType && gameStage) {
         const generatedId = `${awayTeam}vs${homeTeam}${startTime.toString()}`;
         const newGame: NewGame = {
           gameId: generatedId,
@@ -81,7 +82,6 @@ const ScheduleGame: React.FC = () => {
           gameType: gameType,
           gameStage: gameStage,
         };
-        console.log(newGame);
         addGame(newGame, user?.accessToken);
         setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);
       } else {
@@ -102,6 +102,7 @@ const ScheduleGame: React.FC = () => {
         >
           <Select onChange={(e) => handleTeamSelect(e.target.value, false)}>
             <option value="">Select away team</option>
+            <option value="TBD">TBD</option>
             {teams.map((team) => (
               <option key={team._id} value={team.name}>
                 {team.name}
@@ -111,6 +112,7 @@ const ScheduleGame: React.FC = () => {
           @
           <Select onChange={(e) => handleTeamSelect(e.target.value, true)}>
             <option value="">Select home team</option>
+            <option value={"TBD"}>TBD</option>
             {teams.map((team) => (
               <option key={team._id} value={team.name}>
                 {team.name}

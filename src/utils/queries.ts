@@ -108,6 +108,58 @@ export const getGameById = async (accessToken: string, gameId: string) => {
     throw error;
   }
 };
+export const removeGameById = async (accessToken: string, gameId: string) => {
+  try {
+    const data = {
+      collection: "games",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { gameId: gameId },
+    };
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    console.log(response);
+    return response.data.document;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
+export const removePlayerById = async (accessToken: string, id: string) => {
+  try {
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { generatedId: id },
+    };
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    console.log(response);
+    return response.data.document;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
 export const getTeamByName = async (teamName: string, accessToken: string) => {
   try {
     const data = {

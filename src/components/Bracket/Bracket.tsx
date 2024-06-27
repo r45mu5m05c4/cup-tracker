@@ -3,14 +3,19 @@ import { getGames } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Game } from "../../utils/types/Game";
 import { styled } from "styled-components";
+import GameItem from "../../molecules/GameItem";
+import GameModal from "../Games/GameModal";
 
 const Bracket = () => {
+  const [games, setGames] = useState<Game[]>();
   const [semisA, setSemisA] = useState<Game[]>([]);
   const [semisB, setSemisB] = useState<Game[]>([]);
   const [finalA, setFinalA] = useState<Game>();
   const [finalB, setFinalB] = useState<Game>();
   const [thirdPlaceA, setThirdPlaceA] = useState<Game>();
   const [thirdPlaceB, setThirdPlaceB] = useState<Game>();
+  const [openGame, setOpenGame] = useState<Game>();
+  const [showModal, setShowModal] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -18,10 +23,12 @@ const Bracket = () => {
       if (user?.accessToken)
         try {
           const gamesFromAPI = await getGames(user.accessToken);
+
           const playoffGames: Game[] = gamesFromAPI.filter(
             (g: Game) =>
               g.gameType === "a_playoff" || g.gameType === "b_playoff"
           );
+          setGames(playoffGames);
           const poolAGames = playoffGames.filter(
             (g: Game) => g.gameType === "a_playoff"
           );
@@ -60,70 +67,283 @@ const Bracket = () => {
 
     fetchAllGames();
   }, []);
-
+  const handleOpenGame = (gameId: string | undefined) => {
+    const foundGame = gameId && games?.find((g) => g._id === gameId);
+    if (foundGame) {
+      setOpenGame(foundGame);
+      setShowModal(true);
+    }
+  };
+  const genTeamPlaceholder = (game: Game, semi1?: boolean): Game => {
+    if (game.homeTeam === "TBD" && semi1) {
+      switch (game.gameStage) {
+        case "semi":
+          game.homeTeam =
+            game.gameType === "a_playoff" ? "Group A 1st" : "Group A 3rd";
+          break;
+        case "third_place":
+          game.homeTeam = "Loser S1";
+          break;
+        case "final":
+          game.homeTeam = "Winner S1";
+          break;
+        default:
+          game.homeTeam = "TBD";
+          break;
+      }
+    }
+    if (game.homeTeam === "TBD" && !semi1) {
+      switch (game.gameStage) {
+        case "semi":
+          game.homeTeam =
+            game.gameType === "a_playoff" ? "Group B 1st" : "Group B 3rd";
+          break;
+        case "third_place":
+          game.homeTeam = "Loser S2";
+          break;
+        case "final":
+          game.homeTeam = "Winner S2";
+          break;
+        default:
+          game.homeTeam = "TBD";
+          break;
+      }
+    }
+    if (game.awayTeam === "TBD" && semi1) {
+      switch (game.gameStage) {
+        case "semi":
+          game.homeTeam =
+            game.gameType === "b_playoff" ? "Group A 2nd" : "Group A 4th";
+          break;
+        case "third_place":
+          game.homeTeam = "Loser S1";
+          break;
+        case "final":
+          game.homeTeam = "Winner S1";
+          break;
+        default:
+          game.homeTeam = "TBD";
+          break;
+      }
+    }
+    if (game.awayTeam === "TBD" && !semi1) {
+      switch (game.gameStage) {
+        case "semi":
+          game.homeTeam =
+            game.gameType === "b_playoff" ? "Group B 2nd" : "Group B 4th";
+          break;
+        case "third_place":
+          game.homeTeam = "Loser S2";
+          break;
+        case "final":
+          game.homeTeam = "Winner S2";
+          break;
+        default:
+          game.homeTeam = "TBD";
+          break;
+      }
+    }
+    return game;
+  };
   return (
-    <>
+    <PlayoffContainer>
+      {showModal && openGame && (
+        <GameModal game={openGame} setShowModal={setShowModal} />
+      )}
+      <h3 style={{ marginBottom: 0 }}>Division A Playoffs</h3>
       <PlayoffA>
         {semisA.length > 0 ? (
-          semisA.map((semi: Game) => (
-            <SemiFinal key={semi.gameId}>
-              {semi.awayTeam}@{semi.awayTeam}
-            </SemiFinal>
-          ))
+          <SemiFinal>
+            {semisA.map((semi: Game, i) => (
+              <SemiFinalItem key={semi.gameId}>
+                Semi
+                <GameItem
+                  key={semi.gameId}
+                  game={
+                    semi.homeTeam !== "TBD" || semi.awayTeam !== "TBD"
+                      ? genTeamPlaceholder(semi, i === 0 ? true : false)
+                      : semi
+                  }
+                  handleOpenGame={handleOpenGame}
+                />
+              </SemiFinalItem>
+            ))}
+          </SemiFinal>
         ) : (
-          <>
-            <SemiFinal>TBD @ TBD</SemiFinal>
-            <SemiFinal>TBD @ TBD</SemiFinal>
-          </>
+          <SemiFinal>
+            <SemiFinalItem>
+              Semi 1
+              <PlaceHolderCard>Group A Winner @ Group B Second</PlaceHolderCard>
+            </SemiFinalItem>
+            <SemiFinalItem>
+              Semi 2
+              <PlaceHolderCard>Group B Winner @ Group A Second</PlaceHolderCard>
+            </SemiFinalItem>
+          </SemiFinal>
         )}
         <ThirdPlace>
-          {thirdPlaceA
-            ? `${thirdPlaceA?.awayTeam}@ ${thirdPlaceA?.awayTeam}`
-            : "TBD @ TBD"}
+          Third place
+          {thirdPlaceA ? (
+            <GameItem
+              game={
+                thirdPlaceA.homeTeam !== "TBD" || thirdPlaceA.awayTeam !== "TBD"
+                  ? genTeamPlaceholder(thirdPlaceA)
+                  : thirdPlaceA
+              }
+              handleOpenGame={handleOpenGame}
+            />
+          ) : (
+            <PlaceHolderCard>Loser S1 @ Loser S2</PlaceHolderCard>
+          )}
         </ThirdPlace>
         <Final>
-          {finalA ? `${finalA?.awayTeam}@ ${finalA?.awayTeam}` : "TBD @ TBD"}
+          Final
+          {finalA ? (
+            <GameItem
+              game={
+                finalA.homeTeam !== "TBD" || finalA.awayTeam !== "TBD"
+                  ? genTeamPlaceholder(finalA)
+                  : finalA
+              }
+              handleOpenGame={handleOpenGame}
+            />
+          ) : (
+            <PlaceHolderCard>Winner S1 @ Winner S2</PlaceHolderCard>
+          )}
         </Final>
       </PlayoffA>
+      <h3 style={{ marginBottom: 0 }}>Division B Playoffs</h3>
       <PlayoffB>
         {semisB.length > 0 ? (
-          semisB.map((semi: Game) => (
-            <SemiFinal key={semi.gameId}>
-              {semisB.map((semi: Game) => (
-                <SemiFinal key={semi.gameId}></SemiFinal>
-              ))}
-            </SemiFinal>
-          ))
+          <SemiFinal>
+            {semisB.map((semi: Game, i) => (
+              <SemiFinalItem key={semi.gameId}>
+                Semi
+                <GameItem
+                  key={semi.gameId}
+                  game={
+                    semi.homeTeam !== "TBD" || semi.awayTeam !== "TBD"
+                      ? genTeamPlaceholder(semi, i === 0 ? true : false)
+                      : semi
+                  }
+                  handleOpenGame={handleOpenGame}
+                />
+              </SemiFinalItem>
+            ))}
+          </SemiFinal>
         ) : (
-          <>
-            <SemiFinal>TBD @ TBD</SemiFinal>
-            <SemiFinal>TBD @ TBD</SemiFinal>
-          </>
+          <SemiFinal>
+            <SemiFinalItem>
+              Semi 1
+              <PlaceHolderCard>Group A Third @ Group B Fourth</PlaceHolderCard>
+            </SemiFinalItem>
+            <SemiFinalItem>
+              Semi 2
+              <PlaceHolderCard>Group B Third @ Group A Fourth</PlaceHolderCard>
+            </SemiFinalItem>
+          </SemiFinal>
         )}
         <ThirdPlace>
-          {thirdPlaceB
-            ? `${thirdPlaceB?.awayTeam}@ ${thirdPlaceB?.awayTeam}`
-            : "TBD @ TBD"}
+          Third place
+          {thirdPlaceB ? (
+            <GameItem
+              game={
+                thirdPlaceB.homeTeam !== "TBD" || thirdPlaceB.awayTeam !== "TBD"
+                  ? genTeamPlaceholder(thirdPlaceB)
+                  : thirdPlaceB
+              }
+              handleOpenGame={handleOpenGame}
+            />
+          ) : (
+            <PlaceHolderCard>Loser S1 @ Loser S2</PlaceHolderCard>
+          )}
         </ThirdPlace>
         <Final>
-          {finalB ? `${finalB?.awayTeam}@ ${finalB?.awayTeam}` : "TBD @ TBD"}
+          Final
+          {finalB ? (
+            <GameItem
+              game={
+                finalB.homeTeam !== "TBD" || finalB.awayTeam !== "TBD"
+                  ? genTeamPlaceholder(finalB)
+                  : finalB
+              }
+              handleOpenGame={handleOpenGame}
+            />
+          ) : (
+            <PlaceHolderCard>Winner S1 @ Winner S2</PlaceHolderCard>
+          )}
         </Final>
       </PlayoffB>
-    </>
+    </PlayoffContainer>
   );
 };
 export default Bracket;
+
+const PlayoffContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  @media (max-width: 768px) {
+    gap: 0;
+  }
+`;
 const PlayoffA = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
 `;
 const PlayoffB = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
 `;
 const SemiFinal = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  gap: 32px;
+  position: relative;
+  @media (max-width: 768px) {
+    width: 90%;
+    gap: 0;
+  }
 `;
-const Final = styled.div``;
-const ThirdPlace = styled.div``;
+const SemiFinalItem = styled.div`
+  position: relative;
+`;
+const Final = styled.div`
+  position: relative;
+  padding: 24px;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+`;
+const ThirdPlace = styled.div`
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+`;
+const PlaceHolderCard = styled.div`
+  background-color: #f8f9fa;
+  border: 1px solid #42917e;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+`;

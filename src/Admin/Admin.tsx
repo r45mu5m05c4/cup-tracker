@@ -5,6 +5,8 @@ import AddPlayer from "./AddPlayer";
 import UpdatePlayers from "./UpdatePlayers";
 import ScheduleGame from "./ScheduleGame";
 import GameManager from "./GameManager";
+import RemoveGame from "./RemoveGame";
+import RemovePlayer from "./RemovePlayer";
 
 const Admin: React.FC = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
@@ -16,8 +18,12 @@ const Admin: React.FC = () => {
         return <UpdatePlayers />;
       case "addPlayer":
         return <AddPlayer />;
+      case "removePlayer":
+        return <RemovePlayer />;
       case "addGame":
         return <ScheduleGame />;
+      case "removeGame":
+        return <RemoveGame />;
       case "updateGame":
         return <GameManager />;
       default:
@@ -42,8 +48,14 @@ const Admin: React.FC = () => {
           <AdminButton onClick={() => setCurrentAdminPage("addPlayer")}>
             Add player
           </AdminButton>
+          <AdminButton onClick={() => setCurrentAdminPage("removePlayer")}>
+            Remove player
+          </AdminButton>
           <AdminButton onClick={() => setCurrentAdminPage("addGame")}>
             Add game
+          </AdminButton>
+          <AdminButton onClick={() => setCurrentAdminPage("removeGame")}>
+            Remove game
           </AdminButton>
           <AdminButton onClick={() => setCurrentAdminPage("updateGame")}>
             Live game manager
