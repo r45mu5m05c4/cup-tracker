@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import { Game } from "../utils/types/Game";
 import { format, isToday, isTomorrow, isYesterday, isBefore } from "date-fns";
 import { FC } from "react";
@@ -22,6 +22,7 @@ const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
     <GameItemCard key={game._id} onClick={() => handleOpenGame(game._id)}>
       <TeamsContainer>
         <TeamName>{game.homeTeam}</TeamName>
+
         <TeamName>{game.awayTeam}</TeamName>
       </TeamsContainer>
       <GameDetails>
@@ -31,7 +32,9 @@ const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
         {game.ended ? (
           <Time>Final</Time>
         ) : (
-          <Time>{$isActive ? "Live" : getDateString(game.startTime)}</Time>
+          <Time>
+            {$isActive ? <LiveCircle /> : getDateString(game.startTime)}
+          </Time>
         )}
       </GameDetails>
     </GameItemCard>
@@ -56,6 +59,37 @@ const GameItemCard = styled.div`
   @media (max-width: 768px) {
     width: 90%;
     min-width: 50px;
+  }
+`;
+const blinkingAnimation = keyframes` 
+50%   {
+  transform: scale(2);
+  opacity: 0
+}
+100%   {
+  transform: scale(2);
+  opacity: 0
+
+}`;
+
+const LiveCircle = styled.div`
+  margin: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #343a40;
+  position: relative;
+
+  &:before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #00ff00;
+    animation: ${blinkingAnimation} 2s infinite;
   }
 `;
 

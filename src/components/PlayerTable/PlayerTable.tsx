@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
+import { styled } from "styled-components";
 interface Props {
   small: boolean;
 }
@@ -70,10 +71,16 @@ const PlayerTable: FC<Props> = ({ small }) => {
       ];
 
   return (
-    <>
+    <Container $small={small}>
       <Table data={players} columns={playerColumns}></Table>
-    </>
+    </Container>
   );
 };
 
 export default PlayerTable;
+const Container = styled.div<{ $small: boolean }>`
+  @media (max-width: 768px) {
+    padding: 0;
+  }
+  padding: ${(props) => (props.$small ? "0" : "24px")};
+`;
