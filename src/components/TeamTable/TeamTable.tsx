@@ -1,6 +1,6 @@
 import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
-import { getAllLogos, getTeams } from "../../utils/queries";
+import { getTeams } from "../../utils/queries";
 import { FC, useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { styled } from "styled-components";
@@ -8,10 +8,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowLongRightIcon,
-  HeartIcon,
 } from "@heroicons/react/20/solid";
 import { Logo } from "../../utils/types/Logo";
-import Cup from "./../../../public/cup.svg";
 import { logoItems } from "../../utils/Logos";
 
 interface Props {
@@ -155,13 +153,6 @@ const LeftIconButton = styled(ChevronLeftIcon)`
 `;
 
 const LinkIconButton = styled(ArrowLongRightIcon)`
-  height: 20px;
-  cursor: pointer;
-  margin: auto;
-  margin-left: 5px;
-`;
-
-const HeartIconButton = styled(HeartIcon)`
   height: 20px;
   cursor: pointer;
   margin: auto;

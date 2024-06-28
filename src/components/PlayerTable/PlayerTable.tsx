@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { Player } from "../../utils/types/Player";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
+
 interface Props {
   small: boolean;
 }
