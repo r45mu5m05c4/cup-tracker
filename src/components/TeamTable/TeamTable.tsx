@@ -1,6 +1,6 @@
 import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
-import { getTeams } from "../../utils/queries";
+import { getAllLogos, getTeams } from "../../utils/queries";
 import { FC, useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { styled } from "styled-components";
@@ -8,7 +8,11 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowLongRightIcon,
+  HeartIcon,
 } from "@heroicons/react/20/solid";
+import { Logo } from "../../utils/types/Logo";
+import Cup from "./../../../public/cup.svg";
+import { logoItems } from "../../utils/Logos";
 
 interface Props {
   small: boolean;
@@ -24,22 +28,38 @@ const TeamTable: FC<Props> = ({ small }) => {
     const fetchAllTeams = async () => {
       if (user?.accessToken)
         try {
-          const teamsFromAPI = await getTeams(user?.accessToken);
-          const teamATeams = teamsFromAPI.filter((t: Team) => t.group === "a");
-          const teamBTeams = teamsFromAPI.filter((t: Team) => t.group === "b");
+          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamLogoLoop = teamsFromAPI.map((t: Team) => {
+            const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
+
+            return { ...t, logo: teamLogo?.logo };
+          });
+          console.log(teamLogoLoop);
+          const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
+          const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
           setTeamsB(teamBTeams);
         } catch (error) {
-          console.error("Error fetching teams:", error);
+          console.error("Error adding teams:", error);
         }
     };
 
     fetchAllTeams();
-  }, []);
+  }, [user]);
 
   const teamColumns = small
     ? [
-        { key: "name", header: "Team" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="Team Logo"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
         { key: "points", header: "P" },
         { key: "wins", header: "W" },
         { key: "draws", header: "D" },
@@ -47,7 +67,18 @@ const TeamTable: FC<Props> = ({ small }) => {
         { key: "gamesPlayed", header: "GP" },
       ]
     : [
-        { key: "name", header: "Team" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="Team Logo"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
+        { key: "name", header: "" },
         { key: "points", header: "P" },
         { key: "wins", header: "W" },
         { key: "draws", header: "D" },
@@ -58,21 +89,22 @@ const TeamTable: FC<Props> = ({ small }) => {
       ];
 
   const toggleGroup = () => {
-    activeGroup === "A" ? setActiveGroup("B") : setActiveGroup("A");
+    setActiveGroup(activeGroup === "A" ? "B" : "A");
   };
+
   return (
     <Container $small={small}>
       {small ? (
         <>
           <SmallHeader>
             {activeGroup === "A" ? "Group A" : "Group B"}
-            <LeftIconButton onClick={() => toggleGroup()} />{" "}
-            <RightIconButton onClick={() => toggleGroup()} />
+            <LeftIconButton onClick={toggleGroup} />
+            <RightIconButton onClick={toggleGroup} />
           </SmallHeader>
           <Table
             data={activeGroup === "A" ? teamsA : teamsB}
             columns={teamColumns}
-          ></Table>
+          />
           <Link href="/#/teams">
             Go to groups
             <LinkIconButton />
@@ -81,9 +113,9 @@ const TeamTable: FC<Props> = ({ small }) => {
       ) : (
         <>
           <Header>Group A</Header>
-          <Table data={teamsA} columns={teamColumns}></Table>
+          <Table data={teamsA} columns={teamColumns} />
           <Header>Group B</Header>
-          <Table data={teamsB} columns={teamColumns}></Table>
+          <Table data={teamsB} columns={teamColumns} />
         </>
       )}
     </Container>
@@ -98,11 +130,13 @@ const Container = styled.div<{ $small: boolean }>`
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
 `;
+
 const Header = styled.h2`
   @media (max-width: 768px) {
     padding: 10px;
   }
 `;
+
 const RightIconButton = styled(ChevronRightIcon)`
   height: 20px;
   cursor: pointer;
@@ -119,12 +153,21 @@ const LeftIconButton = styled(ChevronLeftIcon)`
     color: #42917e;
   }
 `;
+
 const LinkIconButton = styled(ArrowLongRightIcon)`
   height: 20px;
   cursor: pointer;
   margin: auto;
   margin-left: 5px;
 `;
+
+const HeartIconButton = styled(HeartIcon)`
+  height: 20px;
+  cursor: pointer;
+  margin: auto;
+  margin-left: 5px;
+`;
+
 const SmallHeader = styled.div`
   height: 10%;
   display: flex;
@@ -133,6 +176,7 @@ const SmallHeader = styled.div`
   padding: 10px;
   font-weight: 500;
 `;
+
 const Link = styled.a`
   display: flex;
   align-items: center;
