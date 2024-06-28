@@ -83,19 +83,7 @@ const GameItem = styled.div`
   border: 1px solid;
   cursor: pointer;
 `;
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-`;
+
 const Label = styled.div`
   width: 100%;
   display: flex;
@@ -107,18 +95,5 @@ const Label = styled.div`
   @media (max-width: 768px) {
     font-size: 0.8em;
     flex-direction: column;
-  }
-`;
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: auto;
-  margin-right: 0;
-  width: 70%;
-  padding: 8px;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    width: 100%;
   }
 `;

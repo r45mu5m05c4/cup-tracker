@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
-import { Player, PlayerPosition } from "../../utils/types/Player";
+import { Player } from "../../utils/types/Player";
 import RemovePlayerModal from "./RemovePlayerModal";
 
 const RemovePlayer = () => {
