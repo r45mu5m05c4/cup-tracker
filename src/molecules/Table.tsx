@@ -42,9 +42,11 @@ const TableHeader = styled.th.withConfig({
 `;
 
 const TableCell = styled.td.withConfig({
-  shouldForwardProp: (prop) => prop !== "sticky",
-})<{ sticky: boolean }>`
+  shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
+})<{ sticky: boolean; isLogo: boolean }>`
   padding: 8px;
+  padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
+  width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
   border-bottom: 1px solid #ddd;
   background: #fff;
   position: ${({ sticky }) => (sticky ? "sticky" : "static")};
@@ -103,7 +105,11 @@ const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
           {sortedData.map((item, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((column, colIndex) => (
-                <TableCell key={colIndex} sticky={colIndex === 0}>
+                <TableCell
+                  key={colIndex}
+                  sticky={colIndex === 0}
+                  isLogo={column.key === "logo"}
+                >
                   {column.render
                     ? column.render(item[column.key])
                     : item[column.key]}
