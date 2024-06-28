@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
