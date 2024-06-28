@@ -3,6 +3,9 @@ import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
 import { styled } from "styled-components";
+import { Player } from "../../utils/types/Player";
+import { Logo } from "../../utils/types/Logo";
+import { logoItems } from "../../utils/Logos";
 interface Props {
   small: boolean;
 }
@@ -15,14 +18,21 @@ const PlayerTable: FC<Props> = ({ small }) => {
     const fetchAllPlayers = async () => {
       if (user?.accessToken)
         try {
-          const teamsFromAPI = await getPlayers(user?.accessToken);
+          const playersFromAPI = await getPlayers(user?.accessToken);
+          const playersWithLogo = playersFromAPI.map((p: Player) => {
+            const teamLogo = logoItems.find(
+              (l: Logo) => p.teamName === l.teamName
+            );
+
+            return { ...p, logo: teamLogo?.logo };
+          });
           if (isMobileDevice()) {
-            const abbreviatedPlayers = players.map((p) => {
+            const abbreviatedPlayers = playersWithLogo.map((p: Player) => {
               p.name = abbreviateName(p.name);
               return p;
             });
             setPlayers(abbreviatedPlayers);
-          } else setPlayers(teamsFromAPI);
+          } else setPlayers(playersWithLogo);
         } catch (error) {
           console.error("Error fetching teams:", error);
         }
@@ -54,6 +64,17 @@ const PlayerTable: FC<Props> = ({ small }) => {
   const playerColumns = small
     ? [
         { key: "name", header: "Name" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
         { key: "goals", header: "G" },
         { key: "assists", header: "A" },
         { key: "points", header: "P" },
@@ -61,7 +82,17 @@ const PlayerTable: FC<Props> = ({ small }) => {
     : [
         { key: "name", header: "Name" },
         { key: "jerseyNumber", header: "#" },
-        { key: "teamName", header: "Team" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
         { key: "position", header: "Pos" },
         { key: "goals", header: "G" },
         { key: "assists", header: "A" },

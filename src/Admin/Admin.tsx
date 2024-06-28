@@ -7,6 +7,7 @@ import ScheduleGame from "./ScheduleGame";
 import GameManager from "./GameManager";
 import RemoveGame from "./RemoveGame";
 import RemovePlayer from "./RemovePlayer";
+import AddLogo from "./AddLogo";
 
 const Admin: React.FC = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
@@ -14,6 +15,8 @@ const Admin: React.FC = () => {
     switch (currentAdminPage) {
       case "teamStats":
         return <AddTeamStats />;
+      case "teamLogo":
+        return <AddLogo />;
       case "playerStats":
         return <UpdatePlayers />;
       case "addPlayer":
@@ -43,6 +46,9 @@ const Admin: React.FC = () => {
             <h3>Team</h3>
             <AdminButton onClick={() => setCurrentAdminPage("teamStats")}>
               Update a teams stats
+            </AdminButton>
+            <AdminButton onClick={() => setCurrentAdminPage("teamLogo")}>
+              Update/add a teams logo
             </AdminButton>
           </TeamControlContainer>
           <PlayerControlContainer>

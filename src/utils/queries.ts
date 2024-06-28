@@ -31,7 +31,31 @@ export const getTeams = async (accessToken: string) => {
     throw error;
   }
 };
+export const getAllLogos = async (accessToken: string) => {
+  try {
+    const data = {
+      collection: "logos",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+    };
 
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data.documents;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
 export const getPlayers = async (accessToken: string) => {
   try {
     const data = {
@@ -227,7 +251,40 @@ export const updateTeamStats = async (team: Team, accessToken: string) => {
     throw error;
   }
 };
+export const uploadLogo = async (
+  teamName: string,
+  logo: Uint8Array,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "logos",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      document: {
+        teamName: teamName,
+        logo: logo,
+      },
+    };
 
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating team:", error);
+    throw error;
+  }
+};
 export const updatePlayerStats = async (
   player: Player,
   accessToken: string
