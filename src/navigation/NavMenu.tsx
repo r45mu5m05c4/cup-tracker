@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import NavHeader from "./NavHeader";
@@ -14,6 +14,14 @@ const NavMenu = () => {
     setCollapsed(!collapsed);
   };
 
+  useEffect(() => {
+    isMobileDevice() && setCollapsed(true);
+  }, []);
+
+  const isMobileDevice = () => {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  };
+  
   return (
     <LeftBar $collapsed={collapsed}>
       <NavHeader collapsed={collapsed} />
