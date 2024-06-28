@@ -3,6 +3,7 @@ import { FC, useState, useEffect, useCallback } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { Game, Goal, Penalty } from "../../utils/types/Game";
 import { getGameById } from "../../utils/queries";
+import GameTimer from "../../molecules/GameTimer";
 
 interface Props {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,7 +44,6 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
   };
 
   const eventRenderer = () => {
-    console.log(activeGame);
     if (!activeGame) return null;
 
     const penalties = activeGame.penalty?.length
@@ -117,6 +117,12 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <GoalsRow>
             <AwayGoals>{activeGame?.awayTeamGoals.length}</AwayGoals>
+            <GameTimeContainer>
+              <GameTimer
+                startTime={new Date(game.startTime)}
+                ended={game.ended}
+              />
+            </GameTimeContainer>
             <HomeGoals>{activeGame?.homeTeamGoals.length}</HomeGoals>
           </GoalsRow>
           {eventRenderer()}
@@ -150,7 +156,9 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
-
+const GameTimeContainer = styled.div`
+  margin: auto;
+`;
 const Overlay = styled.div`
   cursor: default;
   position: fixed;
@@ -199,14 +207,14 @@ const GoalsRow = styled.div`
 `;
 
 const HomeGoals = styled.h1`
-  width: 50%;
+  width: 45%;
   margin-right: 5%;
   margin-left: auto;
   text-align: right;
 `;
 
 const AwayGoals = styled.h1`
-  width: 50%;
+  width: 45%;
   margin-right: auto;
   margin-left: 5%;
 `;

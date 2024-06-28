@@ -1,7 +1,8 @@
-import { keyframes, styled } from "styled-components";
+import styled from "styled-components";
 import { Game } from "../utils/types/Game";
-import { format, isToday, isTomorrow, isYesterday, isBefore } from "date-fns";
+import { isBefore } from "date-fns";
 import { FC } from "react";
+import GameTimer from "./GameTimer";
 
 interface Props {
   game: Game;
@@ -9,31 +10,25 @@ interface Props {
 }
 
 const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
-  const getDateString = (date: string) => {
-    if (isYesterday(date))
-      return `Yesterday ${format(new Date(date), "HH:mm")} `;
-    if (isToday(date)) return `Today ${format(new Date(date), "HH:mm")} `;
-    if (isTomorrow(date)) return `Tomorrow ${format(new Date(date), "HH:mm")} `;
-    else return format(new Date(date), "HH:mm - dd MMMM");
-  };
   const $isActive = isBefore(game.startTime, new Date()) && !game.ended;
-
   return (
     <GameItemCard key={game._id} onClick={() => handleOpenGame(game._id)}>
       <TeamsContainer>
-        <TeamName>{game.homeTeam}</TeamName>
-
         <TeamName>{game.awayTeam}</TeamName>
+        <TeamName>{game.homeTeam}</TeamName>
       </TeamsContainer>
       <GameDetails>
         <Score
           $isActive={$isActive}
-        >{`${game.homeTeamGoals.length} - ${game.awayTeamGoals.length}`}</Score>
+        >{`${game.awayTeamGoals.length} - ${game.homeTeamGoals.length}`}</Score>
         {game.ended ? (
           <Time>Final</Time>
         ) : (
           <Time>
-            {$isActive ? <LiveCircle /> : getDateString(game.startTime)}
+            <GameTimer
+              startTime={new Date(game.startTime)}
+              ended={game.ended}
+            />
           </Time>
         )}
       </GameDetails>
@@ -61,37 +56,6 @@ const GameItemCard = styled.div`
     min-width: 50px;
   }
 `;
-const blinkingAnimation = keyframes` 
-50%   {
-  transform: scale(2);
-  opacity: 0
-}
-100%   {
-  transform: scale(2);
-  opacity: 0
-
-}`;
-
-const LiveCircle = styled.div`
-  margin: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #343a40;
-  position: relative;
-
-  &:before {
-    content: " ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: #00ff00;
-    animation: ${blinkingAnimation} 2s infinite;
-  }
-`;
 
 const TeamsContainer = styled.div`
   display: flex;
@@ -108,10 +72,16 @@ const Score = styled.span<{ $isActive: boolean }>`
   padding: 0 10px;
   color: ${(props) => (props.$isActive ? "#28a745" : "#343a40")};
 `;
+
 const Time = styled.span`
   font-size: 14px;
   color: #343a40;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 64px;
 `;
+
 const GameDetails = styled.div`
   display: flex;
   flex-direction: column;

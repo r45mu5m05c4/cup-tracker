@@ -16,6 +16,7 @@ import {
   giveWin,
 } from "./helperFunctions";
 import addGoal from "./addGoal";
+import GameTimer from "../../molecules/GameTimer";
 
 const GameManager = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -47,6 +48,18 @@ const GameManager = () => {
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
   const { user } = useUser();
 
+  const updateElapsedMinutes = () => {
+    if (game) {
+      const currentTime = new Date();
+      const elapsedMilliseconds =
+        currentTime.getTime() - new Date(game.startTime).getTime();
+      const minutes = Math.floor(elapsedMilliseconds / (60 * 1000));
+      minutes > 40 && setGameMinute(40);
+      minutes < 0 && setGameMinute(0);
+      minutes < 40 && minutes > 0 && setGameMinute(minutes);
+    }
+  };
+
   const gamePicker = (gameId: string) => {
     const foundGame = games && games.find((g) => g._id === gameId);
     foundGame && setGame(foundGame);
@@ -70,6 +83,7 @@ const GameManager = () => {
     if (game) {
       getHomeTeamPlayers();
       getAwayTeamPlayers();
+      updateElapsedMinutes();
     }
   }, [game]);
 
@@ -283,6 +297,12 @@ const GameManager = () => {
           </Header>
           <GoalsRow>
             <AwayGoals>{game.awayTeamGoals.length}</AwayGoals>
+            <GameTimeContainer>
+              <GameTimer
+                startTime={new Date(game.startTime)}
+                ended={game.ended}
+              />
+            </GameTimeContainer>
             <HomeGoals>{game.homeTeamGoals.length}</HomeGoals>
           </GoalsRow>
           {eventRenderer()}
@@ -679,4 +699,7 @@ const EventHeader = styled.p`
 const GoalHeader = styled.p`
   margin: 0;
   font-weight: bold;
+`;
+const GameTimeContainer = styled.div`
+  margin: auto;
 `;
