@@ -580,7 +580,9 @@ const GameManager = () => {
           </>
         )}
       </Container>
-      <Button onClick={() => endMatchHandler()}>End Game</Button>
+      <Button disabled={game?.ended} onClick={() => endMatchHandler()}>
+        End Game
+      </Button>
     </>
   );
 };
@@ -609,6 +611,13 @@ const Button = styled.button`
   cursor: pointer;
   transition: border-color 0.25s;
   margin: 24px;
+  &:disabled {
+    background-color: #bababa;
+    cursor: default;
+    &:hover {
+      border: 1px solid transparent;
+    }
+  }
 `;
 const HomeContainer = styled.div`
   height: 100%;

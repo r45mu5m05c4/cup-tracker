@@ -39,27 +39,36 @@ const Admin: React.FC = () => {
       )}
       {currentAdminPage === "" ? (
         <>
-          <AdminButton onClick={() => setCurrentAdminPage("teamStats")}>
-            Update a teams stats
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("playerStats")}>
-            Update a player
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("addPlayer")}>
-            Add player
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("removePlayer")}>
-            Remove player
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("addGame")}>
-            Add game
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("removeGame")}>
-            Remove game
-          </AdminButton>
-          <AdminButton onClick={() => setCurrentAdminPage("updateGame")}>
-            Live game manager
-          </AdminButton>
+          <TeamControlContainer>
+            <h3>Team</h3>
+            <AdminButton onClick={() => setCurrentAdminPage("teamStats")}>
+              Update a teams stats
+            </AdminButton>
+          </TeamControlContainer>
+          <PlayerControlContainer>
+            <h3>Player</h3>
+            <AdminButton onClick={() => setCurrentAdminPage("playerStats")}>
+              Update a player
+            </AdminButton>
+            <AdminButton onClick={() => setCurrentAdminPage("addPlayer")}>
+              Add player
+            </AdminButton>
+            <AdminButton onClick={() => setCurrentAdminPage("removePlayer")}>
+              Remove player
+            </AdminButton>
+          </PlayerControlContainer>
+          <GameControlContainer>
+            <h3>Game</h3>
+            <AdminButton onClick={() => setCurrentAdminPage("addGame")}>
+              Add game
+            </AdminButton>
+            <AdminButton onClick={() => setCurrentAdminPage("removeGame")}>
+              Remove game
+            </AdminButton>
+            <AdminButton onClick={() => setCurrentAdminPage("updateGame")}>
+              Live game manager
+            </AdminButton>
+          </GameControlContainer>
         </>
       ) : (
         showAdminPage()
@@ -74,7 +83,7 @@ const Container = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 `;
 const AdminButton = styled.button`
   border-radius: 8px;
@@ -88,4 +97,21 @@ const AdminButton = styled.button`
   cursor: pointer;
   transition: border-color 0.25s;
   margin: 24px;
+`;
+const TeamControlContainer = styled.div`
+  padding-left: 5px;
+  display: flex;
+  flex-direction: column;
+`;
+const PlayerControlContainer = styled.div`
+  padding-left: 5px;
+  border-left: 1px solid;
+  display: flex;
+  flex-direction: column;
+`;
+const GameControlContainer = styled.div`
+  padding-left: 5px;
+  border-left: 1px solid;
+  display: flex;
+  flex-direction: column;
 `;
