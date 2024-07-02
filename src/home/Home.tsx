@@ -83,6 +83,9 @@ export default Home;
 const Container = styled.div`
   width: 100%;
   display: flex;
+  @media (max-width: 768px) {
+    background-color: #f9f9f9;
+  }
 `;
 const PageContainer = styled.div`
   width: 100%;
@@ -90,6 +93,9 @@ const PageContainer = styled.div`
   margin: 16px;
   margin-left: 0;
   border-radius: 16px;
+  @media (max-width: 768px) {
+    margin-left: 16px;
+  }
 `;
 const Row = styled.div`
   width: 100%;

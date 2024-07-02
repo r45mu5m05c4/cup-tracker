@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Bars3Icon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import NavHeader from "./NavHeader";
 import NavLinks from "./NavLinks";
+import MobileMenu from "./MobileMenu";
+
 interface LeftBarProps {
   $collapsed: boolean;
 }
 
 const NavMenu = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -21,8 +29,15 @@ const NavMenu = () => {
   const isMobileDevice = () => {
     return /Mobi|Android/i.test(navigator.userAgent);
   };
-  
-  return (
+
+  return isMobileDevice() ? (
+    <>
+      <HamburgerButton onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <StyledCloseIcon /> : <StyledHamburgerIcon />}
+      </HamburgerButton>
+      {isOpen && <MobileMenu isOpenProp={setIsOpen} />}
+    </>
+  ) : (
     <LeftBar $collapsed={collapsed}>
       <NavHeader collapsed={collapsed} />
       <NavLinks collapsed={collapsed} />
@@ -66,7 +81,26 @@ const StyledChevronRightIcon = styled(ChevronLeftIcon)`
     cursor: pointer;
   }
 `;
+const StyledHamburgerIcon = styled(Bars3Icon)`
+  height: 44px;
+  width: 44px;
+  min-width: 24px;
+  color: #000;
 
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const StyledCloseIcon = styled(XMarkIcon)`
+  height: 44px;
+  width: 44px;
+  min-width: 24px;
+  color: #fff;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
 const StyledChevronLeftIcon = styled(ChevronRightIcon)`
   height: 24px;
   width: 24px;
@@ -104,4 +138,13 @@ const CollapseSideMenuButton = styled("button")`
   &:focus {
     outline: 1px solid var(--color-text-primary);
   }
+`;
+const HamburgerButton = styled.button`
+  background-color: transparent;
+  height: 44px;
+  top: 10px;
+  right: 2%;
+  border: none;
+  position: absolute;
+  z-index: 160;
 `;
