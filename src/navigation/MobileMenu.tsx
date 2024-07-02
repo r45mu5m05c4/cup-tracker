@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import styled, { css } from "styled-components";
 import Typography from "../molecules/Typography";
 import {
@@ -19,7 +19,6 @@ import {
   WrenchScrewdriverIcon,
   TrophyIcon,
 } from "@heroicons/react/24/outline";
-import { set } from "date-fns/fp/set";
 
 interface Props {
   isOpenProp: React.Dispatch<React.SetStateAction<boolean>>;
