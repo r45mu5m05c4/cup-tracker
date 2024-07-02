@@ -99,6 +99,10 @@ const Modal = styled.div.withConfig({
   border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  @media (max-width: 768px) {
+    margin-right: -200px;
+    margin-left: auto;
+  }
 `;
 const LoginOrOutButton = styled.a`
   border-radius: 8px;

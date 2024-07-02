@@ -18,43 +18,6 @@ type SortConfig<T> = {
   direction: "asc" | "desc";
 };
 
-const ScrollableWrapper = styled.div`
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-`;
-
-const TableContainer = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TableHeader = styled.th.withConfig({
-  shouldForwardProp: (prop) => prop !== "sticky",
-})<{ sticky: boolean }>`
-  padding: 8px;
-  text-align: left;
-  border-bottom: 2px solid #ddd;
-  background: #fff;
-  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
-  left: ${({ sticky }) => (sticky ? "0" : "auto")};
-  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
-  cursor: pointer;
-`;
-
-const TableCell = styled.td.withConfig({
-  shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
-})<{ sticky: boolean; isLogo: boolean }>`
-  padding: 8px;
-  padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
-  width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
-  border-bottom: 1px solid #ddd;
-  background: #fff;
-  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
-  left: ${({ sticky }) => (sticky ? "0" : "auto")};
-  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
-  text-wrap: nowrap;
-`;
-
 const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<any> | null>(null);
 
@@ -124,3 +87,40 @@ const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
 };
 
 export default Table;
+
+const ScrollableWrapper = styled.div`
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+`;
+
+const TableContainer = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.th.withConfig({
+  shouldForwardProp: (prop) => prop !== "sticky",
+})<{ sticky: boolean }>`
+  padding: 8px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  background: #fff;
+  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
+  left: ${({ sticky }) => (sticky ? "0" : "auto")};
+  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
+  cursor: pointer;
+`;
+
+const TableCell = styled.td.withConfig({
+  shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
+})<{ sticky: boolean; isLogo: boolean }>`
+  padding: 8px;
+  padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
+  width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  position: ${({ sticky }) => (sticky ? "sticky" : "static")};
+  left: ${({ sticky }) => (sticky ? "0" : "auto")};
+  z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
+  text-wrap: nowrap;
+`;

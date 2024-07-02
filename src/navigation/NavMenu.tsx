@@ -144,7 +144,8 @@ const HamburgerButton = styled.button`
   height: 44px;
   top: 10px;
   right: 2%;
+  left: auto;
   border: none;
-  position: absolute;
+  position: fixed;
   z-index: 160;
 `;

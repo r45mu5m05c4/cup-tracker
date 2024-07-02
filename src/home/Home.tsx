@@ -41,7 +41,6 @@ const Home = () => {
       <NavMenu />
       <PageContainer>
         <Header>
-          <h3>Hello, tortuga!</h3>
           <IconButton ref={buttonRef} onClick={() => togglePopup()}>
             <HamburgerMenuIcon />
             {showLoginModal && (
@@ -52,6 +51,7 @@ const Home = () => {
             )}
           </IconButton>
         </Header>
+
         <Row>
           <Content>
             <Routes>
@@ -110,10 +110,11 @@ const Content = styled.div`
 `;
 const Header = styled.div`
   display: flex;
-  gap: 8px;
-  padding: 24px;
   justify-content: flex-end;
   align-items: center;
+  @media (max-width: 768px) {
+    justify-content: flex-start;
+  }
 `;
 const IconButton = styled.button`
   background-color: transparent;
