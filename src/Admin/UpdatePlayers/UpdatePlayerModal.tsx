@@ -69,34 +69,34 @@ const UpdatePlayerModal: React.FC<Props> = ({
                 handleUpdatePlayer();
               }}
             >
-              <label>
+              <Label>
                 Name:
                 <input
                   type="text"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Goals:
                 <input
                   type="number"
                   value={goals}
                   onChange={(e) => setGoals(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Assists:
                 <input
                   type="number"
                   value={assists}
                   onChange={(e) => setAssists(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Points:
                 <input
                   type="number"
@@ -104,38 +104,38 @@ const UpdatePlayerModal: React.FC<Props> = ({
                   disabled
                   onChange={(e) => setPoints(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Penalty Minutes:
                 <input
                   type="number"
                   value={penaltyMinutes}
                   onChange={(e) => setPenaltyMinutes(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Games Played:
                 <input
                   type="number"
                   value={gamesPlayed}
                   onChange={(e) => setGamesPlayed(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Jersey Number:
                 <input
                   type="number"
                   value={jerseyNumber}
                   onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
                 />
-              </label>
+              </Label>
               <br />
-              <label>
+              <Label>
                 Position:
-                <select
+                <Select
                   value={position}
                   onChange={(e) =>
                     setPosition(e.target.value as PlayerPosition)
@@ -146,8 +146,8 @@ const UpdatePlayerModal: React.FC<Props> = ({
                       {pos}
                     </option>
                   ))}
-                </select>
-              </label>
+                </Select>
+              </Label>
               <br />
               <Button type="submit">Update Player</Button>
             </form>
@@ -162,20 +162,11 @@ const UpdatePlayerModal: React.FC<Props> = ({
 export default UpdatePlayerModal;
 
 const Container = styled.div`
+  margin: auto;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-`;
-const Modal = styled.div`
-  z-index: 100;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
 `;
 const Button = styled.button`
   border-radius: 8px;
@@ -188,5 +179,49 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin: 24px;
+  &:disabled {
+    background-color: #bababa;
+    cursor: default;
+    &:hover {
+      border: 1px solid transparent;
+    }
+  }
+`;
+const Label = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
   margin: auto;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    flex-direction: column;
+  }
+`;
+const Select = styled.select`
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: auto;
+  margin-right: 0;
+  width: 70%;
+  padding: 8px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    width: 100%;
+  }
+`;
+const Modal = styled.div`
+  z-index: 100;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 `;

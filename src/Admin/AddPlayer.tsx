@@ -140,6 +140,7 @@ const AddPlayer: React.FC = () => {
 export default AddPlayer;
 
 const Container = styled.div`
+  margin: auto;
   height: 100%;
   width: 60%;
   display: flex;
@@ -156,6 +157,14 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin: 24px;
+  &:disabled {
+    background-color: #bababa;
+    cursor: default;
+    &:hover {
+      border: 1px solid transparent;
+    }
+  }
 `;
 const Label = styled.div`
   width: 100%;
@@ -165,6 +174,10 @@ const Label = styled.div`
   font-weight: 500;
   font-family: inherit;
   margin: 5px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    flex-direction: column;
+  }
 `;
 const Select = styled.select`
   font-size: 1em;
@@ -174,4 +187,8 @@ const Select = styled.select`
   margin-right: 0;
   width: 70%;
   padding: 8px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    width: 100%;
+  }
 `;

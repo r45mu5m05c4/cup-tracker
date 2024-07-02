@@ -90,6 +90,9 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 const AdminButton = styled.button`
   border-radius: 8px;

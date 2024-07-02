@@ -94,7 +94,7 @@ const PageContainer = styled.div`
   margin-left: 0;
   border-radius: 16px;
   @media (max-width: 768px) {
-    margin-left: 16px;
+    margin: 0;
   }
 `;
 const Row = styled.div`

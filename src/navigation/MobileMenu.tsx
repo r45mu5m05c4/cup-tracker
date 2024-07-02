@@ -124,7 +124,7 @@ const Menu = styled.div`
   padding-top:54px;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   background-color: #000;
   z-index: 150;
 `;

@@ -110,7 +110,9 @@ const PlayerTable: FC<Props> = ({ small }) => {
 };
 
 export default PlayerTable;
+
 const Container = styled.div<{ $small: boolean }>`
+  position: relative;
   @media (max-width: 768px) {
     padding: 0;
   }

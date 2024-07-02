@@ -75,14 +75,14 @@ const AddTeamStats: React.FC = () => {
   return (
     <Container>
       <h2>Admin Page - Update Teams</h2>
-      <select onChange={(e) => handleTeamSelect(e.target.value)}>
+      <Select onChange={(e) => handleTeamSelect(e.target.value)}>
         <option value="">Select a team to update</option>
         {teams.map((team) => (
           <option key={team._id} value={team._id}>
             {team.name}
           </option>
         ))}
-      </select>
+      </Select>
       {selectedTeam && (
         <div>
           <h3>Update Team: {selectedTeam.name}</h3>
@@ -92,52 +92,52 @@ const AddTeamStats: React.FC = () => {
               handleUpdateTeam();
             }}
           >
-            <label>
+            <Label>
               Wins:
               <input
                 type="number"
                 value={updatedWins}
                 onChange={(e) => setUpdatedWins(parseInt(e.target.value))}
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Draws:
               <input
                 type="number"
                 value={updatedDraws}
                 onChange={(e) => setUpdatedDraws(parseInt(e.target.value))}
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Losses:
               <input
                 type="number"
                 value={updatedLosses}
                 onChange={(e) => setUpdatedLosses(parseInt(e.target.value))}
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Points:
               <input
                 type="number"
                 value={updatedPoints}
                 onChange={(e) => setUpdatedPoints(parseInt(e.target.value))}
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Goals:
               <input
                 type="number"
                 value={updatedGoals}
                 onChange={(e) => setUpdatedGoals(parseInt(e.target.value))}
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Goals against:
               <input
                 type="number"
@@ -146,9 +146,9 @@ const AddTeamStats: React.FC = () => {
                   setUpdatedGoalsAgainst(parseInt(e.target.value))
                 }
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Games played:
               <input
                 type="number"
@@ -157,31 +157,31 @@ const AddTeamStats: React.FC = () => {
                   setUpdatedGamesPlayed(parseInt(e.target.value))
                 }
               />
-            </label>
+            </Label>
             <br />
-            <label>
+            <Label>
               Group:
-              <select
+              <Select
                 value={updatedGroup}
                 onChange={(e) => setUpdatedGroup(e.target.value)}
               >
                 <option value="">Select group</option>
                 <option value="A">Group A</option>
                 <option value="B">Group B</option>
-              </select>
-            </label>
+              </Select>
+            </Label>
             <br />
-            <label>
+            <Label>
               Playoff group:
-              <select
+              <Select
                 value={updatedPlayoffGroup}
                 onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
               >
                 <option value="">Select group</option>
                 <option value="A">Playoff group A</option>
                 <option value="B">Playoff group B</option>
-              </select>
-            </label>
+              </Select>
+            </Label>
             <br />
             <Button type="submit">Update Team</Button>
           </form>
@@ -195,6 +195,7 @@ const AddTeamStats: React.FC = () => {
 export default AddTeamStats;
 
 const Container = styled.div`
+  margin: auto;
   height: 100%;
   width: 100%;
   display: flex;
@@ -211,5 +212,38 @@ const Button = styled.button`
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin: 24px;
+  &:disabled {
+    background-color: #bababa;
+    cursor: default;
+    &:hover {
+      border: 1px solid transparent;
+    }
+  }
+`;
+const Label = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
   margin: auto;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    flex-direction: column;
+  }
+`;
+const Select = styled.select`
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  margin: auto;
+  margin-right: 0;
+  width: 70%;
+  padding: 8px;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    width: 100%;
+  }
 `;
