@@ -94,7 +94,7 @@ const Modal = styled.div.withConfig({
   flex-direction: column;
   padding: 24px;
   top: ${(props) => props.top}px;
-  margin-right: 100px;
+  margin-right: 200px;
   background-color: #ffffff;
   border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
