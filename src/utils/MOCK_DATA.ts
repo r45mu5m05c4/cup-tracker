@@ -1,3 +1,8 @@
+export const MOCK_COMPETITIONS = [
+  { id: "123", name: "Folkets cup", type: "cup" },
+  { id: "456", name: "MHL", type: "league" },
+];
+
 export const MOCK_PLAYERS = [
   {
     id: "PF21",

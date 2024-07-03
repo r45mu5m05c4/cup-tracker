@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 interface Props {
   small: boolean;
@@ -21,6 +22,7 @@ const TeamTable: FC<Props> = ({ small }) => {
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
@@ -110,9 +112,13 @@ const TeamTable: FC<Props> = ({ small }) => {
         </>
       ) : (
         <>
-          <Header>Group A</Header>
+          <Header>
+            {competition?.type === "cup" ? "Group A" : "Division 1"}
+          </Header>
           <Table data={teamsA} columns={teamColumns} />
-          <Header>Group B</Header>
+          <Header>
+            {competition?.type === "cup" ? "Group B" : "Division 2"}
+          </Header>
           <Table data={teamsB} columns={teamColumns} />
         </>
       )}

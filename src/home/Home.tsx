@@ -21,12 +21,15 @@ import {
 } from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
 import Bracket from "../components/Bracket/Bracket";
+import CompetitionPicker from "../components/CompetitionPicker";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 const Home = () => {
+  const { competition } = useCompetition();
+  const { user } = useUser();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState(0);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const { user } = useUser();
 
   const togglePopup = () => {
     if (buttonRef.current) {
@@ -36,7 +39,7 @@ const Home = () => {
     setShowLoginModal(!showLoginModal);
   };
 
-  return (
+  return competition ? (
     <Container>
       <NavMenu />
       <PageContainer>
@@ -76,6 +79,8 @@ const Home = () => {
         </Row>
       </PageContainer>
     </Container>
+  ) : (
+    <CompetitionPicker />
   );
 };
 export default Home;
