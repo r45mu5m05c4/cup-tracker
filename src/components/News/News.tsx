@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import PlayerTable from "../PlayerTable";
 import TeamTable from "../TeamTable";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import {
   STARKALogo,
