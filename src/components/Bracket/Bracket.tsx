@@ -5,6 +5,7 @@ import { Game } from "../../utils/types/Game";
 import { styled } from "styled-components";
 import GameItem from "../../molecules/GameItem";
 import GameModal from "../Games/GameModal";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 const Bracket = () => {
   const [games, setGames] = useState<Game[]>();
@@ -17,12 +18,16 @@ const Bracket = () => {
   const [openGame, setOpenGame] = useState<Game>();
   const [showModal, setShowModal] = useState(false);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllGames = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const gamesFromAPI = await getGames(user.accessToken);
+          const gamesFromAPI = await getGames(
+            user.accessToken,
+            competition.name
+          );
 
           const playoffGames: Game[] = gamesFromAPI.filter(
             (g: Game) =>
