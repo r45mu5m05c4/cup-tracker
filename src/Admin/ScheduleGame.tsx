@@ -6,6 +6,7 @@ import { addGame, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { GameStage, GameType, Goal } from "../utils/types/Game";
 import DatePicker from "react-datepicker";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 export type NewGame = {
   gameId: string;
@@ -17,6 +18,7 @@ export type NewGame = {
   ended: boolean;
   gameType: GameType;
   gameStage: GameStage;
+  competition: string;
 };
 
 const ScheduleGame: React.FC = () => {
@@ -29,12 +31,16 @@ const ScheduleGame: React.FC = () => {
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -70,7 +76,14 @@ const ScheduleGame: React.FC = () => {
     if (user?.accessToken) {
       console.log(startTime, gameType, gameStage);
 
-      if (homeTeam && awayTeam && startTime && gameType && gameStage) {
+      if (
+        homeTeam &&
+        awayTeam &&
+        startTime &&
+        gameType &&
+        gameStage &&
+        competition
+      ) {
         const generatedId = `${awayTeam}vs${homeTeam}${startTime.toString()}`;
         const newGame: NewGame = {
           gameId: generatedId,
@@ -82,6 +95,7 @@ const ScheduleGame: React.FC = () => {
           ended: false,
           gameType: gameType,
           gameStage: gameStage,
+          competition: competition.name,
         };
         addGame(newGame, user?.accessToken);
         setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);

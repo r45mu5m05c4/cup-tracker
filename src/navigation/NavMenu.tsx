@@ -9,6 +9,7 @@ import {
 import NavHeader from "./NavHeader";
 import NavLinks from "./NavLinks";
 import MobileMenu from "./MobileMenu";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 interface LeftBarProps {
   $collapsed: boolean;
@@ -17,6 +18,7 @@ interface LeftBarProps {
 const NavMenu = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { competition } = useCompetition();
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -39,7 +41,10 @@ const NavMenu = () => {
     </>
   ) : (
     <LeftBar $collapsed={collapsed}>
-      <NavHeader collapsed={collapsed} />
+      <NavHeader
+        collapsed={collapsed}
+        competitionName={competition ? competition.name : ""}
+      />
       <NavLinks collapsed={collapsed} />
       <NavFooter>
         <CollapseSideMenuButton onClick={handleCollapse}>

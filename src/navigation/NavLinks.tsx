@@ -18,6 +18,7 @@ import {
   ROUTE_PATH_TEAMS,
 } from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 interface NavLinksProps {
   collapsed: boolean;
@@ -26,6 +27,7 @@ interface NavLinksProps {
 const NavLinks = ({ collapsed }: NavLinksProps) => {
   const location = useLocation();
   const { user } = useUser();
+  const { competition, setCompetition } = useCompetition();
 
   const isTeamAdmin = false;
   const isCupAdmin = false;
@@ -69,16 +71,18 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledTeamStatsIcon />
-        {!collapsed && <Typography variant="p">Team stats</Typography>}
+        {!collapsed && <Typography variant="p">Standings</Typography>}
       </StyledLink>
-      <StyledLink
-        to={ROUTE_PATH_BRACKET}
-        $active={isActive(ROUTE_PATH_BRACKET)}
-        $collapsed={collapsed}
-      >
-        <StyledPlayoffBracketIcon />
-        {!collapsed && <Typography variant="p">Playoff bracket</Typography>}
-      </StyledLink>
+      {competition?.type === "cup" && (
+        <StyledLink
+          to={ROUTE_PATH_BRACKET}
+          $active={isActive(ROUTE_PATH_BRACKET)}
+          $collapsed={collapsed}
+        >
+          <StyledPlayoffBracketIcon />
+          {!collapsed && <Typography variant="p">Playoff bracket</Typography>}
+        </StyledLink>
+      )}
       {showAdminSection && (
         <>
           <Separator />
@@ -112,9 +116,19 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
               )}
             </StyledLink>
           )}
+
           <Separator />
         </>
       )}
+      <StyledLink
+        to="/"
+        $active={false}
+        $collapsed={collapsed}
+        onClick={() => setCompetition(null)}
+      >
+        <StyledSuperAdminIcon />
+        {!collapsed && <Typography variant="p">Change competition</Typography>}
+      </StyledLink>
     </Container>
   );
 };

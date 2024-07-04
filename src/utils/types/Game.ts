@@ -26,6 +26,7 @@ export interface Game {
   gameType: GameType;
   gameStage: GameStage;
   penalty: Penalty[];
+  competition: string;
 }
 
 export enum GameType {

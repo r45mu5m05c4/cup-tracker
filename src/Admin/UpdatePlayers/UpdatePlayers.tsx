@@ -2,10 +2,11 @@ import { styled } from "styled-components";
 
 import React, { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
-import {  getPlayerByTeam, getTeams } from "../../utils/queries";
+import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
 import UpdatePlayerModal from "./UpdatePlayerModal";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 export type NewPlayer = {
   name: string;
@@ -25,12 +26,16 @@ const UpdatePlayers: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -43,15 +48,16 @@ const UpdatePlayers: React.FC = () => {
   const handleTeamSelect = async (teamId: string) => {
     const foundTeam = teams.find((team) => team._id === teamId);
     if (foundTeam && user?.accessToken) {
-        try {
-          const playersInTeam = await getPlayerByTeam(
-            foundTeam.name,
-            user.accessToken
-          );
-          setPlayers(playersInTeam);
-        } catch (error) {
-          console.error("Error fetching teams:", error);
-        }
+      try {
+        const playersInTeam = await getPlayerByTeam(
+          foundTeam.name,
+          user.accessToken,
+          foundTeam.competition
+        );
+        setPlayers(playersInTeam);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
     }
   };
 

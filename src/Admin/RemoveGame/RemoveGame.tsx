@@ -4,12 +4,14 @@ import { useUser } from "../../utils/context/UserContext";
 import { getGames } from "../../utils/queries";
 import { styled } from "styled-components";
 import RemoveGameModal from "./RemoveGameModal";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 const RemoveGame = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
   const [modalOpen, setModalOpen] = useState(false);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   const gamePicker = (gameId: string) => {
     const foundGame = games && games.find((g) => g.gameId === gameId);
@@ -19,9 +21,12 @@ const RemoveGame = () => {
 
   useEffect(() => {
     const fetchAllGames = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const gamesFromAPI = await getGames(user.accessToken);
+          const gamesFromAPI = await getGames(
+            user.accessToken,
+            competition.name
+          );
           setGames(gamesFromAPI);
         } catch (error) {
           console.error("Error fetching games:", error);

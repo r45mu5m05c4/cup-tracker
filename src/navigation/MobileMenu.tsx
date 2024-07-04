@@ -69,7 +69,7 @@ const HamburgerMenu: FC<Props> = ({ isOpenProp }) => {
         onClick={() => isOpenProp(false)}
       >
         <StyledTeamStatsIcon />
-        {<Typography variant="p">Team stats</Typography>}
+        {<Typography variant="p">Standings</Typography>}
       </StyledLink>
       <StyledLink
         to={ROUTE_PATH_BRACKET}

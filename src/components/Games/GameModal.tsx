@@ -25,7 +25,11 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
     setError(null);
 
     try {
-      const gameFromAPI = await getGameById(user.accessToken, game.gameId);
+      const gameFromAPI = await getGameById(
+        user.accessToken,
+        game.gameId,
+        game.competition
+      );
       console.log("Fetched game data:", gameFromAPI);
       setActiveGame(gameFromAPI);
       setLoading(false);

@@ -3,6 +3,7 @@ import { useUser } from "../utils/context/UserContext";
 import { Team } from "../utils/types/Team";
 import { getTeams, uploadLogo } from "../utils/queries";
 import styled from "styled-components";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 const AddLogo = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -10,12 +11,16 @@ const AddLogo = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [message, setMessage] = useState("");
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken) {
+      if (user?.accessToken && competition) {
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -51,7 +56,13 @@ const AddLogo = () => {
           try {
             const logoUpload =
               user?.accessToken &&
-              (await uploadLogo(selectedTeam.name, binary, user.accessToken));
+              competition &&
+              (await uploadLogo(
+                selectedTeam.name,
+                binary,
+                user.accessToken,
+                competition.name
+              ));
             console.log(logoUpload);
             setMessage("Logo updated");
           } catch (error) {

@@ -11,10 +11,17 @@ import { Game, Goal, Penalty } from "../../utils/types/Game";
 export const addGoalToHomeTeamCurrentGame = async (
   gameId: string,
   goal: Goal,
-  userAccessToken: string
+  userAccessToken: string,
+  competition: string
 ) => {
   try {
-    const statUpdate = await addGoalToGame(gameId, goal, true, userAccessToken);
+    const statUpdate = await addGoalToGame(
+      gameId,
+      goal,
+      true,
+      userAccessToken,
+      competition
+    );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error updating game with home team goal:", error);
@@ -23,14 +30,16 @@ export const addGoalToHomeTeamCurrentGame = async (
 export const addGoalToAwayTeamCurrentGame = async (
   gameId: string,
   goal: Goal,
-  userAccessToken: string
+  userAccessToken: string,
+  competition: string
 ) => {
   try {
     const statUpdate = await addGoalToGame(
       gameId,
       goal,
       false,
-      userAccessToken
+      userAccessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
@@ -40,13 +49,15 @@ export const addGoalToAwayTeamCurrentGame = async (
 export const addPenalty = async (
   mins: number,
   generatedId: string,
-  userAccessToken: string
+  userAccessToken: string,
+  competition: string
 ) => {
   try {
     const statUpdate = await addPenaltyToPlayer(
       mins,
       generatedId,
-      userAccessToken
+      userAccessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
@@ -56,10 +67,16 @@ export const addPenalty = async (
 export const addPenaltyToMatch = async (
   gameId: string,
   penalty: Penalty,
-  userAccessToken: string
+  userAccessToken: string,
+  competition: string
 ) => {
   try {
-    const statUpdate = await addPenaltyToGame(gameId, penalty, userAccessToken);
+    const statUpdate = await addPenaltyToGame(
+      gameId,
+      penalty,
+      userAccessToken,
+      competition
+    );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);
@@ -67,39 +84,61 @@ export const addPenaltyToMatch = async (
 };
 export const endMatch = async (game: Game, userAccessToken: string) => {
   try {
-    const statUpdate = await updateGame(game, userAccessToken);
+    const statUpdate = await updateGame(
+      game,
+      userAccessToken,
+      game.competition
+    );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);
   }
 };
-export const giveWin = async (teamName: string, userAccessToken: string) => {
+export const giveWin = async (
+  teamName: string,
+  userAccessToken: string,
+  competition: string
+) => {
   try {
     const statUpdate = await addWinOrLossToTeam(
       true,
       teamName,
-      userAccessToken
+      userAccessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);
   }
 };
-export const giveLoss = async (teamName: string, userAccessToken: string) => {
+export const giveLoss = async (
+  teamName: string,
+  userAccessToken: string,
+  competition: string
+) => {
   try {
     const statUpdate = await addWinOrLossToTeam(
       false,
       teamName,
-      userAccessToken
+      userAccessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);
   }
 };
-export const giveDraw = async (teamName: string, userAccessToken: string) => {
+export const giveDraw = async (
+  teamName: string,
+  userAccessToken: string,
+  competition: string
+) => {
   try {
-    const statUpdate = await addDrawToTeam(teamName, userAccessToken);
+    const statUpdate = await addDrawToTeam(
+      teamName,
+      userAccessToken,
+      competition
+    );
     console.log(statUpdate);
   } catch (error) {
     console.error("Error adding penalty:", error);

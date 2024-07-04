@@ -5,13 +5,77 @@ import { NewPlayer } from "../Admin/AddPlayer";
 import { NewGame } from "../Admin/ScheduleGame";
 import { Game, Penalty } from "./types/Game";
 import { Goal } from "./types/Game";
+import { Competition } from "./types/Competition";
 
-export const getTeams = async (accessToken: string) => {
+export const getCompetitions = async (accessToken: string) => {
+  try {
+    const data = {
+      collection: "competitions",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data.documents;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
+export const updateCompetition = async (
+  competition: Competition,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "competitions",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { name: competition.name },
+      update: {
+        $set: {
+          name: competition.name,
+          startDate: competition.startDate,
+          endDate: competition.endDate,
+        },
+      },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating team:", error);
+    throw error;
+  }
+};
+export const getTeams = async (accessToken: string, competition: string) => {
   try {
     const data = {
       collection: "teams",
       database: "folkets-cup",
       dataSource: "folketsCup",
+      filter: { competition: competition },
     };
 
     const config = {
@@ -31,12 +95,13 @@ export const getTeams = async (accessToken: string) => {
     throw error;
   }
 };
-export const getAllLogos = async (accessToken: string) => {
+export const getAllLogos = async (accessToken: string, competition: string) => {
   try {
     const data = {
       collection: "logos",
       database: "folkets-cup",
       dataSource: "folketsCup",
+      filter: { competition: competition },
     };
 
     const config = {
@@ -56,12 +121,13 @@ export const getAllLogos = async (accessToken: string) => {
     throw error;
   }
 };
-export const getPlayers = async (accessToken: string) => {
+export const getPlayers = async (accessToken: string, competition: string) => {
   try {
     const data = {
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
+      filter: { competition: competition },
     };
 
     const config = {
@@ -81,12 +147,13 @@ export const getPlayers = async (accessToken: string) => {
     throw error;
   }
 };
-export const getGames = async (accessToken: string) => {
+export const getGames = async (accessToken: string, competition: string) => {
   try {
     const data = {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
+      filter: { competition: competition },
     };
 
     const config = {
@@ -106,13 +173,17 @@ export const getGames = async (accessToken: string) => {
     throw error;
   }
 };
-export const getGameById = async (accessToken: string, gameId: string) => {
+export const getGameById = async (
+  accessToken: string,
+  gameId: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { gameId: gameId },
+      filter: { gameId: gameId, competition: competition },
     };
     const config = {
       method: "post",
@@ -132,13 +203,17 @@ export const getGameById = async (accessToken: string, gameId: string) => {
     throw error;
   }
 };
-export const removeGameById = async (accessToken: string, gameId: string) => {
+export const removeGameById = async (
+  accessToken: string,
+  gameId: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { gameId: gameId },
+      filter: { gameId: gameId, competition: competition },
     };
     const config = {
       method: "post",
@@ -158,13 +233,17 @@ export const removeGameById = async (accessToken: string, gameId: string) => {
     throw error;
   }
 };
-export const removePlayerById = async (accessToken: string, id: string) => {
+export const removePlayerById = async (
+  accessToken: string,
+  id: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { generatedId: id },
+      filter: { generatedId: id, competition: competition },
     };
     const config = {
       method: "post",
@@ -184,13 +263,17 @@ export const removePlayerById = async (accessToken: string, id: string) => {
     throw error;
   }
 };
-export const getTeamByName = async (teamName: string, accessToken: string) => {
+export const getTeamByName = async (
+  teamName: string,
+  accessToken: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "teams",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { name: teamName },
+      filter: { name: teamName, competition: competition },
     };
 
     const config = {
@@ -217,7 +300,7 @@ export const updateTeamStats = async (team: Team, accessToken: string) => {
       collection: "teams",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { name: team.name },
+      filter: { name: team.name, competition: team.competition },
       update: {
         $set: {
           wins: team.wins,
@@ -254,7 +337,8 @@ export const updateTeamStats = async (team: Team, accessToken: string) => {
 export const uploadLogo = async (
   teamName: string,
   logo: Uint8Array,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = {
@@ -264,6 +348,7 @@ export const uploadLogo = async (
       document: {
         teamName: teamName,
         logo: logo,
+        competition: competition,
       },
     };
 
@@ -294,7 +379,10 @@ export const updatePlayerStats = async (
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { generatedId: player.generatedId },
+      filter: {
+        generatedId: player.generatedId,
+        competition: player.competition,
+      },
       update: {
         $set: {
           goals: player.goals,
@@ -345,6 +433,7 @@ export const addPlayer = async (player: NewPlayer, accessToken: string) => {
         position: player.position,
         teamName: player.teamName,
         jerseyNumber: player.jerseyNumber,
+        competition: player.competition,
       },
     };
 
@@ -368,14 +457,15 @@ export const addPlayer = async (player: NewPlayer, accessToken: string) => {
 };
 export const getPlayerByTeam = async (
   teamName: string,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = {
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { teamName: teamName },
+      filter: { teamName: teamName, competition: competition },
     };
 
     const config = {
@@ -411,6 +501,7 @@ export const addGame = async (game: NewGame, accessToken: string) => {
         ended: game.ended,
         gameType: game.gameType,
         gameStage: game.gameStage,
+        competition: game.competition,
       },
     };
 
@@ -433,13 +524,17 @@ export const addGame = async (game: NewGame, accessToken: string) => {
   }
 };
 
-export const updateGame = async (game: Game, accessToken: string) => {
+export const updateGame = async (
+  game: Game,
+  accessToken: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { gameId: game.gameId },
+      filter: { gameId: game.gameId, competition: competition },
       update: {
         $set: {
           homeTeam: game.homeTeam,
@@ -476,7 +571,8 @@ export const updateGame = async (game: Game, accessToken: string) => {
 export const addSingularStatToPlayer = async (
   playerName: string,
   accessToken: string,
-  goal: boolean
+  goal: boolean,
+  competition: string
 ) => {
   try {
     const data = goal
@@ -484,7 +580,7 @@ export const addSingularStatToPlayer = async (
           collection: "players",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: playerName },
+          filter: { name: playerName, competition: competition },
           update: {
             $inc: {
               goals: 1,
@@ -496,7 +592,7 @@ export const addSingularStatToPlayer = async (
           collection: "players",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: playerName },
+          filter: { name: playerName, competition: competition },
           update: {
             $inc: {
               assists: 1,
@@ -526,14 +622,15 @@ export const addSingularStatToPlayer = async (
 export const addPenaltyToPlayer = async (
   pims: number,
   generatedId: string,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = {
       collection: "players",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { generatedId: generatedId },
+      filter: { generatedId: generatedId, competition: competition },
       update: {
         $inc: {
           penaltyMinutes: pims,
@@ -562,7 +659,8 @@ export const addPenaltyToPlayer = async (
 export const addSingularStatToTeam = async (
   goalFor: boolean,
   teamName: string,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = goalFor
@@ -570,7 +668,7 @@ export const addSingularStatToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: teamName },
+          filter: { name: teamName, competition: competition },
           update: {
             $inc: {
               goals: 1,
@@ -581,7 +679,7 @@ export const addSingularStatToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: teamName },
+          filter: { name: teamName, competition: competition },
           update: {
             $inc: {
               goalsAgainst: 1,
@@ -610,7 +708,8 @@ export const addSingularStatToTeam = async (
 export const addWinOrLossToTeam = async (
   win: boolean,
   teamName: string,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = win
@@ -618,7 +717,7 @@ export const addWinOrLossToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: teamName },
+          filter: { name: teamName, competition: competition },
           update: {
             $inc: {
               wins: 1,
@@ -631,7 +730,7 @@ export const addWinOrLossToTeam = async (
           collection: "teams",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { name: teamName },
+          filter: { name: teamName, competition: competition },
           update: {
             $inc: {
               losses: 1,
@@ -658,13 +757,17 @@ export const addWinOrLossToTeam = async (
     throw error;
   }
 };
-export const addDrawToTeam = async (teamName: string, accessToken: string) => {
+export const addDrawToTeam = async (
+  teamName: string,
+  accessToken: string,
+  competition: string
+) => {
   try {
     const data = {
       collection: "teams",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { name: teamName },
+      filter: { name: teamName, competition: competition },
       update: {
         $inc: {
           draws: 1,
@@ -696,7 +799,8 @@ export const addGoalToGame = async (
   gameId: string,
   goal: Goal,
   homeTeam: boolean,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = homeTeam
@@ -704,7 +808,7 @@ export const addGoalToGame = async (
           collection: "games",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { gameId: gameId },
+          filter: { gameId: gameId, competition: competition },
           update: {
             $push: {
               homeTeamGoals: goal,
@@ -715,7 +819,7 @@ export const addGoalToGame = async (
           collection: "games",
           database: "folkets-cup",
           dataSource: "folketsCup",
-          filter: { gameId: gameId },
+          filter: { gameId: gameId, competition: competition },
           update: {
             $push: {
               awayTeamGoals: goal,
@@ -744,14 +848,15 @@ export const addGoalToGame = async (
 export const addPenaltyToGame = async (
   gameId: string,
   penalty: Penalty,
-  accessToken: string
+  accessToken: string,
+  competition: string
 ) => {
   try {
     const data = {
       collection: "games",
       database: "folkets-cup",
       dataSource: "folketsCup",
-      filter: { gameId: gameId },
+      filter: { gameId: gameId, competition: competition },
       update: {
         $push: {
           penalty: penalty,

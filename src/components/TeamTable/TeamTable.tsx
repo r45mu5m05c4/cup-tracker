@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 interface Props {
   small: boolean;
@@ -21,18 +22,21 @@ const TeamTable: FC<Props> = ({ small }) => {
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           const teamLogoLoop = teamsFromAPI.map((t: Team) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
 
             return { ...t, logo: teamLogo?.logo };
           });
-          console.log(teamLogoLoop);
           const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
           const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
@@ -51,11 +55,7 @@ const TeamTable: FC<Props> = ({ small }) => {
           key: "logo",
           header: "Team",
           render: (logo: string) => (
-            <img
-              src={logo}
-              alt="Team Logo"
-              style={{ width: "20px", height: "20px" }}
-            />
+            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
           ),
         },
         { key: "points", header: "P" },
@@ -69,11 +69,7 @@ const TeamTable: FC<Props> = ({ small }) => {
           key: "logo",
           header: "Team",
           render: (logo: string) => (
-            <img
-              src={logo}
-              alt="Team Logo"
-              style={{ width: "20px", height: "20px" }}
-            />
+            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
           ),
         },
         { key: "name", header: "" },
@@ -110,9 +106,13 @@ const TeamTable: FC<Props> = ({ small }) => {
         </>
       ) : (
         <>
-          <Header>Group A</Header>
+          <Header>
+            {competition?.type === "cup" ? "Group A" : "Division 1"}
+          </Header>
           <Table data={teamsA} columns={teamColumns} />
-          <Header>Group B</Header>
+          <Header>
+            {competition?.type === "cup" ? "Group B" : "Division 2"}
+          </Header>
           <Table data={teamsB} columns={teamColumns} />
         </>
       )}

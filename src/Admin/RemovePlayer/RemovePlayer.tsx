@@ -6,6 +6,7 @@ import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
 import RemovePlayerModal from "./RemovePlayerModal";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 const RemovePlayer = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,12 +14,16 @@ const RemovePlayer = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -34,7 +39,8 @@ const RemovePlayer = () => {
       try {
         const playersInTeam = await getPlayerByTeam(
           foundTeam.name,
-          user.accessToken
+          user.accessToken,
+          foundTeam.competition
         );
         setPlayers(playersInTeam);
       } catch (error) {

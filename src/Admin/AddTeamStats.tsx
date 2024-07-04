@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { getTeams, updateTeamStats } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 const AddTeamStats: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -19,12 +20,16 @@ const AddTeamStats: React.FC = () => {
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           console.log(teamsFromAPI);
           setTeams(teamsFromAPI);
         } catch (error) {
