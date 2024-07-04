@@ -9,6 +9,11 @@ import {
   TortugaBombLogo,
   MHLLogo,
   FolketsPuckPoster,
+  BlackRavens,
+  WhiteRavens,
+  Griparna,
+  RRD,
+  LBH,
 } from "../assets";
 
 export const competitionPosters = [
@@ -17,6 +22,27 @@ export const competitionPosters = [
 ];
 
 export const logoItems = [
+  {
+    teamName: "Black Ravens",
+    logo: BlackRavens,
+  },
+  {
+    teamName: "White Ravens",
+    logo: WhiteRavens,
+  },
+  {
+    teamName: "Griparna",
+    logo: Griparna,
+  },
+  {
+    teamName: "Raging Red Deers",
+    logo: RRD,
+  },
+  {
+    teamName: "Lomma Bay Hockey",
+    logo: LBH,
+  },
+
   {
     teamName: "Tortugas",
     logo: TortugasLogo,

@@ -13,8 +13,18 @@ import VEDLogo from "./VED.svg";
 import TortugaBombLogo from "./HC Tortugas Bomb.svg";
 import FolketsPuckPoster from "./FolketsPuckPoster.png";
 import MHLLogo from "./MHL.logo.png";
+import BlackRavens from "./Black Ravens.svg";
+import WhiteRavens from "./White Ravens.svg";
+import Griparna from "./Griparna.svg";
+import RRD from "./The Raging Red Deers.svg";
+import LBH from "./Lomma Bay v1.svg";
 
 export {
+  BlackRavens,
+  WhiteRavens,
+  Griparna,
+  RRD,
+  LBH,
   MHLLogo,
   FolketsPuckPoster,
   BAIFLogo,
