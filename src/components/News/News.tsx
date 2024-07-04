@@ -10,6 +10,7 @@ import {
   VEDLogo,
 } from "./../../assets";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import Countdown from "../../molecules/Countdown";
 
 const News = () => {
   const [readMore, setReadMore] = useState(false);
@@ -39,6 +40,12 @@ const News = () => {
 
   return (
     <Container>
+      {competition?.startDate && (
+        <Row>
+          <h2>{competition.name} begins in:</h2>
+          <Countdown targetDate={competition.startDate} />
+        </Row>
+      )}
       <Row>
         <NewsContainer $readMore={false}>
           <PlayerTable small={true} />
