@@ -7,7 +7,14 @@ import {
   GentofteLogo,
   TortugasLogo,
   TortugaBombLogo,
+  MHLLogo,
+  FolketsPuckPoster,
 } from "../assets";
+
+export const competitionPosters = [
+  { compName: "MHL", logo: MHLLogo },
+  { compName: "Folkets cup", logo: FolketsPuckPoster },
+];
 
 export const logoItems = [
   {

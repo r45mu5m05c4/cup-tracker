@@ -11,8 +11,12 @@ import STARKALogo from "./STARKA.svg";
 import TortugasLogo from "./Tortugas_for dark backgrounds.svg";
 import VEDLogo from "./VED.svg";
 import TortugaBombLogo from "./HC Tortugas Bomb.svg";
+import FolketsPuckPoster from "./FolketsPuckPoster.png";
+import MHLLogo from "./MHL.logo.png";
 
 export {
+  MHLLogo,
+  FolketsPuckPoster,
   BAIFLogo,
   TortugaBombLogo,
   CPHFalconsLogo,
