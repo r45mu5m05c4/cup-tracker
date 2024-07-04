@@ -42,4 +42,8 @@ export const logoItems = [
     teamName: "Jagrbombs",
     logo: TortugaBombLogo,
   },
+  {
+    teamName: "Tortugas B",
+    logo: TortugasLogo,
+  },
 ];

@@ -9,10 +9,12 @@ import {
   FischerDarkLogo,
   VEDLogo,
 } from "./../../assets";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 const News = () => {
   const [readMore, setReadMore] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -47,70 +49,80 @@ const News = () => {
       </Row>
       <Row>
         <NewsContainer style={{ padding: "24px" }} $readMore={readMore}>
-          <ContentContainer $readMore={readMore}>
-            <h2>Welcome to Folkets Cup 2024</h2>
-            Folkets Puck Hockeyklubb invites you to Folkets Cup for veteran
-            teams, recreational teams and corporate teams. <br />
-            <br /> The focus will be on having fun both on and off the ice. We
-            will organise an after-party, offer lunch, and aim to create an even
-            tournament where everyone has a chance to win!
-            <br />
-            <br />
-            <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view">
-              View Full Tournament Info via PDF
-            </Link>
-            <h3>Date, Time & Location</h3> November 16th & 17th 08.00 - 18.00
-            both days
-            <Link href="https://maps.app.goo.gl/JccSMdFjqRDeeiFP8">
-              Kirseberg Ishall, Malmö
-            </Link>
-            Österhagsgatan 3, 212 22 Malmö <h3>Tournament Level</h3>
-            <ul>
-              <li>This is an adult tournament. 19+ only.</li>
-              <li> 1 Division. </li>
-              <li> 8 Teams. </li>
-              <li> 10-15 players + 1 goalie per team.</li>
-              <li>Teams should ideally have a mix of B & C series players.</li>
-              <li>
-                No A-series player / teams will be accepted.
-                <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
-                  See details on player levels here
-                </Link>
-              </li>
-            </ul>
-            <h3>The rules people really care about:</h3>
-            <ul>
-              <li>Icing: Hybrid.</li>
-              <li>
-                Slapshots: No “full” slapshots. “Snapshots” are okay. Basically
-                - keep your stick below your knees.
-              </li>
-              <li>Hitting: No! </li>
-              <li>
-                All rules:
-                <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
-                  View Full Tournament Info via PDF
-                </Link>
-              </li>
-            </ul>
-            <h3>Food</h3> Locker Room Snacks: There will be a snack basket
-            (fruit, energy, snacks) provided for each team. <br />
-            Lunch: No.
-            <h3>After-party</h3> Meet 19.30 on SATURDAY at our official
-            clubhouse:
-            <Link href="https://maps.app.goo.gl/92gsykBKaX6HEPC97">
-              V.E.D Restaurang & Bar
-            </Link>
-            Kristianstadsgatan 10A <br /> 214 23 Malmö
-            <br />
-            <br />
-            We will either stay here or find something close by depending on how
-            much space we need. There are a ton of options within a couple
-            blocks.
-            <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
-              View Full Tournament Info via PDF
-            </Link>
-          </ContentContainer>
+          {competition && (
+            <ContentContainer $readMore={readMore}>
+              <h2>Welcome to {competition.name} 2024</h2>
+              {competition.name === "Folkets cup" ? (
+                <>
+                  Folkets Puck Hockeyklubb invites you to Folkets Cup for
+                  veteran teams, recreational teams and corporate teams. <br />
+                  <br /> The focus will be on having fun both on and off the
+                  ice. We will organise an after-party, offer lunch, and aim to
+                  create an even tournament where everyone has a chance to win!
+                  <br />
+                  <br />
+                  <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view">
+                    View Full Tournament Info via PDF
+                  </Link>
+                  <h3>Date, Time & Location</h3> November 16th & 17th 08.00 -
+                  18.00 both days
+                  <Link href="https://maps.app.goo.gl/JccSMdFjqRDeeiFP8">
+                    Kirseberg Ishall, Malmö
+                  </Link>
+                  Österhagsgatan 3, 212 22 Malmö <h3>Tournament Level</h3>
+                  <ul>
+                    <li>This is an adult tournament. 19+ only.</li>
+                    <li> 1 Division. </li>
+                    <li> 8 Teams. </li>
+                    <li> 10-15 players + 1 goalie per team.</li>
+                    <li>
+                      Teams should ideally have a mix of B & C series players.
+                    </li>
+                    <li>
+                      No A-series player / teams will be accepted.
+                      <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
+                        See details on player levels here
+                      </Link>
+                    </li>
+                  </ul>
+                  <h3>The rules people really care about:</h3>
+                  <ul>
+                    <li>Icing: Hybrid.</li>
+                    <li>
+                      Slapshots: No “full” slapshots. “Snapshots” are okay.
+                      Basically - keep your stick below your knees.
+                    </li>
+                    <li>Hitting: No! </li>
+                    <li>
+                      All rules:
+                      <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
+                        View Full Tournament Info via PDF
+                      </Link>
+                    </li>
+                  </ul>
+                  <h3>Food</h3> Locker Room Snacks: There will be a snack basket
+                  (fruit, energy, snacks) provided for each team. <br />
+                  Lunch: No.
+                  <h3>After-party</h3> Meet 19.30 on SATURDAY at our official
+                  clubhouse:
+                  <Link href="https://maps.app.goo.gl/92gsykBKaX6HEPC97">
+                    V.E.D Restaurang & Bar
+                  </Link>
+                  Kristianstadsgatan 10A <br /> 214 23 Malmö
+                  <br />
+                  <br />
+                  We will either stay here or find something close by depending
+                  on how much space we need. There are a ton of options within a
+                  couple blocks.
+                  <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view?usp=sharing">
+                    View Full Tournament Info via PDF
+                  </Link>
+                </>
+              ) : (
+                competition?.description
+              )}
+            </ContentContainer>
+          )}
           <ReadMoreButton onClick={() => setReadMore(!readMore)}>
             {readMore ? (
               <>

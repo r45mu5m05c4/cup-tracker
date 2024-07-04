@@ -85,24 +85,33 @@ const TeamTable: FC<Props> = ({ small }) => {
   const toggleGroup = () => {
     setActiveGroup(activeGroup === "A" ? "B" : "A");
   };
-
+  const getHeader = () => {
+    if (activeGroup === "A") {
+      if (competition?.type === "league") return "Division 1";
+      if (competition?.type === "cup") return "Group A";
+    }
+    if (activeGroup === "B") {
+      if (competition?.type === "league") return "Division 2";
+      if (competition?.type === "cup") return "Group B";
+    }
+  };
   return (
     <Container $small={small}>
       {small ? (
         <>
           <SmallHeader>
-            {activeGroup === "A" ? "Group A" : "Group B"}
+            {getHeader()}
             <LeftIconButton onClick={toggleGroup} />
-            <RightIconButton onClick={toggleGroup} />
+            <RightIconButton onClick={toggleGroup} />{" "}
+            <Link href="/#/teams">
+              Go to groups
+              <LinkIconButton />
+            </Link>
           </SmallHeader>
           <Table
             data={activeGroup === "A" ? teamsA : teamsB}
             columns={teamColumns}
           />
-          <Link href="/#/teams">
-            Go to groups
-            <LinkIconButton />
-          </Link>
         </>
       ) : (
         <>
@@ -173,6 +182,8 @@ const Link = styled.a`
   align-items: center;
   color: #000;
   padding: 10px;
+  margin-left: auto;
+  margin-right: 0;
   &:hover {
     color: #42917e;
   }
