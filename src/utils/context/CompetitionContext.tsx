@@ -3,7 +3,7 @@ import { Competition } from "../types/Competition";
 
 interface CompetitionContextType {
   competition: Competition | null;
-  setCompetition: (comp: Competition) => void;
+  setCompetition: (comp: Competition | null) => void;
 }
 
 const CompetitionContext = createContext<CompetitionContextType | undefined>(
@@ -16,7 +16,7 @@ export const CompetitionProvider: React.FC<{ children: ReactNode }> = ({
   const [competition, setInternalCompetition] = useState<Competition | null>(
     null
   );
-  const setCompetition = (comp: Competition) => {
+  const setCompetition = (comp: Competition | null) => {
     setInternalCompetition(comp);
   };
 

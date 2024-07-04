@@ -10,4 +10,5 @@ export type Team = {
   gamesPlayed: number;
   group: string;
   playoffGroup: string;
+  competition: string;
 };

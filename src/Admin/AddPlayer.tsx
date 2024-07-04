@@ -5,6 +5,7 @@ import { Team } from "../utils/types/Team";
 import { addPlayer, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { PlayerPosition } from "../utils/types/Player";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 export type NewPlayer = {
   generatedId: string;
@@ -17,6 +18,7 @@ export type NewPlayer = {
   position: PlayerPosition;
   jerseyNumber: number;
   teamName: string;
+  competition: string;
 };
 
 const AddPlayer: React.FC = () => {
@@ -29,12 +31,16 @@ const AddPlayer: React.FC = () => {
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -52,7 +58,7 @@ const AddPlayer: React.FC = () => {
   };
 
   const handleAddPlayer = () => {
-    if (user?.accessToken) {
+    if (user?.accessToken && competition) {
       if (selectedTeam && position) {
         const newPlayer: NewPlayer = {
           generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
@@ -65,6 +71,7 @@ const AddPlayer: React.FC = () => {
           position: position,
           jerseyNumber: jerseyNumber,
           teamName: selectedTeam.name,
+          competition: competition.name,
         };
         console.log(newPlayer);
         addPlayer(newPlayer, user?.accessToken);

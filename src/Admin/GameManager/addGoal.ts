@@ -4,12 +4,17 @@ import {
 } from "../../utils/queries";
 import { Goal } from "../../utils/types/Game";
 
-const addGoal = async (goal: Goal, accessToken: string) => {
+const addGoal = async (
+  goal: Goal,
+  accessToken: string,
+  competition: string
+) => {
   try {
     const statUpdate = await addSingularStatToPlayer(
       goal.scorer,
       accessToken,
-      true
+      true,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
@@ -21,7 +26,8 @@ const addGoal = async (goal: Goal, accessToken: string) => {
       const statUpdate = await addSingularStatToPlayer(
         goal.primaryAssist,
         accessToken,
-        false
+        false,
+        competition
       );
       console.log(statUpdate);
     } catch (error) {
@@ -34,7 +40,8 @@ const addGoal = async (goal: Goal, accessToken: string) => {
       const statUpdate = await addSingularStatToPlayer(
         goal.secondaryAssist,
         accessToken,
-        false
+        false,
+        competition
       );
       console.log(statUpdate);
     } catch (error) {
@@ -46,7 +53,8 @@ const addGoal = async (goal: Goal, accessToken: string) => {
     const statUpdate = await addSingularStatToTeam(
       true,
       goal.scoringTeamId,
-      accessToken
+      accessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {
@@ -57,7 +65,8 @@ const addGoal = async (goal: Goal, accessToken: string) => {
     const statUpdate = await addSingularStatToTeam(
       false,
       goal.concedingTeamId,
-      accessToken
+      accessToken,
+      competition
     );
     console.log(statUpdate);
   } catch (error) {

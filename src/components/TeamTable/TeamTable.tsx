@@ -26,15 +26,17 @@ const TeamTable: FC<Props> = ({ small }) => {
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const teamsFromAPI = await getTeams(user.accessToken);
+          const teamsFromAPI = await getTeams(
+            user.accessToken,
+            competition.name
+          );
           const teamLogoLoop = teamsFromAPI.map((t: Team) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
 
             return { ...t, logo: teamLogo?.logo };
           });
-          console.log(teamLogoLoop);
           const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
           const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
@@ -53,11 +55,7 @@ const TeamTable: FC<Props> = ({ small }) => {
           key: "logo",
           header: "Team",
           render: (logo: string) => (
-            <img
-              src={logo}
-              alt="Team Logo"
-              style={{ width: "20px", height: "20px" }}
-            />
+            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
           ),
         },
         { key: "points", header: "P" },
@@ -71,11 +69,7 @@ const TeamTable: FC<Props> = ({ small }) => {
           key: "logo",
           header: "Team",
           render: (logo: string) => (
-            <img
-              src={logo}
-              alt="Team Logo"
-              style={{ width: "20px", height: "20px" }}
-            />
+            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
           ),
         },
         { key: "name", header: "" },

@@ -24,7 +24,11 @@ const RemoveGameModal: FC<Props> = ({ setShowModal, game }) => {
     setError(null);
 
     try {
-      const gameFromAPI = await removeGameById(user.accessToken, game.gameId);
+      const gameFromAPI = await removeGameById(
+        user.accessToken,
+        game.gameId,
+        game.competition
+      );
       console.log("Removed:", gameFromAPI);
       setMessage("Removed game");
       setLoading(false);

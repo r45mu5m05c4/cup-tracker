@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { Player } from "../../utils/types/Player";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 interface Props {
   small: boolean;
@@ -14,12 +15,13 @@ interface Props {
 const PlayerTable: FC<Props> = ({ small }) => {
   const [players, setPlayers] = useState<any[]>([]);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllPlayers = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const playersFromAPI = await getPlayers(user?.accessToken);
+          const playersFromAPI = await getPlayers(user?.accessToken, competition.name);
           const playersWithLogo = playersFromAPI.map((p: Player) => {
             const teamLogo = logoItems.find(
               (l: Logo) => p.teamName === l.teamName

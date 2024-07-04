@@ -1,18 +1,22 @@
-
 import styled from "styled-components";
 import Typography from "../molecules/Typography";
 import { FireIcon } from "@heroicons/react/20/solid";
 
 interface NavHeaderProps {
   collapsed: boolean;
+  competitionName: string;
 }
 
-const NavHeader = ({ collapsed }: NavHeaderProps) => (
+const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
   <Container>
     <LogoContainer>
       <StyledTrophyIcon />
     </LogoContainer>
-    {!collapsed && <Typography variant="h4" style={{ whiteSpace: "nowrap" }}>Folkets cup</Typography>}
+    {!collapsed && (
+      <Typography variant="h4" style={{ whiteSpace: "nowrap" }}>
+        {competitionName}
+      </Typography>
+    )}
   </Container>
 );
 
@@ -34,7 +38,7 @@ const LogoContainer = styled("div")`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #42917E;
+  color: #42917e;
 `;
 
 const StyledTrophyIcon = styled(FireIcon)`

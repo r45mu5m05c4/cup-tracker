@@ -40,6 +40,7 @@ const UpdatePlayerModal: React.FC<Props> = ({
         position: position,
         jerseyNumber: jerseyNumber,
         teamName: player.teamName,
+        competition: player.competition,
       };
       updatePlayerStats(updatedPlayer, user?.accessToken);
       setMessage(`Successfully updated ${updatedPlayer.name}`);

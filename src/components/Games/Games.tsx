@@ -5,18 +5,23 @@ import { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import GameModal from "./GameModal";
 import GameItem from "../../molecules/GameItem";
+import { useCompetition } from "../../utils/context/CompetitionContext";
 
 const Games = () => {
   const [games, setGames] = useState<Game[]>();
   const [openGame, setOpenGame] = useState<Game>();
   const [showModal, setShowModal] = useState(false);
   const { user } = useUser();
+  const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllGames = async () => {
-      if (user?.accessToken)
+      if (user?.accessToken && competition)
         try {
-          const gamesFromAPI = await getGames(user.accessToken);
+          const gamesFromAPI = await getGames(
+            user.accessToken,
+            competition.name
+          );
           const sortedGames: Game[] = gamesFromAPI.sort(
             (a: Game, b: Game) =>
               new Date(a.startTime).getTime() - new Date(b.startTime).getTime()

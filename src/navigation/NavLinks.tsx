@@ -27,7 +27,7 @@ interface NavLinksProps {
 const NavLinks = ({ collapsed }: NavLinksProps) => {
   const location = useLocation();
   const { user } = useUser();
-  const { competition } = useCompetition();
+  const { competition, setCompetition } = useCompetition();
 
   const isTeamAdmin = false;
   const isCupAdmin = false;
@@ -116,9 +116,19 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
               )}
             </StyledLink>
           )}
+
           <Separator />
         </>
       )}
+      <StyledLink
+        to="/"
+        $active={false}
+        $collapsed={collapsed}
+        onClick={() => setCompetition(null)}
+      >
+        <StyledSuperAdminIcon />
+        {!collapsed && <Typography variant="p">Change competition</Typography>}
+      </StyledLink>
     </Container>
   );
 };
