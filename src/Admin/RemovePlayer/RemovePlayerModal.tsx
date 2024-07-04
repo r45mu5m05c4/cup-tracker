@@ -26,7 +26,8 @@ const RemovePlayerModal: FC<Props> = ({ setShowModal, player }) => {
     try {
       const playerFromAPI = await removePlayerById(
         user.accessToken,
-        player.generatedId
+        player.generatedId,
+        player.competition
       );
       console.log("Removed:", playerFromAPI);
       setMessage("Removed player");
