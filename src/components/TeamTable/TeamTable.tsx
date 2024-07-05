@@ -21,13 +21,14 @@ const TeamTable: FC<Props> = ({ small }) => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name

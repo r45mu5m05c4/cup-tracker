@@ -10,7 +10,7 @@ const RemoveGame = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
   const [modalOpen, setModalOpen] = useState(false);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   const gamePicker = (gameId: string) => {
@@ -23,6 +23,7 @@ const RemoveGame = () => {
     const fetchAllGames = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const gamesFromAPI = await getGames(
             user.accessToken,
             competition.name

@@ -30,13 +30,14 @@ const ScheduleGame: React.FC = () => {
   const [gameStage, setGameStage] = useState<GameStage>();
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name
@@ -71,7 +72,7 @@ const ScheduleGame: React.FC = () => {
     GameStage.ThirdPlace,
   ];
 
-  const handleAddGame = () => {
+  const handleAddGame = async () => {
     console.log(awayTeam, "@", homeTeam);
     if (user?.accessToken) {
       console.log(startTime, gameType, gameStage);
@@ -97,8 +98,14 @@ const ScheduleGame: React.FC = () => {
           gameStage: gameStage,
           competition: competition.name,
         };
-        addGame(newGame, user?.accessToken);
-        setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);
+        try {
+          await refreshAccessToken();
+          await addGame(newGame, user?.accessToken);
+          setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);
+        } catch (e) {
+          console.log(e);
+          setMessage("Something went wrong, game not scheduled");
+        }
       } else {
         setMessage(`Fill in all fields`);
       }

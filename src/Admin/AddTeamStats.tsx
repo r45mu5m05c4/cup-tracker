@@ -19,13 +19,14 @@ const AddTeamStats: React.FC = () => {
   const [updatedPlayoffGroup, setUpdatedPlayoffGroup] = useState<string>("");
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name
@@ -72,8 +73,12 @@ const AddTeamStats: React.FC = () => {
           group: updatedGroup,
           playoffGroup: updatedPlayoffGroup,
         };
-        updateTeamStats(updatedTeam, user?.accessToken);
-        setMessage(`Successfully updated ${selectedTeam.name}`);
+        try {
+          updateTeamStats(updatedTeam, user?.accessToken);
+          setMessage(`Successfully updated ${selectedTeam.name}`);
+        } catch (e) {
+          setMessage("Update failed");
+        }
       }
   };
 

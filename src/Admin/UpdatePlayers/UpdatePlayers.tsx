@@ -25,13 +25,14 @@ const UpdatePlayers: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name
@@ -49,6 +50,7 @@ const UpdatePlayers: React.FC = () => {
     const foundTeam = teams.find((team) => team._id === teamId);
     if (foundTeam && user?.accessToken) {
       try {
+        await refreshAccessToken();
         const playersInTeam = await getPlayerByTeam(
           foundTeam.name,
           user.accessToken,

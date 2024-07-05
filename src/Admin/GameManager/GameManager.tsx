@@ -47,7 +47,7 @@ const GameManager = () => {
   const [gameMinute, setGameMinute] = useState<number>();
   const [homePlayers, setHomePlayers] = useState<Player[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   const updateElapsedMinutes = () => {
@@ -71,6 +71,7 @@ const GameManager = () => {
     const fetchAllGames = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const gamesFromAPI = await getGames(
             user.accessToken,
             competition.name
@@ -95,6 +96,7 @@ const GameManager = () => {
   const getHomeTeamPlayers = async () => {
     if (game && user?.accessToken) {
       try {
+        await refreshAccessToken();
         const playersInTeam = await getPlayerByTeam(
           game.homeTeam,
           user.accessToken,
@@ -110,6 +112,7 @@ const GameManager = () => {
   const getAwayTeamPlayers = async () => {
     if (game && user?.accessToken) {
       try {
+        await refreshAccessToken();
         const playersInTeam = await getPlayerByTeam(
           game.awayTeam,
           user.accessToken,
@@ -122,7 +125,7 @@ const GameManager = () => {
     }
   };
 
-  const addHomeGoalHandler = () => {
+  const addHomeGoalHandler = async () => {
     if (
       homePlayer &&
       homeAssister &&
@@ -139,9 +142,10 @@ const GameManager = () => {
         concedingTeamId: game.awayTeam,
         gameMinute: gameMinute,
       };
-      addGoal(goal, user.accessToken, game.competition);
+      await refreshAccessToken();
+      await addGoal(goal, user.accessToken, game.competition);
 
-      addGoalToHomeTeamCurrentGame(
+      await addGoalToHomeTeamCurrentGame(
         game.gameId,
         goal,
         user.accessToken,
@@ -150,7 +154,7 @@ const GameManager = () => {
     }
   };
 
-  const addAwayGoalHandler = () => {
+  const addAwayGoalHandler = async () => {
     if (awayPlayer && game?.gameId && gameMinute && user?.accessToken) {
       const goal: Goal = {
         scorer: awayPlayer,
@@ -160,9 +164,10 @@ const GameManager = () => {
         concedingTeamId: game.homeTeam,
         gameMinute: gameMinute,
       };
-      addGoal(goal, user.accessToken, game.competition);
+      await refreshAccessToken();
+      await addGoal(goal, user.accessToken, game.competition);
 
-      addGoalToAwayTeamCurrentGame(
+      await addGoalToAwayTeamCurrentGame(
         game.gameId,
         goal,
         user.accessToken,
@@ -170,7 +175,7 @@ const GameManager = () => {
       );
     }
   };
-  const addHomePenaltyHandler = () => {
+  const addHomePenaltyHandler = async () => {
     const foundHomePlayer = homePlayers.find(
       (p) => p.generatedId === homePlayer
     );
@@ -183,6 +188,7 @@ const GameManager = () => {
       user?.accessToken &&
       homePenaltyType
     ) {
+      await refreshAccessToken();
       const penalty: Penalty = {
         playerId: homePlayer,
         playerName: foundHomePlayer.name,
@@ -191,13 +197,14 @@ const GameManager = () => {
         gameMinute: gameMinute,
         penaltyType: homePenaltyType,
       };
-      addPenalty(
+
+      await addPenalty(
         homePenaltyMinutes,
         homePlayer,
         user.accessToken,
         game.competition
       );
-      addPenaltyToMatch(
+      await addPenaltyToMatch(
         game?.gameId,
         penalty,
         user.accessToken,
@@ -206,7 +213,7 @@ const GameManager = () => {
     }
   };
 
-  const addAwayPenaltyHandler = () => {
+  const addAwayPenaltyHandler = async () => {
     const foundAwayPlayer = awayPlayers.find(
       (p) => p.generatedId === awayPlayer
     );
@@ -219,6 +226,7 @@ const GameManager = () => {
       user?.accessToken &&
       awayPenaltyType
     ) {
+      await refreshAccessToken();
       const penalty: Penalty = {
         playerId: awayPlayer,
         playerName: foundAwayPlayer.name,
@@ -227,13 +235,13 @@ const GameManager = () => {
         gameMinute: gameMinute,
         penaltyType: awayPenaltyType,
       };
-      addPenalty(
+      await addPenalty(
         awayPenaltyMinutes,
         awayPlayer,
         user.accessToken,
         game.competition
       );
-      addPenaltyToMatch(
+      await addPenaltyToMatch(
         game?.gameId,
         penalty,
         user.accessToken,
@@ -241,13 +249,14 @@ const GameManager = () => {
       );
     }
   };
-  const endMatchHandler = () => {
+  const endMatchHandler = async () => {
     if (game && user?.accessToken) {
       game.ended = true;
-      endMatch(game, user.accessToken);
+      await refreshAccessToken();
+      await endMatch(game, user.accessToken);
       if (game.awayTeamGoals.length === game.homeTeamGoals.length) {
-        giveDraw(game.awayTeam, user.accessToken, game.competition);
-        giveDraw(game.homeTeam, user.accessToken, game.competition);
+        await giveDraw(game.awayTeam, user.accessToken, game.competition);
+        await giveDraw(game.homeTeam, user.accessToken, game.competition);
       } else {
         const winner =
           game.awayTeamGoals.length > game.homeTeamGoals.length
@@ -257,8 +266,8 @@ const GameManager = () => {
           game.awayTeamGoals.length < game.homeTeamGoals.length
             ? game.awayTeam
             : game.homeTeam;
-        giveWin(winner, user.accessToken, game.competition);
-        giveLoss(loser, user.accessToken, game.competition);
+        await giveWin(winner, user.accessToken, game.competition);
+        await giveLoss(loser, user.accessToken, game.competition);
       }
     }
   };

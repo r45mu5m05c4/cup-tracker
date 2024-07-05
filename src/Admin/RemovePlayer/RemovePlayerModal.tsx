@@ -13,7 +13,7 @@ const RemovePlayerModal: FC<Props> = ({ setShowModal, player }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
 
   const removePlayer = async () => {
     console.log("Fetching player with ID:", player.generatedId);
@@ -24,6 +24,7 @@ const RemovePlayerModal: FC<Props> = ({ setShowModal, player }) => {
     setError(null);
 
     try {
+      await refreshAccessToken();
       const playerFromAPI = await removePlayerById(
         user.accessToken,
         player.generatedId,

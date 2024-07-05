@@ -14,13 +14,14 @@ interface Props {
 
 const PlayerTable: FC<Props> = ({ small }) => {
   const [players, setPlayers] = useState<any[]>([]);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllPlayers = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const playersFromAPI = await getPlayers(
             user?.accessToken,
             competition.name

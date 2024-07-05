@@ -10,13 +10,14 @@ const AddLogo = () => {
   const [updatedLogo, setUpdatedLogo] = useState<File | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [message, setMessage] = useState("");
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition) {
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name
@@ -54,6 +55,7 @@ const AddLogo = () => {
           const binary = new Uint8Array(reader.result as ArrayBuffer);
 
           try {
+            await refreshAccessToken();
             const logoUpload =
               user?.accessToken &&
               competition &&

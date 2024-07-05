@@ -14,7 +14,7 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
   const [activeGame, setActiveGame] = useState<Game>(game);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
 
   const refetchGame = useCallback(async () => {
     console.log("Fetching game with ID:", game.gameId);
@@ -25,6 +25,7 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
     setError(null);
 
     try {
+      await refreshAccessToken();
       const gameFromAPI = await getGameById(
         user.accessToken,
         game.gameId,

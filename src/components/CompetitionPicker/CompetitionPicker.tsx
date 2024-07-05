@@ -15,7 +15,7 @@ interface CompetitionWithLogo extends Competition {
 
 const CompetitionPicker = () => {
   const { setCompetition } = useCompetition();
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const [competitions, setCompetitions] = useState<
     CompetitionWithLogo[] | null
   >(null);
@@ -28,6 +28,7 @@ const CompetitionPicker = () => {
     const fetchAllCompetitions = async () => {
       if (user?.accessToken)
         try {
+          await refreshAccessToken();
           const allCompetitions = await getCompetitions(user.accessToken);
           const compLogoLoop = allCompetitions.map((c: Competition) => {
             const compLogo = competitionPosters.find(

@@ -13,7 +13,7 @@ const RemoveGameModal: FC<Props> = ({ setShowModal, game }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
 
   const removeGame = async () => {
     console.log("Fetching game with ID:", game.gameId);
@@ -24,6 +24,7 @@ const RemoveGameModal: FC<Props> = ({ setShowModal, game }) => {
     setError(null);
 
     try {
+      await refreshAccessToken();
       const gameFromAPI = await removeGameById(
         user.accessToken,
         game.gameId,

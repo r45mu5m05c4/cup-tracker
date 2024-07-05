@@ -11,6 +11,7 @@ interface UserContextType {
   user: Realm.User | null;
   setUser: (user: Realm.User | null) => void;
   logout: () => void;
+  refreshAccessToken: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -52,9 +53,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       setUser(anonymousUser);
     }
   };
-
+  const refreshAccessToken = async () => {
+    try {
+      if (user) {
+        await user.refreshAccessToken();
+        setUser(user);
+      }
+    } catch (error) {
+      console.error("Failed to refresh access token:", error);
+      // Handle token refresh failure gracefully, e.g., re-authenticate the user
+      logout(); // Example: Log out user if token refresh fails
+    }
+  };
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser, logout, refreshAccessToken }}>
       {children}
     </UserContext.Provider>
   );

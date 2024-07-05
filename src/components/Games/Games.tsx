@@ -11,13 +11,14 @@ const Games = () => {
   const [games, setGames] = useState<Game[]>();
   const [openGame, setOpenGame] = useState<Game>();
   const [showModal, setShowModal] = useState(false);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllGames = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const gamesFromAPI = await getGames(
             user.accessToken,
             competition.name

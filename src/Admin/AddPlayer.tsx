@@ -30,13 +30,14 @@ const AddPlayer: React.FC = () => {
   );
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
-  const { user } = useUser();
+  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
       if (user?.accessToken && competition)
         try {
+          await refreshAccessToken();
           const teamsFromAPI = await getTeams(
             user.accessToken,
             competition.name
@@ -57,7 +58,7 @@ const AddPlayer: React.FC = () => {
     }
   };
 
-  const handleAddPlayer = () => {
+  const handleAddPlayer = async () => {
     if (user?.accessToken && competition) {
       if (selectedTeam && position) {
         const newPlayer: NewPlayer = {
@@ -74,8 +75,14 @@ const AddPlayer: React.FC = () => {
           competition: competition.name,
         };
         console.log(newPlayer);
-        addPlayer(newPlayer, user?.accessToken);
-        setMessage(`Successfully added ${newPlayer.name}`);
+        try {
+          await refreshAccessToken();
+          await addPlayer(newPlayer, user?.accessToken);
+          setMessage(`Successfully added ${newPlayer.name}`);
+        } catch (e) {
+          console.log(e);
+          setMessage("Could not update player");
+        }
       }
     }
   };
