@@ -33,6 +33,10 @@ const News = ({ hasScrolled }: NewsProps) => {
     });
   };
 
+  const isMobileDevice = () => {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
@@ -96,10 +100,7 @@ const News = ({ hasScrolled }: NewsProps) => {
             </Typography>
           </div>
           {competition?.startDate && (
-            <div>
-              <h2>{competition.name} begins in:</h2>
-              <Countdown targetDate={competition.startDate} />
-            </div>
+            <Countdown targetDate={competition.startDate} />
           )}
         </IntroContainer>
       </RowFirst>
@@ -201,7 +202,7 @@ const News = ({ hasScrolled }: NewsProps) => {
           </SponsorContainer>
         </NewsContainer>
       </Row>
-      <Float $hasScrolled={hasScrolled} onClick={onClickFloatButton} />
+      {!isMobileDevice() && <Float $hasScrolled={hasScrolled} onClick={onClickFloatButton} />}
     </Container>
   );
 };
@@ -215,13 +216,14 @@ const Container = styled.div`
 `;
 
 const IntroContainer = styled.div`
-  padding-top: 62px;
-  height: 500px;
   width: 100%;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  gap: 54px;
+  padding-top: 72px;
 
   h1 {
     margin: 0;
@@ -309,11 +311,12 @@ const ReadMoreButton = styled.button`
 `;
 
 const RowFirst = styled.div`
-  height: calc(100vh - 96px);
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin-bottom: 120px;
 `;
+
 const Row = styled.div`
   width: 100%;
   display: flex;
