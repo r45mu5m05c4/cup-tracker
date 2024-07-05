@@ -3,6 +3,7 @@ export interface Competition {
   name: string;
   description: string;
   type: string;
+  location: string;
   startDate: Date;
   endDate: Date;
 }

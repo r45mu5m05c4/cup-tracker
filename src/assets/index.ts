@@ -1,6 +1,6 @@
 import BAIFLogo from "./B-A IF.svg";
 import CPHFalconsLogo from "./Copenhagen Falcons.svg";
-import EVT_black from "./EVT_black.svg";
+import EVT_white from "./EVT_white.svg";
 import FischerLogo from "./Fischer Hockey_transparent.svg";
 import FischerDarkLogo from "./Fischer Hockey_grey background.svg";
 import GentofteLogo from "./Gentofte Hangovers_no background.svg";
@@ -36,7 +36,7 @@ export {
   LundGiantsLogo,
   TortugasLogo,
   STARKALogo,
-  EVT_black,
+  EVT_white,
   FischerLogo,
   VEDLogo,
   FischerDarkLogo,
