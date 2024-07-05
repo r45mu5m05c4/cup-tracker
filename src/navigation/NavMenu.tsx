@@ -87,20 +87,22 @@ const StyledChevronRightIcon = styled(ChevronLeftIcon)`
   }
 `;
 const StyledHamburgerIcon = styled(Bars3Icon)`
-  height: 44px;
-  width: 44px;
+  height: 34px;
+  width: 34px;
   min-width: 24px;
-  color: #000;
+  color: white;
+  padding: 8px;
 
   &:hover {
     cursor: pointer;
   }
 `;
 const StyledCloseIcon = styled(XMarkIcon)`
-  height: 44px;
-  width: 44px;
+  height: 34px;
+  width: 34px;
   min-width: 24px;
-  color: #fff;
+  color: white;
+  padding: 8px 0;
 
   &:hover {
     cursor: pointer;

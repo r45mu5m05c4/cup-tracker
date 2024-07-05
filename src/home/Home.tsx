@@ -30,6 +30,7 @@ const Home = () => {
   const { user } = useUser();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const togglePopup = () => {
@@ -39,6 +40,14 @@ const Home = () => {
     }
     setShowLoginModal(!showLoginModal);
   };
+
+  window.onscroll = function () { scrollFunction() };
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+      setHasScrolled(true);
+    }
+  }
 
   return (
     <Container>
@@ -65,11 +74,11 @@ const Home = () => {
                 element={
                   <>
                     <SetCompetitionFromUrl />
-                    <News />
+                    <News hasScrolled={hasScrolled} />
                   </>
                 }
               />
-              <Route path={ROUTE_PATH_NEWS} element={<News />} />
+              <Route path={ROUTE_PATH_NEWS} element={<News hasScrolled={hasScrolled} />} />
               <Route path={ROUTE_PATH_GAMES} element={<Games />} />
               <Route
                 path={ROUTE_PATH_PLAYERS}
@@ -103,9 +112,7 @@ const Container = styled.div`
 `;
 const PageContainer = styled.div`
   width: 100%;
-  background-color: var(--color-background-secondary-darker);
-  margin: 16px;
-  margin-left: 0;
+  background-color: #052029;
   border-radius: 16px;
   @media (max-width: 768px) {
     margin: 0;
@@ -151,7 +158,7 @@ const IconButton = styled.button`
   }
 `;
 const HamburgerMenuIcon = styled(UserCircleIcon)`
-  color: #e0e0e0;
+  color: white;
   width: 28px;
   height: 28px;
 `;

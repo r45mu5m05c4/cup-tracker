@@ -51,36 +51,36 @@ const TeamTable: FC<Props> = ({ small }) => {
 
   const teamColumns = small
     ? [
-        {
-          key: "logo",
-          header: "Team",
-          render: (logo: string) => (
-            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
-          ),
-        },
-        { key: "points", header: "P" },
-        { key: "wins", header: "W" },
-        { key: "draws", header: "D" },
-        { key: "losses", header: "L" },
-        { key: "gamesPlayed", header: "GP" },
-      ]
+      {
+        key: "logo",
+        header: "Team",
+        render: (logo: string) => (
+          <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
+        ),
+      },
+      { key: "points", header: "P" },
+      { key: "wins", header: "W" },
+      { key: "draws", header: "D" },
+      { key: "losses", header: "L" },
+      { key: "gamesPlayed", header: "GP" },
+    ]
     : [
-        {
-          key: "logo",
-          header: "Team",
-          render: (logo: string) => (
-            <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
-          ),
-        },
-        { key: "name", header: "" },
-        { key: "points", header: "P" },
-        { key: "wins", header: "W" },
-        { key: "draws", header: "D" },
-        { key: "losses", header: "L" },
-        { key: "goals", header: "GF" },
-        { key: "goalsAgainst", header: "GA" },
-        { key: "gamesPlayed", header: "GP" },
-      ];
+      {
+        key: "logo",
+        header: "Team",
+        render: (logo: string) => (
+          <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
+        ),
+      },
+      { key: "name", header: "" },
+      { key: "points", header: "P" },
+      { key: "wins", header: "W" },
+      { key: "draws", header: "D" },
+      { key: "losses", header: "L" },
+      { key: "goals", header: "GF" },
+      { key: "goalsAgainst", header: "GA" },
+      { key: "gamesPlayed", header: "GP" },
+    ];
 
   const toggleGroup = () => {
     setActiveGroup(activeGroup === "A" ? "B" : "A");
@@ -180,7 +180,7 @@ const SmallHeader = styled.div`
   height: 10%;
   display: flex;
   align-items: center;
-  border-bottom: 0.5px solid;
+  border-bottom: 0.5px solid #0E4051;
   padding: 10px;
   font-weight: 500;
 `;
@@ -188,7 +188,7 @@ const SmallHeader = styled.div`
 const Link = styled.a`
   display: flex;
   align-items: center;
-  color: #000;
+  color: white;
   padding: 10px;
   margin-left: auto;
   margin-right: 0;
