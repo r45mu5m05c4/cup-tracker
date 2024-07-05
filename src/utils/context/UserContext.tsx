@@ -22,10 +22,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const app = new Realm.App({ id: "data-lcjxaso" });
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("realmUser");
-    if (storedUser) {
-      const parsedUser = app.currentUser;
-      setUserState(parsedUser);
+    const storedUserId = localStorage.getItem("realmUserId");
+    if (storedUserId && app.currentUser) {
+      setUserState(app.currentUser);
     } else {
       loginAnonymously();
     }
@@ -38,9 +37,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   const setUser = (user: Realm.User | null) => {
     if (user) {
-      sessionStorage.setItem("realmUser", JSON.stringify(user));
+      localStorage.setItem("realmUserId", user.id);
     } else {
-      sessionStorage.removeItem("realmUser");
+      localStorage.removeItem("realmUserId");
     }
     setUserState(user);
   };
@@ -48,7 +47,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const logout = async () => {
     if (user) {
       await user.logOut();
-      sessionStorage.removeItem("realmUser");
+      localStorage.removeItem("realmUserId");
       const anonymousUser = await app.logIn(Realm.Credentials.anonymous());
       setUser(anonymousUser);
     }

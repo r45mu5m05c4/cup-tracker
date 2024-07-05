@@ -44,15 +44,19 @@ const Games = () => {
   };
   return (
     <Container>
-      {games?.map((game: Game) => {
-        return (
-          <GameItem
-            key={game._id}
-            game={game}
-            handleOpenGame={handleOpenGame}
-          />
-        );
-      })}
+      {games?.length ? (
+        games.map((game: Game) => {
+          return (
+            <GameItem
+              key={game._id}
+              game={game}
+              handleOpenGame={handleOpenGame}
+            />
+          );
+        })
+      ) : (
+        <NoGamesText>No games scheduled</NoGamesText>
+      )}
       {openGame && showModal && (
         <GameModal setShowModal={setShowModal} game={openGame} />
       )}
@@ -66,4 +70,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`;
+const NoGamesText = styled.h2`
+  margin: auto;
 `;

@@ -118,11 +118,19 @@ const TeamTable: FC<Props> = ({ small }) => {
           <Header>
             {competition?.type === "cup" ? "Group A" : "Division 1"}
           </Header>
-          <Table data={teamsA} columns={teamColumns} />
+          {teamsA.length ? (
+            <Table data={teamsA} columns={teamColumns} />
+          ) : (
+            <NoTeamsText>No teams in group</NoTeamsText>
+          )}
           <Header>
             {competition?.type === "cup" ? "Group B" : "Division 2"}
           </Header>
-          <Table data={teamsB} columns={teamColumns} />
+          {teamsB.length ? (
+            <Table data={teamsB} columns={teamColumns} />
+          ) : (
+            <NoTeamsText>No teams in group</NoTeamsText>
+          )}
         </>
       )}
     </Container>
@@ -187,4 +195,7 @@ const Link = styled.a`
   &:hover {
     color: #42917e;
   }
+`;
+const NoTeamsText = styled.h2`
+  margin: auto;
 `;

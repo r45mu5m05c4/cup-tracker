@@ -23,6 +23,7 @@ import { useUser } from "../utils/context/UserContext";
 import Bracket from "../components/Bracket/Bracket";
 import CompetitionPicker from "../components/CompetitionPicker";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import SetCompetitionFromUrl from "../components/CompetitionPicker/SetCompetitionFromUrl";
 
 const Home = () => {
   const { competition } = useCompetition();
@@ -39,8 +40,9 @@ const Home = () => {
     setShowLoginModal(!showLoginModal);
   };
 
-  return competition ? (
+  return (
     <Container>
+      {!competition && <CompetitionPicker />}
       <NavMenu />
       <PageContainer>
         <Header>
@@ -58,6 +60,15 @@ const Home = () => {
         <Row>
           <Content>
             <Routes>
+              <Route
+                path="/:competitionName/*"
+                element={
+                  <>
+                    <SetCompetitionFromUrl />
+                    <News />
+                  </>
+                }
+              />
               <Route path={ROUTE_PATH_NEWS} element={<News />} />
               <Route path={ROUTE_PATH_GAMES} element={<Games />} />
               <Route
@@ -79,8 +90,6 @@ const Home = () => {
         </Row>
       </PageContainer>
     </Container>
-  ) : (
-    <CompetitionPicker />
   );
 };
 export default Home;

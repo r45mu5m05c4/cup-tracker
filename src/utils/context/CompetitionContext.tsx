@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { Competition } from "../types/Competition";
 
 interface CompetitionContextType {
@@ -13,12 +13,23 @@ const CompetitionContext = createContext<CompetitionContextType | undefined>(
 export const CompetitionProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [competition, setInternalCompetition] = useState<Competition | null>(
+  const [competition, setCompetition] = useState<Competition | null>(
     null
   );
-  const setCompetition = (comp: Competition | null) => {
-    setInternalCompetition(comp);
-  };
+  useEffect(() => {
+    // Optionally, load initial competition state from localStorage or other persistence layer
+    const savedCompetition = localStorage.getItem('competition');
+    if (savedCompetition) {
+      setCompetition(JSON.parse(savedCompetition));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save competition state to localStorage or other persistence layer
+    if (competition) {
+      localStorage.setItem('competition', JSON.stringify(competition));
+    }
+  }, [competition]);
 
   return (
     <CompetitionContext.Provider value={{ competition, setCompetition }}>

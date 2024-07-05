@@ -21,7 +21,10 @@ const PlayerTable: FC<Props> = ({ small }) => {
     const fetchAllPlayers = async () => {
       if (user?.accessToken && competition)
         try {
-          const playersFromAPI = await getPlayers(user?.accessToken, competition.name);
+          const playersFromAPI = await getPlayers(
+            user?.accessToken,
+            competition.name
+          );
           const playersWithLogo = playersFromAPI.map((p: Player) => {
             const teamLogo = logoItems.find(
               (l: Logo) => p.teamName === l.teamName
@@ -106,7 +109,11 @@ const PlayerTable: FC<Props> = ({ small }) => {
 
   return (
     <Container $small={small}>
-      <Table data={players} columns={playerColumns}></Table>
+      {players.length ? (
+        <Table data={players} columns={playerColumns}></Table>
+      ) : (
+        <NoPlayersText>No players registered</NoPlayersText>
+      )}
     </Container>
   );
 };
@@ -119,4 +126,7 @@ const Container = styled.div<{ $small: boolean }>`
     padding: 0;
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
+`;
+const NoPlayersText = styled.h2`
+  margin: auto;
 `;

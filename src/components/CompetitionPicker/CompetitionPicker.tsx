@@ -68,11 +68,15 @@ const CompetitionPicker = () => {
         </IconButton>
       </Header>
       <Row>
-        {competitions?.map((comp: CompetitionWithLogo) =>
+        {competitions?.map((comp: CompetitionWithLogo, i) =>
           comp.logo ? (
-            <ImgButton src={comp.logo} onClick={() => setCompetition(comp)} />
+            <ImgButton
+              key={i}
+              src={comp.logo}
+              onClick={() => setCompetition(comp)}
+            />
           ) : (
-            <Button key={comp.id} onClick={() => setCompetition(comp)}>
+            <Button key={i} onClick={() => setCompetition(comp)}>
               {comp.name}
             </Button>
           )
@@ -84,6 +88,10 @@ const CompetitionPicker = () => {
 export default CompetitionPicker;
 
 const Container = styled.div`
+  position: fixed;
+  z-index: 150;
+  inset: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #fff;

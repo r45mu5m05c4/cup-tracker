@@ -65,21 +65,25 @@ const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((item, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, colIndex) => (
-                <TableCell
-                  key={colIndex}
-                  sticky={colIndex === 0}
-                  isLogo={column.key === "logo"}
-                >
-                  {column.render
-                    ? column.render(item[column.key])
-                    : item[column.key]}
-                </TableCell>
-              ))}
-            </tr>
-          ))}
+          {sortedData ? (
+            sortedData.map((item, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <TableCell
+                    key={colIndex}
+                    sticky={colIndex === 0}
+                    isLogo={column.key === "logo"}
+                  >
+                    {column.render
+                      ? column.render(item[column.key])
+                      : item[column.key]}
+                  </TableCell>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <NoDataText>No data</NoDataText>
+          )}
         </tbody>
       </TableContainer>
     </ScrollableWrapper>
@@ -92,7 +96,9 @@ const ScrollableWrapper = styled.div`
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 `;
-
+const NoDataText = styled.h2`
+  margin: auto;
+`;
 const TableContainer = styled.table`
   width: 100%;
   border-collapse: collapse;
