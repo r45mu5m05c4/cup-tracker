@@ -133,6 +133,8 @@ const Header = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  padding: 14px;
+  
   @media (max-width: 768px) {
     justify-content: flex-start;
   }

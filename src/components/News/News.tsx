@@ -358,34 +358,40 @@ const Link = styled.a`
     color: #000;
   }
 `;
-const Float = styled(ArrowDownIcon)<{ $hasScrolled: boolean }>`
-  position: fixed;
-  width: 28px;
-  height: 28px;
-  bottom: 40px;
-  right: 40px;
-  opacity: ${(props) => (props.$hasScrolled ? "0" : "1")};
-  transition: opacity 0.8s;
+const Float = styled(ArrowDownIcon) <{ $hasScrolled: boolean; }>`
+	position: fixed;
+	width: 28px;
+	height: 28px;
+	bottom: 40px;
+	right: 40px;
+  opacity: 0;
+  transition: opacity .8s;
   padding: 10px;
   border: 2px solid #c4dcd9;
   border-radius: 50%;
   cursor: pointer;
-  color: #c4dcd9;
-  animation: pulse 1.5s infinite, floatfadein 4s 0.8s;
+  color: #C4DCD9;
+  animation: pulse 1.5s infinite, floatfadein 3.5s .8s;
+  animation-fill-mode: forwards;
+  background-color: #052029;
+
+  ${(props) =>
+    props.$hasScrolled &&
+    `
+      animation: floatfadeout .8s;
+    `};
 
   &:hover {
-    animation: floatfadein 3s 1;
+    animation: floatfadein 4s .8s;
+    opacity: 1;
   }
 
   @keyframes pulse {
-    0% {
-      transform: scale(0.9);
+    0%, 100% {
+      transform: scale(.95);
     }
     70% {
       transform: scale(1);
-    }
-    100% {
-      transform: scale(0.9);
     }
   }
 
@@ -393,11 +399,17 @@ const Float = styled(ArrowDownIcon)<{ $hasScrolled: boolean }>`
     0% {
       opacity: 0;
     }
-    60% {
-      opacity: 0;
-    }
     100% {
       opacity: 1;
     }
   }
-`;
+
+  @keyframes floatfadeout {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  `
