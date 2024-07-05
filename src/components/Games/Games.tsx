@@ -71,7 +71,13 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  @media (max-width: 768px) {
+    padding: 0;
+    padding-bottom: 50px;
+    min-height: 500px;
+  }
 `;
 const NoGamesText = styled.h2`
   margin: auto;
+  padding: 24px;
 `;

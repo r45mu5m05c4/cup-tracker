@@ -342,7 +342,7 @@ const ThirdPlace = styled.div`
   }
 `;
 const PlaceHolderCard = styled.div`
-  background-color: #f8f9fa;
+  background-color: #42917e;
   border: 1px solid #42917e;
   padding: 10px;
   border-radius: 4px;

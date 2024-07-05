@@ -123,11 +123,16 @@ export default PlayerTable;
 
 const Container = styled.div<{ $small: boolean }>`
   position: relative;
+  display: flex;
+  flex-direction: column;
   @media (max-width: 768px) {
     padding: 0;
+    padding-bottom:  ${(props) => (props.$small ? "0" : "50px")};
+    min-height:  ${(props) => (props.$small ? "0" : "500px")};
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
 `;
 const NoPlayersText = styled.h2`
   margin: auto;
+  padding: 24px;
 `;

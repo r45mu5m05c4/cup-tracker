@@ -13,38 +13,6 @@ interface TimeLeft {
   isTimeUp: boolean;
 }
 
-const CountdownContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 60%
-`;
-
-const TimeBlock = styled.div`
-  margin: 0 10px;
-`;
-
-const TimeNumber = styled.div`
-  font-size: 3.2em;
-  font-weight: bold;
-  display: flex;
-  color: #575757;
-`;
-
-const TimeDigit = styled.div`
-  background-color: white;
-  border-radius: 8px;
-  padding: 4px 16px;
-  margin: 6px;
-  `;
-
-const TimeLabel = styled.span`
-  font-size: 1.1em;
-  font-weight: 600;
-  color: #C8C8C8;
-`;
-
 const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
   const calculateTimeLeft = (): TimeLeft => {
     const difference = +new Date(targetDate) - +new Date();
@@ -70,16 +38,15 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
   };
 
   const renderTimeNumberSections = (time: number) => {
-    const digits = String(time).split('');
+    const digits = String(time).split("");
 
     if (digits.length < 2) {
-      digits.unshift("0")
+      digits.unshift("0");
     }
 
-    return digits
-      .map((digit, index) => (
-        <TimeDigit key={index} >{digit}</TimeDigit>
-      ));
+    return digits.map((digit, index) => (
+      <TimeDigit key={index}>{digit}</TimeDigit>
+    ));
   };
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
@@ -121,3 +88,39 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
 };
 
 export default Countdown;
+const CountdownContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 60% @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const TimeBlock = styled.div`
+  margin: 0 10px;
+`;
+
+const TimeNumber = styled.div`
+  font-size: 3.2em;
+  font-weight: bold;
+  display: flex;
+  color: #575757;
+  @media (max-width: 768px) {
+    font-size: 3.2em;
+  }
+`;
+
+const TimeDigit = styled.div`
+  background-color: white;
+  border-radius: 8px;
+  padding: 4px 16px;
+  margin: 6px;
+`;
+
+const TimeLabel = styled.span`
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #c8c8c8;
+`;

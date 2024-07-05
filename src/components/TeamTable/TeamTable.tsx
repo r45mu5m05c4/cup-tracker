@@ -143,6 +143,8 @@ export default TeamTable;
 const Container = styled.div<{ $small: boolean }>`
   @media (max-width: 768px) {
     padding: 0;
+    padding-bottom: 50px;
+    min-height: 500px;
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
 `;
@@ -199,4 +201,5 @@ const Link = styled.a`
 `;
 const NoTeamsText = styled.h2`
   margin: auto;
+  padding: 24px;
 `;
