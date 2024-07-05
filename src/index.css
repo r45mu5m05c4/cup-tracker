@@ -21,16 +21,18 @@ a {
 a:hover {
   color: #fff;
 }
+
 input {
   padding: 8px;
 }
+
 body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #041d24;
+  background-color: #03181E;
 
   --color-background-primary: #041416;
   --color-background-primary-darker: #0e2025;
@@ -61,7 +63,7 @@ h2 {
 
 h3 {
   font-size: 1.4em;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 h4 {
@@ -91,10 +93,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   body {
-    color: #0e0c1a;
-    background-color: #041d24;
+    color: #D6D6D6;
+    background-color: #03181E;
 
     --color-background-primary: #f9f9f9;
     --color-background-primary-darker: #fff;
@@ -104,4 +106,4 @@ button:focus-visible {
 
     --color-divider-primary: #1c3731;
   }
-}
+} */

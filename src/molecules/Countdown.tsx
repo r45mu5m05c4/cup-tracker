@@ -18,14 +18,15 @@ const CountdownContainer = styled.div`
   align-items: center;
   font-family: Arial, sans-serif;
   font-size: 2em;
-  color: #333;
+  color: white;
   margin: auto;
-  margin-left: 0;
+  width: 40%
 `;
 
 const TimeBlock = styled.div`
   margin: 0 10px;
   text-align: center;
+  width: 100%;
 `;
 
 const TimeNumber = styled.div`

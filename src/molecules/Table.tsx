@@ -106,11 +106,11 @@ const TableContainer = styled.table`
 
 const TableHeader = styled.th.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky",
-})<{ sticky: boolean }>`
+}) <{ sticky: boolean }>`
   padding: 8px;
   text-align: left;
-  border-bottom: 2px solid #ddd;
-  background: #fff;
+  border-bottom: 2px solid #0E4051;
+  background: #072B38;
   position: ${({ sticky }) => (sticky ? "sticky" : "static")};
   left: ${({ sticky }) => (sticky ? "0" : "auto")};
   z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
@@ -119,12 +119,12 @@ const TableHeader = styled.th.withConfig({
 
 const TableCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
-})<{ sticky: boolean; isLogo: boolean }>`
+}) <{ sticky: boolean; isLogo: boolean }>`
   padding: 8px;
   padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
   width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  border-bottom: 1px solid #0E4051;
+  background: #072B38;
   position: ${({ sticky }) => (sticky ? "sticky" : "static")};
   left: ${({ sticky }) => (sticky ? "0" : "auto")};
   z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
