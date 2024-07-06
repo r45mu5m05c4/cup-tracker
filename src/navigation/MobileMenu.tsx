@@ -19,6 +19,7 @@ import {
   TrophyIcon,
 } from "@heroicons/react/24/outline";
 import { HomeIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { useCompetition } from "../utils/context/CompetitionContext";
 
 interface Props {
   isOpenProp: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +28,8 @@ interface Props {
 const MobileMenu: FC<Props> = ({ isOpenProp }) => {
   const location = useLocation();
   const { user } = useUser();
+  const { setCompetition } = useCompetition();
+
   const isTeamAdmin = false;
   const isCupAdmin = false;
   const isAdmin = user && user.providerType !== "anon-user";
@@ -86,6 +89,7 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
         </StyledLink>
         {showAdminSection && (
           <>
+            <Separator />
             {isTeamAdmin && (
               <StyledLink
                 to={ROUTE_PATH_ADMIN}
@@ -116,6 +120,18 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
             )}
           </>
         )}
+        <Separator />
+        <StyledLink
+          to="/"
+          $active={false}
+          onClick={() => {
+            isOpenProp(false);
+            setCompetition(null);
+          }}
+        >
+          <StyledSuperAdminIcon />
+          {<Typography variant="p">Change competition</Typography>}
+        </StyledLink>
       </Menu>
     </>
 
@@ -141,7 +157,7 @@ const Menu = styled.div`
   padding-top: 62px;
   height: 100%;
   position: fixed;
-  background-color: #03181E;
+  background-color: var(--neutral-surface-navMenu);
   z-index: 150;
   border-top-right-radius: 30px;
   width: 85%;
@@ -171,12 +187,12 @@ const StyledLink = styled(Link) <{ $active: boolean }>`
   margin: 8px 12px;
   border-radius: 4px;
   font-weight: 600;
-  background-color: ${(props) => (props.$active ? "#42917E" : "transparent")};
+  background-color: ${(props) => (props.$active ? "var(--decorative-brand-light)" : "transparent")};
   color: ${(props) => (props.$active ? "#fff" : "var(--color-text-primary)")};
   white-space: nowrap;
 
   &:hover {
-    background-color: ${(props) => (!props.$active ? "#07333F" : "42917E")};
+    background-color: ${(props) => (!props.$active ? "#07333F" : "var(--decorative-brand-light)")};
     color: #fff;
     cursor: pointer;
   }
@@ -184,7 +200,7 @@ const StyledLink = styled(Link) <{ $active: boolean }>`
   ${(props) =>
     props.$active &&
     css`
-      background-color: #42917e;
+      background-color: var(--decorative-brand-light);
       color: #fff;
     `}
 `;
@@ -242,4 +258,9 @@ const StyledCloseIcon = styled(XMarkIcon)`
   &:hover {
     cursor: pointer;
   }
+`;
+const Separator = styled("div")`
+  background-color: var(--neutral-border-onBase);
+  margin: 24px 14px;
+  height: 1px;
 `;

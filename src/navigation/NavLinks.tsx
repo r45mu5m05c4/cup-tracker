@@ -183,12 +183,12 @@ const StyledLink = styled(Link) <{ $active: boolean; $collapsed: boolean }>`
   margin: 12px;
   border-radius: 4px;
   font-weight: 600;
-  background-color: ${(props) => (props.$active ? "#42917E" : "transparent")};
-  color: ${(props) => (props.$active ? "#fff" : "var(--color-text-primary)")};
+  background-color: ${(props) => (props.$active ? "var(--decorative-brand-light)" : "transparent")};
+  color: ${(props) => (props.$active ? "var(--text-base)" : "var(--text-muted)")};
 
   &:hover {
-    background-color: ${(props) => (!props.$active ? "#07333F" : "42917E")};
-    color: #fff;
+    background-color: ${(props) => (!props.$active ? "var(--neutral-surface-muted)" : "var(--decorative-brand-light)")};
+    color: var(--text-base);
     cursor: pointer;
   }
 
@@ -200,13 +200,13 @@ const StyledLink = styled(Link) <{ $active: boolean; $collapsed: boolean }>`
   ${(props) =>
     props.$active &&
     css`
-      background-color: #42917e;
-      color: #fff;
+      background-color: var(--decorative-brand-light);
+      color: var(--text-base);
     `}
 `;
 
 const Separator = styled("div")`
-  background-color: #06323F;
+  background-color: var(--neutral-border-onBase);
   margin: 24px 14px;
   height: 1px;
 `;

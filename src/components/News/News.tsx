@@ -79,7 +79,7 @@ const News = ({ hasScrolled }: NewsProps) => {
           <div>
             <Typography
               variant="h1"
-              style={{ fontWeight: "bold", fontSize: "60px" }}
+              style={{ fontWeight: "bold", fontSize: "3.8em" }}
             >
               {competition?.location || ""}
             </Typography>
@@ -87,20 +87,20 @@ const News = ({ hasScrolled }: NewsProps) => {
               variant="h1"
               style={{
                 fontWeight: "bolder",
-                fontSize: "90px",
-                color: "#15BA83",
+                fontSize: "6em",
+                color: "var(--decorative-brand-main)",
                 lineHeight: "78px",
                 paddingBottom: "12px",
                 marginTop: "-10px"
               }}
             >
-              {competition?.name === "MHL" ? "Hockey Legue" : "Folkets Cup" || ""}
+              {competition?.name === "MHL" ? "Hockey League" : "Folkets Cup" || ""}
             </Typography>
             <Typography
               variant="h1"
               style={{
                 fontWeight: "bold",
-                fontSize: "60px",
+                fontSize: "3.8em",
                 marginTop: "-8px"
               }}
             >
@@ -128,7 +128,11 @@ const News = ({ hasScrolled }: NewsProps) => {
           </NewsContainerHeader>
           <TeamTable small={true} />
         </NewsContainer>
-        <NewsContainer $readMore={false} $hasScrolled={hasScrolled} style={{ backgroundColor: "#093A48" }}>
+        <NewsContainer
+          $readMore={false}
+          $hasScrolled={hasScrolled}
+          style={{ backgroundColor: "var(--neutral-surface-second)" }}
+        >
           <NewsContainerHeader>
             <Typography variant="h4">Players</Typography>
           </NewsContainerHeader>
@@ -140,7 +144,7 @@ const News = ({ hasScrolled }: NewsProps) => {
           $readMore={readMore}
           $hasScrolled={hasScrolled}
           style={{
-            backgroundImage: "linear-gradient(228.48deg, #054c54 1.31%, #054c5400 50.25%)"
+            backgroundImage: "linear-gradient(228.48deg, var(--neutral-surface-linear-gradient-base) 1.31%, var(--neutral-surface-linear-gradient-contrast) 50.25%)"
           }}
         >
           {competition && (
@@ -346,7 +350,7 @@ const SponsorContainer = styled.div`
   margin-bottom: 24px;
   padding: 24px;
   gap: 50px;
-  background-color: #072B38;
+  background-color: var(--neutral-surface-contrast);
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
 
   @media (max-width: 768px) {
@@ -360,7 +364,7 @@ const DownIconButton = styled(ChevronDownIcon)`
   margin: auto;
   cursor: pointer;
   &:hover {
-    color: #42917e;
+    color: var(--decorative-brand-light);
   }
 `;
 
@@ -369,7 +373,7 @@ const UpIconButton = styled(ChevronUpIcon)`
   margin: auto;
   cursor: pointer;
   &:hover {
-    color: #42917e;
+    color: var(--decorative-brand-light);
   }
 `;
 
@@ -379,9 +383,9 @@ const ReadMoreButton = styled.button`
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 600;
   background-color: transparent;
-  color: #42917E;
+  color: var(--decorative-brand-light);
   cursor: pointer;
   transition: border-color 0.25s;
   align-self: flex-end;
@@ -389,12 +393,12 @@ const ReadMoreButton = styled.button`
   margin-right: 12px;
 
   &:disabled {
-    background-color: #bababa;
+    background-color: var(--text-muted);
     cursor: default;
   }
   &:hover {
     border: 1px solid transparent;
-    color: #4EAB95;
+    color: var(--decorative-brand-lighter);
   }
   &:active {
     border: 1px solid transparent;
@@ -437,7 +441,7 @@ const ContentContainer = styled.div<{ $readMore: boolean }>`
 
 const NewsContainer = styled.div<{ $readMore: boolean; $hasScrolled: boolean }>`
   opacity: ${(props) => (props.$hasScrolled ? "1" : "0")};
-  background-color: #072B38;
+  background-color: var(--neutral-surface-contrast);
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
   border-radius: 8px;
   display: flex;
@@ -456,7 +460,7 @@ const NewsContainer = styled.div<{ $readMore: boolean; $hasScrolled: boolean }>`
 `;
 
 const NewsContainerHeader = styled.div`
-  border-bottom: 1px solid #0E4051;
+  border-bottom: 1px solid var(--neutral-border-onContrast);
   padding: 20px 24px;
   font-family: 'Space Mono', sans-serif;
 `;
@@ -464,11 +468,11 @@ const NewsContainerHeader = styled.div`
 const Link = styled.a`
   display: flex;
   align-items: center;
-  color: #42917e;
+  color: var(--decorative-brand-light);
   padding: 12px 0;
 
   &:hover {
-    color: #4EAB95;
+    color: var(--decorative-brand-lighter);
   }
 `;
 
@@ -481,13 +485,13 @@ const Float = styled(ArrowDownIcon) <{ $hasScrolled: boolean; }>`
   opacity: 0;
   transition: opacity .8s;
   padding: 10px;
-  border: 2px solid #c4dcd9;
+  border: 2px solid var(--neutral-icon-base);
   border-radius: 50%;
   cursor: pointer;
-  color: #C4DCD9;
+  color: var(--neutral-icon-base);
   animation: pulse 1.5s infinite, floatfadein 3.5s .8s;
   animation-fill-mode: forwards;
-  background-color: #052029;
+  background-color: var(--neutral-surface-base);
 
   ${(props) =>
     props.$hasScrolled &&

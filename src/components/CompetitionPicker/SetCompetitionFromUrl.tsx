@@ -10,6 +10,7 @@ const SetCompetitionFromUrl: React.FC = () => {
   const { competitionName } = useParams<{ competitionName: string }>();
   const { setCompetition } = useCompetition();
   const { user } = useUser();
+
   useEffect(() => {
     const fetchAllCompetitions = async () => {
       if (user?.accessToken)

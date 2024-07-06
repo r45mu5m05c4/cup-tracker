@@ -60,7 +60,7 @@ const TimeDigit = styled.div`
 const TimeLabel = styled.span`
   font-size: 14px;
   font-weight: 600;
-  color: #C8C8C8;
+  color: var(--text-muted);
   padding-top: 4px;
 `;
 

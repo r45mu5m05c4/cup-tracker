@@ -38,7 +38,7 @@ const LogoContainer = styled("div")`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #15BA83;
+  color: var(--decorative-brand-main);
 `;
 
 const StyledTrophyIcon = styled(FireIcon)`

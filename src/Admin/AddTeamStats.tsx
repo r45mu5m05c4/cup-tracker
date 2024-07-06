@@ -218,13 +218,13 @@ const Button = styled.button`
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
+  background-color: var(--text-muted);
+  color: var(--text-base);
   cursor: pointer;
   transition: border-color 0.25s;
   margin: 24px;
   &:disabled {
-    background-color: #bababa;
+    background-color: var(--text-muted);
     cursor: default;
     &:hover {
       border: 1px solid transparent;

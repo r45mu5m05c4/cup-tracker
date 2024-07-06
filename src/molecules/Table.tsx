@@ -111,8 +111,8 @@ const TableHeader = styled.th.withConfig({
 }) <{ sticky: boolean }>`
   padding: 8px;
   text-align: left;
-  border-bottom: 2px solid #0E4051;
-  background: #072B38;
+  border-bottom: 2px solid var(--neutral-border-onContrast);
+  background: var(--neutral-surface-contrast);
   position: ${({ sticky }) => (sticky ? "sticky" : "static")};
   left: ${({ sticky }) => (sticky ? "0" : "auto")};
   z-index: ${({ sticky }) => (sticky ? "1" : "auto")};
@@ -125,8 +125,8 @@ const TableCell = styled.td.withConfig({
   padding: 8px 14px;
   padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
   width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
-  border-bottom: 1px solid #0E4051;
-  background: #072B38;
+  border-bottom: 1px solid var(--neutral-border-onContrast);
+  background: var(--neutral-surface-contrast);
   position: ${({ sticky }) => (sticky ? "sticky" : "static")};
   left: ${({ sticky }) => (sticky ? "0" : "auto")};
   z-index: ${({ sticky }) => (sticky ? "1" : "auto")};

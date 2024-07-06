@@ -159,7 +159,7 @@ const RightIconButton = styled(ChevronRightIcon)`
   height: 20px;
   cursor: pointer;
   &:hover {
-    color: #42917e;
+    color: var(--decorative-brand-light);
   }
 `;
 
@@ -168,7 +168,7 @@ const LeftIconButton = styled(ChevronLeftIcon)`
   margin-left: 10px;
   cursor: pointer;
   &:hover {
-    color: #42917e;
+    color: var(--decorative-brand-light);
   }
 `;
 
@@ -183,22 +183,22 @@ const SmallHeader = styled.div`
   height: 10%;
   display: flex;
   align-items: center;
-  border-bottom: 0.5px solid #0E4051;
+  border-bottom: 0.5px solid var(--neutral-border-onContrast);
   padding: 6px 10px;
   font-weight: 500;
   font-size: .8em;
-  background-color: #093A47;
+  background-color: var(--neutral-surface-third);
 `;
 
 const Link = styled.a`
   display: flex;
   align-items: center;
-  color: white;
+  color: var(--text-base);
   padding: 10px 0;
   margin-left: auto;
   margin-right: 0;
   &:hover {
-    color: #42917e;
+    color: var(--decorative-brand-light);
   }
 `;
 const NoTeamsText = styled.h2`

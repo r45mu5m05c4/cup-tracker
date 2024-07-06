@@ -50,7 +50,7 @@ const Home = () => {
   }
 
   return (
-    <Container>
+    <Container className={competition?.name !== "Folkets cup" ? "red-theme" : "green-theme"}>
       {!competition && <CompetitionPicker />}
       <NavMenu />
       <PageContainer>
@@ -141,7 +141,7 @@ const IconButton = styled.button`
   height: 38px;
 
   &:active {
-    border-color: #e0e0e0;
+    border-color: var(--neutral-border-base);
   }
 
   &:focus {
@@ -153,12 +153,12 @@ const IconButton = styled.button`
   }
 `;
 const LoginIcon = styled(UserCircleIcon)`
-  color: white;
+  color: var(--text-base);
   width: 38px;
   min-width: 38px;
   height: 38px;
 
   &:hover {
-    color: #42917E;
+    color: var(--decorative-brand-light);
   }
 `;

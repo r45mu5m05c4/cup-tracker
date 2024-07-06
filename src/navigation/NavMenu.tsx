@@ -76,8 +76,9 @@ const LeftBar = styled.div<LeftBarProps>`
   transition: all 0.25s ease-in-out;
   position: sticky;
   top: 0;
-  background-color: #03181E;
-  border-right: 1px solid #06323F;
+  background-color: var(--neutral-surface-navMenu);
+  border-right: 1px solid var(--neutral-border-onBase);
+  z-index: 1;
 `;
 
 const StyledChevronRightIcon = styled(ChevronLeftIcon)`
@@ -94,7 +95,7 @@ const StyledHamburgerIcon = styled(Bars3Icon)`
   height: 34px;
   width: 34px;
   min-width: 24px;
-  color: #E5E5E5;
+  color: var(--neutral-icon-base);
 
   &:hover {
     cursor: pointer;
@@ -123,14 +124,14 @@ const CollapseSideMenuButton = styled("button")`
   padding: 6px 8px;
   border-radius: 50%;
   color: var(--color-text-primary);
-  background-color: #0f4644;
+  background-color: var(--decorative-brand-darker);
   width: 40px;
   min-width: 40px;
   height: 40px;
   border: none;
 
   &:hover {
-    background-color: #1d715d;
+    background-color: var(--decorative-brand-dark);
     border: none;
   }
 
@@ -139,7 +140,7 @@ const CollapseSideMenuButton = styled("button")`
   }
 
   &:focus-visible {
-    outline: 2px solid white;
+    outline: 2px solid var(--neutral-icon-base);
     outline-offset: 2px;
   }
 `;

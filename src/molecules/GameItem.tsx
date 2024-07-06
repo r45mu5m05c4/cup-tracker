@@ -43,8 +43,8 @@ const GameItemCard = styled.div`
   margin-bottom: 20px;
   width: 50%;
   min-width: 220px;
-  background-color: #42917e;
-  border: 1px solid #42917e;
+  background-color: var(--decorative-brand-light);
+  border: 1px solid var(--decorative-brand-light);
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 4px;

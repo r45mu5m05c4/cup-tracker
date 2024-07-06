@@ -95,7 +95,7 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #052029;
+  background-color: var(--neutral-surface-base);
   gap: 24px;
   padding: 24px;
   @media (max-width: 768px) {
@@ -105,7 +105,7 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: #052029;
+  background-color: var(--neutral-surface-base);
   padding: 24px;
   gap: 24px;
   align-items: center;
