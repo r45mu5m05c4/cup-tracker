@@ -18,6 +18,8 @@ import WhiteRavens from "./White Ravens.svg";
 import Griparna from "./Griparna.svg";
 import RRD from "./The Raging Red Deers.svg";
 import LBH from "./Lomma Bay v1.svg";
+import HomePage from "./HomePage.jpeg";
+import MobileHomePage from "./MobileHomePage.png";
 
 export {
   BlackRavens,
@@ -40,4 +42,6 @@ export {
   FischerLogo,
   VEDLogo,
   FischerDarkLogo,
+  HomePage,
+  MobileHomePage,
 };

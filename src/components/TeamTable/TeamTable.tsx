@@ -56,7 +56,7 @@ const TeamTable: FC<Props> = ({ small }) => {
         key: "logo",
         header: "Team",
         render: (logo: string) => (
-          <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
+          <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
         ),
       },
       { key: "points", header: "P" },
@@ -70,7 +70,7 @@ const TeamTable: FC<Props> = ({ small }) => {
         key: "logo",
         header: "Team",
         render: (logo: string) => (
-          <img src={logo} alt="" style={{ width: "20px", height: "20px" }} />
+          <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
         ),
       },
       { key: "name", header: "" },
@@ -184,15 +184,17 @@ const SmallHeader = styled.div`
   display: flex;
   align-items: center;
   border-bottom: 0.5px solid #0E4051;
-  padding: 10px;
+  padding: 6px 10px;
   font-weight: 500;
+  font-size: .8em;
+  background-color: #093A47;
 `;
 
 const Link = styled.a`
   display: flex;
   align-items: center;
   color: white;
-  padding: 10px;
+  padding: 10px 0;
   margin-left: auto;
   margin-right: 0;
   &:hover {

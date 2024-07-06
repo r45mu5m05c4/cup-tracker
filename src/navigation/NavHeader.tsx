@@ -26,7 +26,7 @@ const Container = styled("div")`
   display: flex;
   align-items: center;
   padding: 8px;
-  margin-top: 6px;
+  margin-top: 12px;
   color: #fff;
 `;
 
@@ -38,7 +38,7 @@ const LogoContainer = styled("div")`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #42917e;
+  color: #15BA83;
 `;
 
 const StyledTrophyIcon = styled(FireIcon)`

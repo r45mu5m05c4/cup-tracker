@@ -56,7 +56,7 @@ const Home = () => {
       <PageContainer>
         <Header>
           <IconButton ref={buttonRef} onClick={() => togglePopup()}>
-            <HamburgerMenuIcon />
+            <LoginIcon />
             {showLoginModal && (
               <LoginModal
                 popupPosition={popupPosition}
@@ -65,7 +65,6 @@ const Home = () => {
             )}
           </IconButton>
         </Header>
-
         <Row>
           <Content>
             <Routes>
@@ -106,14 +105,9 @@ export default Home;
 const Container = styled.div`
   width: 100%;
   display: flex;
-  @media (max-width: 768px) {
-    background-color: #f9f9f9;
-  }
 `;
 const PageContainer = styled.div`
   width: 100%;
-  background-color: #052029;
-  border-radius: 16px;
   @media (max-width: 768px) {
     margin: 0;
   }
@@ -134,33 +128,37 @@ const Header = styled.div`
   justify-content: flex-end;
   align-items: center;
   padding: 14px;
-  
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-  }
 `;
 const IconButton = styled.button`
   background-color: transparent;
-  border: 1px solid transparent;
-  padding: 8px;
+  border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-
-  &:hover {
-    border-color: #e0e0e0;
-  }
+  width: 38px;
+  height: 38px;
 
   &:active {
     border-color: #e0e0e0;
   }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid white;
+  }
 `;
-const HamburgerMenuIcon = styled(UserCircleIcon)`
+const LoginIcon = styled(UserCircleIcon)`
   color: white;
-  width: 28px;
-  height: 28px;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+
+  &:hover {
+    color: #42917E;
+  }
 `;

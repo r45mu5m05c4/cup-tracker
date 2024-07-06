@@ -12,10 +12,13 @@ import {
   EVT_white,
   FischerDarkLogo,
   VEDLogo,
+  HomePage,
+  MobileHomePage
 } from "./../../assets";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import Countdown from "../../molecules/Countdown";
 import Typography from "../../molecules/Typography";
+
 
 interface NewsProps {
   hasScrolled: boolean;
@@ -76,7 +79,7 @@ const News = ({ hasScrolled }: NewsProps) => {
           <div>
             <Typography
               variant="h1"
-              style={{ fontWeight: "bold", fontSize: "70px" }}
+              style={{ fontWeight: "bold", fontSize: "60px" }}
             >
               {competition?.location || ""}
             </Typography>
@@ -84,21 +87,35 @@ const News = ({ hasScrolled }: NewsProps) => {
               variant="h1"
               style={{
                 fontWeight: "bolder",
-                fontSize: "100px",
+                fontSize: "90px",
                 color: "#15BA83",
                 lineHeight: "78px",
                 paddingBottom: "12px",
+                marginTop: "-10px"
               }}
             >
-              {competition?.name || ""}
+              {competition?.name === "MHL" ? "Hockey Legue" : "Folkets Cup" || ""}
             </Typography>
             <Typography
               variant="h1"
-              style={{ fontWeight: "bold", fontSize: "70px" }}
+              style={{
+                fontWeight: "bold",
+                fontSize: "60px",
+                marginTop: "-8px"
+              }}
             >
               {getYearOfCompetition()}
             </Typography>
           </div>
+          <Typography
+            variant="p"
+            style={{ fontWeight: "500", marginBottom: "-20px", padding: "0 32px 18px 32px" }}
+          >
+            {competition?.name === "Folkets cup" ?
+              "Join us for an exciting event on November 15-17. Experience live updates and follow your favorite players and teams right here with us." :
+              "Welcome to the Malmö Hockey League (MHL), where local amateur teams come together to play hockey for the love of the game. Join us as we celebrate teamwork, passion, and the thrill of the ice!"
+            }
+          </Typography>
           {competition?.startDate && (
             <Countdown targetDate={competition.startDate} />
           )}
@@ -106,63 +123,110 @@ const News = ({ hasScrolled }: NewsProps) => {
       </RowFirst>
       <Row>
         <NewsContainer $readMore={false} $hasScrolled={hasScrolled}>
-          <PlayerTable small={true} />
-        </NewsContainer>
-        <NewsContainer $readMore={false} $hasScrolled={hasScrolled}>
+          <NewsContainerHeader>
+            <Typography variant="h4">Standings</Typography>
+          </NewsContainerHeader>
           <TeamTable small={true} />
+        </NewsContainer>
+        <NewsContainer $readMore={false} $hasScrolled={hasScrolled} style={{ backgroundColor: "#093A48" }}>
+          <NewsContainerHeader>
+            <Typography variant="h4">Players</Typography>
+          </NewsContainerHeader>
+          <PlayerTable small={true} />
         </NewsContainer>
       </Row>
       <Row>
         <NewsContainer
-          style={{ padding: "24px" }}
           $readMore={readMore}
           $hasScrolled={hasScrolled}
+          style={{
+            backgroundImage: "linear-gradient(228.48deg, #054c54 1.31%, #054c5400 50.25%)"
+          }}
         >
           {competition && (
             <ContentContainer $readMore={readMore}>
-              <h2>Welcome to {competition.name} 2024</h2>
+              <Typography variant="h4" style={{
+                fontFamily: "'Space Mono', sans-serif",
+                fontWeight: "bold",
+                padding: "12px 0"
+
+              }}>
+                Tournament information
+              </Typography>
               {competition.name === "Folkets cup" ? (
                 <>
-                  <Typography variant="h3" style={{ fontWeight: "semibold" }}>
-                    It's time for Folkets Cup 2024
-                  </Typography>
-                  <Typography variant="p" style={{ fontWeight: "semibold" }}>
+                  <Typography variant="p">
                     Folkets Puck Hockeyklubb invites you to Folkets Cup for
                     veteran teams, recreational teams and corporate teams. The
                     focus will be on having fun both on and off the ice. We will
                     organise an after-party, offer lunch, and aim to create an
                     even tournament where everyone has a chance to win!
                   </Typography>
-                  <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view">
-                    View Full Tournament Info via PDF
-                  </Link>
-                  <h3>Date, Time & Location</h3> November 16th & 17th 08.00 -
-                  18.00 both days
+                  <Typography variant="p" style={{
+                    fontWeight: "bold",
+                    paddingTop: "14px"
+                  }}>
+                    Date, Time & Location
+                  </Typography>
+                  <Typography variant="p">
+                    November 16th & 17th 08.00 -
+                    18.00 both days
+                  </Typography>
                   <Link href="https://maps.app.goo.gl/JccSMdFjqRDeeiFP8">
                     Kirseberg Ishall, Malmö
                   </Link>
-                  Österhagsgatan 3, 212 22 Malmö <h3>Tournament Level</h3> This
-                  is an adult tournament. 19+ only. 1 Division. 8 Teams. 10-15
-                  players + 1 goalie per team. Teams should ideally have a mix
-                  of B & C series players. No A-series player / teams will be
-                  accepted. (See details on player levels here).{" "}
-                  <h3>The rules people really care about:</h3>
-                  Icing: Hybrid. Slapshots: No “full” slapshots. “Snapshots” are
-                  okay. Basically - keep your stick below your knees. Hitting:
-                  No! All rules:
-                  <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view">
-                    View Full Tournament Info via PDF
-                  </Link>
-                  <h3>Food</h3> Locker Room Snacks: There will be a snack basket
-                  (fruit, energy, snacks) provided for each team. Lunch: No.
-                  <h3>After-party</h3> Meet 19.30 on SATURDAY at our official
-                  clubhouse:
+                  <Typography variant="p" style={{
+                    fontWeight: "bold",
+                    paddingTop: "14px"
+                  }}>
+                    Tournament Level
+                  </Typography>
+                  <Typography variant="p">
+                    This
+                    is an adult tournament. 19+ only. 1 Division. 8 Teams. 10-15
+                    players + 1 goalie per team. Teams should ideally have a mix
+                    of B & C series players. No A-series player / teams will be
+                    accepted. (See details on player levels here).
+                  </Typography>
+                  <Typography variant="p" style={{
+                    fontWeight: "bold",
+                    paddingTop: "14px"
+                  }}>
+                    The rules people really care about:
+                  </Typography>
+                  <Typography variant="p">
+                    Icing: Hybrid. Slapshots: No “full” slapshots. “Snapshots” are
+                    okay. Basically - keep your stick below your knees. Hitting:
+                    No! All rules:
+                  </Typography>
+                  <Typography variant="p" style={{
+                    fontWeight: "bold",
+                    paddingTop: "14px"
+                  }}>
+                    Food
+                  </Typography>
+                  <Typography variant="p">
+                    Locker Room Snacks: There will be a snack basket
+                    (fruit, energy, snacks) provided for each team. Lunch: No.
+                  </Typography>
+                  <Typography variant="p" style={{
+                    fontWeight: "bold",
+                    paddingTop: "14px"
+                  }}>
+                    After-party
+                  </Typography>
+                  <Typography variant="p">
+                    Meet 19.30 on SATURDAY at our official
+                    clubhouse:
+                  </Typography>
                   <Link href="https://maps.app.goo.gl/92gsykBKaX6HEPC97">
                     V.E.D Restaurang & Bar
                   </Link>
-                  . Kristianstadsgatan 10A, 214 23 Malmö We will either stay
-                  here or find something close by depending on how much space we
-                  need. There are a ton of options within a couple blocks.
+                  <Typography variant="p">
+                    Kristianstadsgatan 10A, 214 23 Malmö We will either stay
+                    here or find something close by depending on how much space we
+                    need. There are a ton of options within a couple blocks.
+                  </Typography>
                   <Link href="https://drive.google.com/file/d/1JeJR4cDL32rKlIDix9B7QrZF06HAmaTd/view">
                     View Full Tournament Info via PDF
                   </Link>
@@ -188,19 +252,17 @@ const News = ({ hasScrolled }: NewsProps) => {
         </NewsContainer>
       </Row>
       <Row>
-        <NewsContainer $readMore={false} $hasScrolled={hasScrolled}>
-          <SponsorContainer>
-            {logos.map((logo, index) => (
-              <SponsorLink
-                key={index}
-                href={logo.href}
-                $isActive={index === currentIndex}
-              >
-                <SponsorLogo src={logo.src} />
-              </SponsorLink>
-            ))}
-          </SponsorContainer>
-        </NewsContainer>
+        <SponsorContainer>
+          {logos.map((logo, index) => (
+            <SponsorLink
+              key={index}
+              href={logo.href}
+              $isActive={index === currentIndex}
+            >
+              <SponsorLogo src={logo.src} />
+            </SponsorLink>
+          ))}
+        </SponsorContainer>
       </Row>
       {!isMobileDevice() && <Float $hasScrolled={hasScrolled} onClick={onClickFloatButton} />}
     </Container>
@@ -212,7 +274,6 @@ export default News;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
 `;
 
 const IntroContainer = styled.div`
@@ -223,10 +284,38 @@ const IntroContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 54px;
-  padding-top: 72px;
+  padding-top: 54px;
 
   h1 {
     margin: 0;
+  }
+
+  p {
+    max-width: 560px;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 0;
+    gap: 12px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-image: url(${HomePage});
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    z-index: -1; 
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
+
+    @media (max-width: 768px) {
+      background-image: url(${MobileHomePage});
+    }
   }
 `;
 
@@ -248,16 +337,21 @@ const SponsorLink = styled.a<{ $isActive: boolean }>`
 
 const SponsorContainer = styled.div`
   width: 100%;
-  height: 300px;
+  height: 120px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  padding: 24px;
   gap: 50px;
+  background-color: #072B38;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
+
   @media (max-width: 768px) {
     height: 100%;
-    padding: 0;
+    width: 88%;
   }
 `;
 
@@ -286,24 +380,28 @@ const ReadMoreButton = styled.button`
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
   background-color: transparent;
-  color: #42917e;
+  color: #42917E;
   cursor: pointer;
   transition: border-color 0.25s;
   align-self: flex-end;
+  margin-bottom: 20px;
+  margin-right: 12px;
+
   &:disabled {
     background-color: #bababa;
     cursor: default;
   }
   &:hover {
     border: 1px solid transparent;
+    color: #4EAB95;
   }
   &:active {
     border: 1px solid transparent;
   }
   &:focus {
     border: 1px solid transparent;
+    outline: none;
   }
   &:target {
     border: 1px solid transparent;
@@ -312,9 +410,10 @@ const ReadMoreButton = styled.button`
 
 const RowFirst = styled.div`
   width: 100%;
+  height: calc(100vh - 76px);
   display: flex;
   flex-direction: column;
-  margin-bottom: 120px;
+  padding-bottom: 14px;
 `;
 
 const Row = styled.div`
@@ -329,38 +428,50 @@ const Row = styled.div`
 const ContentContainer = styled.div<{ $readMore: boolean }>`
   flex: 1;
   overflow: ${(props) => (props.$readMore ? "auto" : "hidden")};
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 80%;
 `;
 
 const NewsContainer = styled.div<{ $readMore: boolean; $hasScrolled: boolean }>`
   opacity: ${(props) => (props.$hasScrolled ? "1" : "0")};
   background-color: #072B38;
-  box-shadow: 0px 2px 15px 0px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   ${(props) =>
     !props.$readMore &&
     `
-      height: 300px;
+      height: 350px;
       overflow: hidden;
     `};
   transition: 1s;
   margin: 14px;
-  padding: 14px;
 
   @media (min-width: 768px) {
     width: 100%;
+`;
+
+const NewsContainerHeader = styled.div`
+  border-bottom: 1px solid #0E4051;
+  padding: 20px 24px;
+  font-family: 'Space Mono', sans-serif;
 `;
 
 const Link = styled.a`
   display: flex;
   align-items: center;
   color: #42917e;
+  padding: 12px 0;
+
   &:hover {
-    color: #000;
+    color: #4EAB95;
   }
 `;
+
 const Float = styled(ArrowDownIcon) <{ $hasScrolled: boolean; }>`
 	position: fixed;
 	width: 28px;

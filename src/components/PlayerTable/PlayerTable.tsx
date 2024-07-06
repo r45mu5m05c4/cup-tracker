@@ -7,6 +7,7 @@ import { Player } from "../../utils/types/Player";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import Typography from "../../molecules/Typography";
 
 interface Props {
   small: boolean;
@@ -70,50 +71,52 @@ const PlayerTable: FC<Props> = ({ small }) => {
 
   const playerColumns = small
     ? [
-        { key: "name", header: "Name" },
-        {
-          key: "logo",
-          header: "Team",
-          render: (logo: string) => (
-            <img
-              src={logo}
-              alt="team"
-              style={{ width: "20px", height: "20px" }}
-            />
-          ),
-        },
-        { key: "goals", header: "G" },
-        { key: "assists", header: "A" },
-        { key: "points", header: "P" },
-      ]
+      { key: "name", header: "Name" },
+      {
+        key: "logo",
+        header: "Team",
+        render: (logo: string) => (
+          <img
+            src={logo}
+            alt="team"
+            style={{ width: "20px", height: "20px" }}
+          />
+        ),
+      },
+      { key: "goals", header: "G" },
+      { key: "assists", header: "A" },
+      { key: "points", header: "P" },
+    ]
     : [
-        { key: "name", header: "Name" },
-        { key: "jerseyNumber", header: "#" },
-        {
-          key: "logo",
-          header: "Team",
-          render: (logo: string) => (
-            <img
-              src={logo}
-              alt="team"
-              style={{ width: "20px", height: "20px" }}
-            />
-          ),
-        },
-        { key: "position", header: "Pos" },
-        { key: "goals", header: "G" },
-        { key: "assists", header: "A" },
-        { key: "points", header: "P" },
-        { key: "gamesPlayed", header: "GP" },
-        { key: "penaltyMinutes", header: "PIM" },
-      ];
+      { key: "name", header: "Name" },
+      { key: "jerseyNumber", header: "#" },
+      {
+        key: "logo",
+        header: "Team",
+        render: (logo: string) => (
+          <img
+            src={logo}
+            alt="team"
+            style={{ width: "20px", height: "20px" }}
+          />
+        ),
+      },
+      { key: "position", header: "Pos" },
+      { key: "goals", header: "G" },
+      { key: "assists", header: "A" },
+      { key: "points", header: "P" },
+      { key: "gamesPlayed", header: "GP" },
+      { key: "penaltyMinutes", header: "PIM" },
+    ];
 
   return (
     <Container $small={small}>
       {players.length ? (
         <Table data={players} columns={playerColumns}></Table>
       ) : (
-        <NoPlayersText>No players registered</NoPlayersText>
+        <Typography variant="p" style={{ padding: "12px 24px" }}>
+          No players registered yet.
+        </Typography>
       )}
     </Container>
   );
@@ -131,8 +134,4 @@ const Container = styled.div<{ $small: boolean }>`
     min-height:  ${(props) => (props.$small ? "0" : "500px")};
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
-`;
-const NoPlayersText = styled.h2`
-  margin: auto;
-  padding: 24px;
 `;

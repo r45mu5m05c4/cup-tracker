@@ -11,7 +11,7 @@ const Typography: React.FC<TypographyProps> = ({ variant, color, children, style
     const Element = variant;
 
     return (
-        <Element color={color} style={style}>
+        <Element color={color} style={{ margin: 0, ...style, }}>
             {children}
         </Element>
     );

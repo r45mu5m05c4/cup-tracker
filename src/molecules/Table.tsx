@@ -102,6 +102,8 @@ const NoDataText = styled.h2`
 const TableContainer = styled.table`
   width: 100%;
   border-collapse: collapse;
+  font-size: .9em;
+  padding: 6px;
 `;
 
 const TableHeader = styled.th.withConfig({
@@ -120,7 +122,7 @@ const TableHeader = styled.th.withConfig({
 const TableCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
 }) <{ sticky: boolean; isLogo: boolean }>`
-  padding: 8px;
+  padding: 8px 14px;
   padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
   width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};
   border-bottom: 1px solid #0E4051;

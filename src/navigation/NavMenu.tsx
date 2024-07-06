@@ -4,7 +4,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Bars3Icon,
-  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import NavHeader from "./NavHeader";
 import NavLinks from "./NavLinks";
@@ -17,7 +16,7 @@ interface LeftBarProps {
 
 const NavMenu = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const { competition } = useCompetition();
 
   const handleCollapse = () => {
@@ -34,10 +33,13 @@ const NavMenu = () => {
 
   return isMobileDevice() ? (
     <>
-      <HamburgerButton onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? <StyledCloseIcon /> : <StyledHamburgerIcon />}
-      </HamburgerButton>
-      {isOpen && <MobileMenu isOpenProp={setIsOpen} />}
+      {isMobileNavOpen ? (
+        <MobileMenu isOpenProp={setIsMobileNavOpen} />)
+        : (
+          <HamburgerButton onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}>
+            <StyledHamburgerIcon />
+          </HamburgerButton>
+        )}
     </>
   ) : (
     <LeftBar $collapsed={collapsed}>
@@ -74,6 +76,8 @@ const LeftBar = styled.div<LeftBarProps>`
   transition: all 0.25s ease-in-out;
   position: sticky;
   top: 0;
+  background-color: #03181E;
+  border-right: 1px solid #06323F;
 `;
 
 const StyledChevronRightIcon = styled(ChevronLeftIcon)`
@@ -90,19 +94,7 @@ const StyledHamburgerIcon = styled(Bars3Icon)`
   height: 34px;
   width: 34px;
   min-width: 24px;
-  color: white;
-  padding: 8px;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-const StyledCloseIcon = styled(XMarkIcon)`
-  height: 34px;
-  width: 34px;
-  min-width: 24px;
-  color: white;
-  padding: 8px 0;
+  color: #E5E5E5;
 
   &:hover {
     cursor: pointer;
@@ -143,16 +135,30 @@ const CollapseSideMenuButton = styled("button")`
   }
 
   &:focus {
-    outline: 1px solid var(--color-text-primary);
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 `;
 const HamburgerButton = styled.button`
   background-color: transparent;
-  height: 44px;
-  top: 10px;
-  right: 2%;
-  left: auto;
+  height: 46px;
   border: none;
+  border-radius: 8px;
   position: fixed;
   z-index: 160;
+  margin-top: 8px;
+  margin-left: 8px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
 `;

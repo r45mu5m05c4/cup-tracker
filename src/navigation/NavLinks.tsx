@@ -1,13 +1,5 @@
 import styled, { css } from "styled-components";
 import { Link, useLocation } from "react-router-dom";
-import {
-  NewspaperIcon,
-  BoltIcon,
-  PresentationChartBarIcon,
-  PresentationChartLineIcon,
-  WrenchScrewdriverIcon,
-  TrophyIcon,
-} from "@heroicons/react/24/outline";
 import Typography from "../molecules/Typography";
 import {
   ROUTE_PATH_ADMIN,
@@ -19,6 +11,14 @@ import {
 } from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import {
+  ChartBarSquareIcon,
+  Cog6ToothIcon,
+  HomeIcon,
+  PaperAirplaneIcon,
+  PresentationChartLineIcon,
+  TrophyIcon,
+} from "@heroicons/react/20/solid";
 
 interface NavLinksProps {
   collapsed: boolean;
@@ -47,7 +47,7 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledLinkIcon />
-        {!collapsed && <Typography variant="p">News</Typography>}
+        {!collapsed && <Typography variant="p">Start</Typography>}
       </StyledLink>
       <StyledLink
         to={ROUTE_PATH_GAMES}
@@ -117,9 +117,9 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
             </StyledLink>
           )}
 
-          <Separator />
         </>
       )}
+      <Separator />
       <StyledLink
         to="/"
         $active={false}
@@ -143,17 +143,17 @@ const Container = styled("div")`
   width: 100%;
   white-space: nowrap;
 `;
-const StyledLinkIcon = styled(NewspaperIcon)`
+const StyledLinkIcon = styled(HomeIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
-const StyledGamesIcon = styled(BoltIcon)`
+const StyledGamesIcon = styled(PaperAirplaneIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
-const StyledPlayerStatsIcon = styled(PresentationChartBarIcon)`
+const StyledPlayerStatsIcon = styled(ChartBarSquareIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
@@ -163,7 +163,7 @@ const StyledTeamStatsIcon = styled(PresentationChartLineIcon)`
   min-width: 20px;
   height: 20px;
 `;
-const StyledSuperAdminIcon = styled(WrenchScrewdriverIcon)`
+const StyledSuperAdminIcon = styled(Cog6ToothIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
@@ -173,14 +173,14 @@ const StyledPlayoffBracketIcon = styled(TrophyIcon)`
   min-width: 20px;
   height: 20px;
 `;
-const StyledLink = styled(Link)<{ $active: boolean; $collapsed: boolean }>`
+const StyledLink = styled(Link) <{ $active: boolean; $collapsed: boolean }>`
   height: 38px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   padding: ${(props) => (props.$collapsed ? "0 8px" : "0 0 0 8px")};
   align-items: center;
   font-size: 14px;
-  margin: 8px 12px;
+  margin: 12px;
   border-radius: 4px;
   font-weight: 600;
   background-color: ${(props) => (props.$active ? "#42917E" : "transparent")};
@@ -192,6 +192,11 @@ const StyledLink = styled(Link)<{ $active: boolean; $collapsed: boolean }>`
     cursor: pointer;
   }
 
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
   ${(props) =>
     props.$active &&
     css`
@@ -201,7 +206,7 @@ const StyledLink = styled(Link)<{ $active: boolean; $collapsed: boolean }>`
 `;
 
 const Separator = styled("div")`
-  background-color: var(--color-divider-primary);
+  background-color: #06323F;
   margin: 24px 14px;
   height: 1px;
 `;

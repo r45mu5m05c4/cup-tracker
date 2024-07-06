@@ -59,7 +59,7 @@ const CompetitionPicker = () => {
       <Header>
         <Typography variant="h1" children="Choose competition"></Typography>
         <IconButton ref={buttonRef} onClick={() => togglePopup()}>
-          <HamburgerMenuIcon />
+          <LoginIcon />
           {showLoginModal && (
             <LoginModal
               popupPosition={popupPosition}
@@ -95,7 +95,7 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: #052029;
   gap: 24px;
   padding: 24px;
   @media (max-width: 768px) {
@@ -105,7 +105,7 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: #fff;
+  background-color: #052029;
   padding: 24px;
   gap: 24px;
   align-items: center;
@@ -173,7 +173,7 @@ const IconButton = styled.button`
     border-color: #e0e0e0;
   }
 `;
-const HamburgerMenuIcon = styled(UserCircleIcon)`
+const LoginIcon = styled(UserCircleIcon)`
   color: #e0e0e0;
   width: 28px;
   height: 28px;

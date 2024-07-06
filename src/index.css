@@ -32,14 +32,12 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #03181E;
+  background-color: #052029;
 
   --color-background-primary: #041416;
   --color-background-primary-darker: #0e2025;
   --color-background-secondary-darker: #041416;
-
   --color-text-primary: #c8c8c8;
-
   --color-divider-primary: #1c3731;
 }
 
@@ -54,20 +52,21 @@ h4 {
 h1 {
   font-size: 3.2em;
   font-weight: 500;
+  font-family: 'Futura', sans-serif;
 }
 
 h2 {
-  font-size: 1.8em;
+  font-size: 1.6em;
   font-weight: 500;
 }
 
 h3 {
-  font-size: 1.4em;
+  font-size: 1.3em;
   font-weight: 600;
 }
 
 h4 {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: 600;
 }
 
