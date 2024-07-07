@@ -13,7 +13,10 @@ export const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
       <StyledTrophyIcon />
     </LogoContainer>
     {!collapsed && (
-      <Typography variant="h4" style={{ whiteSpace: "nowrap" }}>
+      <Typography
+        variant="h4"
+        style={{ whiteSpace: "nowrap", fontFamily: "'Roboto', sans-serif" }}
+      >
         {competitionName}
       </Typography>
     )}

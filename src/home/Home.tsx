@@ -15,6 +15,7 @@ import { LoginModal } from "./LoginModal";
 import { SetCompetitionFromUrl } from "../components/CompetitionPicker/SetCompetitionFromUrl";
 import { Bracket } from "../components/Bracket/Bracket";
 import { Games } from "../components/Games/Games";
+import { IconButton } from "../molecules/IconButton";
 
 export const Home = () => {
   const { competition } = useCompetition();
@@ -27,7 +28,7 @@ export const Home = () => {
   const togglePopup = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupPosition(rect.bottom + window.scrollY);
+      setPopupPosition(rect.bottom);
     }
     setShowLoginModal(!showLoginModal);
   };
@@ -55,15 +56,17 @@ export const Home = () => {
       <DesktopMenu />
       <PageContainer>
         <Header>
-          <IconButton ref={buttonRef} onClick={() => togglePopup()}>
-            <LoginIcon />
-            {showLoginModal && (
-              <LoginModal
-                popupPosition={popupPosition}
-                showLoginModal={setShowLoginModal}
-              />
-            )}
-          </IconButton>
+          <IconButton
+            ref={buttonRef}
+            Icon={UserCircleIcon}
+            onClick={togglePopup}
+          />
+          {showLoginModal && (
+            <LoginModal
+              popupPosition={popupPosition}
+              showLoginModal={setShowLoginModal}
+            />
+          )}
         </Header>
         <Row>
           <Content>
@@ -134,39 +137,4 @@ const Header = styled.div`
   justify-content: flex-end;
   align-items: center;
   padding: 14px;
-`;
-
-const IconButton = styled.button`
-  background-color: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-
-  &:active {
-    border-color: var(--neutral-border-base);
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid white;
-  }
-`;
-
-const LoginIcon = styled(UserCircleIcon)`
-  color: var(--text-base);
-  width: 38px;
-  min-width: 38px;
-  height: 38px;
-
-  &:hover {
-    color: var(--decorative-brand-light);
-  }
 `;

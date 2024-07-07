@@ -68,19 +68,19 @@ export const Countdown = ({ targetDate }: CountdownProps) => {
       <TimeBlock>
         <TimeNumber>{renderTimeNumberSections(timeLeft.days)}</TimeNumber>
         <TimeLabel>
-          <Typography variant="p">days</Typography>
+          <Typography>days</Typography>
         </TimeLabel>
       </TimeBlock>
       <TimeBlock>
         <TimeNumber>{renderTimeNumberSections(timeLeft.hours)}</TimeNumber>
         <TimeLabel>
-          <Typography variant="p">hours</Typography>
+          <Typography>hours</Typography>
         </TimeLabel>
       </TimeBlock>
       <TimeBlock>
         <TimeNumber>{renderTimeNumberSections(timeLeft.minutes)}</TimeNumber>
         <TimeLabel>
-          <Typography variant="p">minutes</Typography>
+          <Typography>minutes</Typography>
         </TimeLabel>
       </TimeBlock>
     </CountdownContainer>

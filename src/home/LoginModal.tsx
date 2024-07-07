@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { BaseSyntheticEvent, useState } from "react";
 import * as Realm from "realm-web";
 import { useUser } from "../utils/context/UserContext";
+import { Button } from "../molecules/Button";
 
 interface LoginProps {
   popupPosition: number;
@@ -41,9 +42,7 @@ export const LoginModal = ({ popupPosition, showLoginModal }: LoginProps) => {
       <Overlay onClick={() => showLoginModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()} top={popupPosition}>
         {user && user.providerType !== "anon-user" ? (
-          <LoginOrOutButton href="#" onClick={(e) => handleLogout(e)}>
-            Logout
-          </LoginOrOutButton>
+          <Button onClick={handleLogout}>Log out</Button>
         ) : (
           <>
             <Input
@@ -61,13 +60,11 @@ export const LoginModal = ({ popupPosition, showLoginModal }: LoginProps) => {
               placeholder="Password"
             />
             {error && <p style={{ color: "red" }}>{error}</p>}
-            <LoginOrOutButton
-              href="#"
-              type="submit"
-              onClick={() => handleLogin()}
-            >
-              Login
-            </LoginOrOutButton>
+            <div style={{ display: "flex" }}>
+              <Button type="submit" onClick={handleLogin}>
+                Log in
+              </Button>
+            </div>
           </>
         )}
       </Modal>
@@ -79,8 +76,6 @@ const Overlay = styled.div`
   cursor: default;
   position: fixed;
   inset: 0;
-  opacity: 10%;
-  background-color: #000;
   z-index: 50;
 `;
 
@@ -93,29 +88,14 @@ const Modal = styled.div.withConfig({
       flex-direction: column;
       padding: 24px;
       top: ${(props) => props.top}px;
-      margin-right: 200px;
       border-radius: 8px;
       box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .4);
       background-color: #03161B;
       @media (max-width: 768px) {
         margin - right: -200px;
       margin-left: auto;
+      margin-top: 8px;
   }
-`;
-
-const LoginOrOutButton = styled.a`
-  border-radius: 30px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 600;
-  font-family: inherit;
-  background-color: #3c8271;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  width: 70px;
-  margin-top: 12px;
 `;
 
 const Input = styled.input`

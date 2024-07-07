@@ -40,7 +40,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledLinkIcon />
-        {!collapsed && <Typography variant="p">Start</Typography>}
+        {!collapsed && <Typography>Start</Typography>}
       </StyledLink>
       <StyledLink
         to={ROUTES.GAMES}
@@ -48,7 +48,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledGamesIcon />
-        {!collapsed && <Typography variant="p">Games</Typography>}
+        {!collapsed && <Typography>Games</Typography>}
       </StyledLink>
       <StyledLink
         to={ROUTES.PLAYERS}
@@ -56,7 +56,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledPlayerStatsIcon />
-        {!collapsed && <Typography variant="p">Player stats</Typography>}
+        {!collapsed && <Typography>Player stats</Typography>}
       </StyledLink>
       <StyledLink
         to={ROUTES.TEAMS}
@@ -64,7 +64,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
         $collapsed={collapsed}
       >
         <StyledTeamStatsIcon />
-        {!collapsed && <Typography variant="p">Standings</Typography>}
+        {!collapsed && <Typography>Standings</Typography>}
       </StyledLink>
       {competition?.type === "cup" && (
         <StyledLink
@@ -73,7 +73,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
           $collapsed={collapsed}
         >
           <StyledPlayoffBracketIcon />
-          {!collapsed && <Typography variant="p">Playoff bracket</Typography>}
+          {!collapsed && <Typography>Playoff bracket</Typography>}
         </StyledLink>
       )}
       {showAdminSection && (
@@ -85,7 +85,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
               $active={isActive(ROUTES.ADMIN)}
               $collapsed={collapsed}
             >
-              {!collapsed && <Typography variant="p">My team</Typography>}
+              {!collapsed && <Typography>My team</Typography>}
             </StyledLink>
           )}
           {isCupAdmin && (
@@ -94,7 +94,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
               $active={isActive(ROUTES.ADMIN)}
               $collapsed={collapsed}
             >
-              {!collapsed && <Typography variant="p">Manage cup</Typography>}
+              {!collapsed && <Typography>Manage cup</Typography>}
             </StyledLink>
           )}
           {isAdmin && (
@@ -104,9 +104,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
               $collapsed={collapsed}
             >
               <StyledSuperAdminIcon />
-              {!collapsed && (
-                <Typography variant="p">Super admin tools</Typography>
-              )}
+              {!collapsed && <Typography>Super admin tools</Typography>}
             </StyledLink>
           )}
         </>
@@ -119,7 +117,7 @@ export const NavLinks = ({ collapsed }: NavLinksProps) => {
         onClick={() => setCompetition(null)}
       >
         <StyledSuperAdminIcon />
-        {!collapsed && <Typography variant="p">Change competition</Typography>}
+        {!collapsed && <Typography>Change competition</Typography>}
       </StyledLink>
     </Container>
   );

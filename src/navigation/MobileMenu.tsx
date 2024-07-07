@@ -45,7 +45,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           onClick={onClose}
         >
           <StyledLinkIcon />
-          {<Typography variant="p">Start</Typography>}
+          {<Typography>Start</Typography>}
         </StyledLink>
         <StyledLink
           to={ROUTES.GAMES}
@@ -53,7 +53,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           onClick={onClose}
         >
           <StyledGamesIcon />
-          {<Typography variant="p">Games</Typography>}
+          {<Typography>Games</Typography>}
         </StyledLink>
         <StyledLink
           to={ROUTES.PLAYERS}
@@ -61,7 +61,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           onClick={onClose}
         >
           <StyledPlayerStatsIcon />
-          {<Typography variant="p">Player stats</Typography>}
+          {<Typography>Player stats</Typography>}
         </StyledLink>
         <StyledLink
           to={ROUTES.TEAMS}
@@ -69,7 +69,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           onClick={onClose}
         >
           <StyledTeamStatsIcon />
-          {<Typography variant="p">Standings</Typography>}
+          {<Typography>Standings</Typography>}
         </StyledLink>
         <StyledLink
           to={ROUTES.BRACKET}
@@ -77,7 +77,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           onClick={onClose}
         >
           <StyledPlayoffBracketIcon />
-          {<Typography variant="p">Playoff bracket</Typography>}
+          {<Typography>Playoff bracket</Typography>}
         </StyledLink>
         {showAdminSection && (
           <>
@@ -88,7 +88,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
                 $active={isActive(ROUTES.ADMIN)}
                 onClick={onClose}
               >
-                {<Typography variant="p">My team</Typography>}
+                {<Typography>My team</Typography>}
               </StyledLink>
             )}
             {isCupAdmin && (
@@ -97,7 +97,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
                 $active={isActive(ROUTES.ADMIN)}
                 onClick={onClose}
               >
-                {<Typography variant="p">Manage cup</Typography>}
+                {<Typography>Manage cup</Typography>}
               </StyledLink>
             )}
             {isAdmin && (
@@ -107,7 +107,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
                 onClick={onClose}
               >
                 <StyledSuperAdminIcon />
-                {<Typography variant="p">Super admin tools</Typography>}
+                {<Typography>Super admin tools</Typography>}
               </StyledLink>
             )}
           </>
@@ -122,7 +122,7 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           }}
         >
           <StyledSuperAdminIcon />
-          {<Typography variant="p">Change competition</Typography>}
+          {<Typography>Change competition</Typography>}
         </StyledLink>
       </Menu>
     </>

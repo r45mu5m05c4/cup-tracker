@@ -143,6 +143,7 @@ const CollapseSideMenuButton = styled("button")`
     outline-offset: 2px;
   }
 `;
+
 const HamburgerButton = styled.button`
   background-color: transparent;
   height: 46px;

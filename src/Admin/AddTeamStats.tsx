@@ -5,6 +5,9 @@ import { Team } from "../utils/types/Team";
 import { getTeams, updateTeamStats } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { Select } from "../molecules/Select";
+import { Button } from "../molecules/Button";
+import { Typography } from "../molecules/Typography";
 
 export const AddTeamStats = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -84,18 +87,20 @@ export const AddTeamStats = () => {
 
   return (
     <Container>
-      <h2>Admin Page - Update Teams</h2>
-      <Select onChange={(e) => handleTeamSelect(e.target.value)}>
-        <option value="">Select a team to update</option>
-        {teams.map((team) => (
-          <option key={team._id} value={team._id}>
-            {team.name}
-          </option>
-        ))}
-      </Select>
+      <Select
+        label="Teams"
+        placeholder="Select team"
+        options={teams.map((team) => ({
+          value: team._id,
+          label: team.name,
+        }))}
+        onChange={(e) => handleTeamSelect(e.target.value)}
+      />
       {selectedTeam && (
         <div>
-          <h3>Update Team: {selectedTeam.name}</h3>
+          <Typography style={{ fontWeight: "600", margin: "32px 0 24px 0" }}>
+            Updating team: {selectedTeam.name}
+          </Typography>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -103,7 +108,7 @@ export const AddTeamStats = () => {
             }}
           >
             <Label>
-              Wins:
+              Wins
               <input
                 type="number"
                 value={updatedWins}
@@ -112,7 +117,7 @@ export const AddTeamStats = () => {
             </Label>
             <br />
             <Label>
-              Draws:
+              Draws
               <input
                 type="number"
                 value={updatedDraws}
@@ -121,7 +126,7 @@ export const AddTeamStats = () => {
             </Label>
             <br />
             <Label>
-              Losses:
+              Losses
               <input
                 type="number"
                 value={updatedLosses}
@@ -130,7 +135,7 @@ export const AddTeamStats = () => {
             </Label>
             <br />
             <Label>
-              Points:
+              Points
               <input
                 type="number"
                 value={updatedPoints}
@@ -169,31 +174,39 @@ export const AddTeamStats = () => {
               />
             </Label>
             <br />
-            <Label>
-              Group:
-              <Select
-                value={updatedGroup}
-                onChange={(e) => setUpdatedGroup(e.target.value)}
-              >
-                <option value="">Select group</option>
-                <option value="A">Group A</option>
-                <option value="B">Group B</option>
-              </Select>
-            </Label>
             <br />
-            <Label>
-              Playoff group:
-              <Select
-                value={updatedPlayoffGroup}
-                onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
-              >
-                <option value="">Select group</option>
-                <option value="A">Playoff group A</option>
-                <option value="B">Playoff group B</option>
-              </Select>
-            </Label>
+
+            <Select
+              label="Group"
+              value={updatedGroup}
+              placeholder="Select group"
+              options={[
+                { label: "Group A", value: "A" },
+                { label: "Group B", value: "B" },
+              ]}
+              onChange={(e) => setUpdatedGroup(e.target.value)}
+            />
+
             <br />
-            <Button type="submit">Update Team</Button>
+            <br />
+
+            <Select
+              label="Playoff group"
+              value={updatedPlayoffGroup}
+              placeholder="Select group"
+              options={[
+                { label: "Playoff group A", value: "A" },
+                { label: "Playoff group B", value: "B" },
+              ]}
+              onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
+            />
+
+            <br />
+            <div style={{ marginTop: "24px" }}>
+              <Button type="submit" onClick={() => {}}>
+                Update Team
+              </Button>
+            </div>
           </form>
         </div>
       )}
@@ -203,58 +216,19 @@ export const AddTeamStats = () => {
 };
 
 const Container = styled.div`
-  margin: auto;
-  height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
 `;
 
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--text-muted);
-  color: var(--text-base);
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-  &:disabled {
-    background-color: var(--text-muted);
-    cursor: default;
-    &:hover {
-      border: 1px solid transparent;
-    }
-  }
-`;
-
 const Label = styled.div`
-  width: 90%;
   display: flex;
   flex-direction: row;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
-  margin: auto;
+  gap: 14px;
+
   @media (max-width: 768px) {
     font-size: 0.8em;
     flex-direction: column;
-  }
-`;
-
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: auto;
-  margin-right: 0;
-  width: 70%;
-  padding: 8px;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    width: 100%;
   }
 `;

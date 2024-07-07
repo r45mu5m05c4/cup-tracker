@@ -57,7 +57,6 @@ export const StartHeader = () => {
           </Typography>
         </div>
         <Typography
-          variant="p"
           style={{
             fontWeight: "500",
             marginBottom: "-20px",

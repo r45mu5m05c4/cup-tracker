@@ -37,7 +37,7 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
           </Typography>
           {competition.name === "Folkets cup" ? (
             <>
-              <Typography variant="p">
+              <Typography>
                 Folkets Puck Hockeyklubb invites you to Folkets Cup for veteran
                 teams, recreational teams and corporate teams. The focus will be
                 on having fun both on and off the ice. We will organise an
@@ -45,7 +45,6 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
                 where everyone has a chance to win!
               </Typography>
               <Typography
-                variant="p"
                 style={{
                   fontWeight: "bold",
                   paddingTop: "14px",
@@ -53,14 +52,13 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
               >
                 Date, Time & Location
               </Typography>
-              <Typography variant="p">
+              <Typography>
                 November 16th & 17th 08.00 - 18.00 both days
               </Typography>
               <Link href="https://maps.app.goo.gl/JccSMdFjqRDeeiFP8">
                 Kirseberg Ishall, Malmö
               </Link>
               <Typography
-                variant="p"
                 style={{
                   fontWeight: "bold",
                   paddingTop: "14px",
@@ -68,14 +66,13 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
               >
                 Tournament Level
               </Typography>
-              <Typography variant="p">
+              <Typography>
                 This is an adult tournament. 19+ only. 1 Division. 8 Teams.
                 10-15 players + 1 goalie per team. Teams should ideally have a
                 mix of B & C series players. No A-series player / teams will be
                 accepted. (See details on player levels here).
               </Typography>
               <Typography
-                variant="p"
                 style={{
                   fontWeight: "bold",
                   paddingTop: "14px",
@@ -83,13 +80,12 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
               >
                 The rules people really care about:
               </Typography>
-              <Typography variant="p">
+              <Typography>
                 Icing: Hybrid. Slapshots: No “full” slapshots. “Snapshots” are
                 okay. Basically - keep your stick below your knees. Hitting: No!
                 All rules:
               </Typography>
               <Typography
-                variant="p"
                 style={{
                   fontWeight: "bold",
                   paddingTop: "14px",
@@ -97,12 +93,11 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
               >
                 Food
               </Typography>
-              <Typography variant="p">
+              <Typography>
                 Locker Room Snacks: There will be a snack basket (fruit, energy,
                 snacks) provided for each team. Lunch: No.
               </Typography>
               <Typography
-                variant="p"
                 style={{
                   fontWeight: "bold",
                   paddingTop: "14px",
@@ -110,13 +105,13 @@ export const StartInfoWidget = ({ fadeIn }: StartProps) => {
               >
                 After-party
               </Typography>
-              <Typography variant="p">
+              <Typography>
                 Meet 19.30 on SATURDAY at our official clubhouse:
               </Typography>
               <Link href="https://maps.app.goo.gl/92gsykBKaX6HEPC97">
                 V.E.D Restaurang & Bar
               </Link>
-              <Typography variant="p">
+              <Typography>
                 Kristianstadsgatan 10A, 214 23 Malmö We will either stay here or
                 find something close by depending on how much space we need.
                 There are a ton of options within a couple blocks.

@@ -7,6 +7,9 @@ import { useUser } from "../utils/context/UserContext";
 import { GameStage, GameType, Goal } from "../utils/types/Game";
 import DatePicker from "react-datepicker";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { Typography } from "../molecules/Typography";
+import { Button } from "../molecules/Button";
+import { Select } from "../molecules/Select";
 
 export type NewGame = {
   gameId: string;
@@ -112,134 +115,120 @@ export const ScheduleGame = () => {
     }
   };
 
+  const teamOptions = [
+    { value: "TBD", label: "TBD" },
+    ...teams.map((team) => ({
+      value: team.name,
+      label: team.name,
+    })),
+  ];
+
   return (
     <Container>
-      <h2>Admin Page - Add Game</h2>
-      <>
-        <StyledForm
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAddGame();
-          }}
-        >
-          <Select onChange={(e) => handleTeamSelect(e.target.value, false)}>
-            <option value="">Select away team</option>
-            <option value="TBD">TBD</option>
-            {teams.map((team) => (
-              <option key={team._id} value={team.name}>
-                {team.name}
-              </option>
-            ))}
-          </Select>
-          @
-          <Select onChange={(e) => handleTeamSelect(e.target.value, true)}>
-            <option value="">Select home team</option>
-            <option value={"TBD"}>TBD</option>
-            {teams.map((team) => (
-              <option key={team._id} value={team.name}>
-                {team.name}
-              </option>
-            ))}
-          </Select>
-          <DateContainer>
-            <p>
-              Selected Date and Time:
-              <br />
-              {startTime && format(startTime, "HH:mm - dd MMMM, yyyy")}
-            </p>
-            <DatePicker
-              showTimeInput
-              dateFormat="MMMM d, yyyy HH:mm"
-              onChange={(date) => setStartTime(date)}
-              selected={startTime}
+      <StyledForm
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddGame();
+        }}
+      >
+        <div>
+          <Typography style={{ fontWeight: "500", marginBottom: "8px" }}>
+            Teams
+          </Typography>
+          <TeamsContainer>
+            <Select
+              placeholder="Select away team"
+              options={teamOptions}
+              onChange={(e) => handleTeamSelect(e.target.value, false)}
             />
-          </DateContainer>
-          <Label>
-            Game type:
+            <Typography style={{ fontWeight: "500", fontSize: "1.2em" }}>
+              @
+            </Typography>
             <Select
-              value={gameType}
-              onChange={(e) => setGameType(e.target.value as GameType)}
-            >
-              <option value="">Select type</option>
-              {possibleGameType.map((pos) => (
-                <option key={pos} value={pos}>
-                  {pos}
-                </option>
-              ))}
-            </Select>
-          </Label>
-          <Label>
-            Game stage:
-            <Select
-              value={gameStage}
-              onChange={(e) => setGameStage(e.target.value as GameStage)}
-            >
-              <option value="">Select stage</option>
-              {possibleGameStage.map((pos) => (
-                <option key={pos} value={pos}>
-                  {pos}
-                </option>
-              ))}
-            </Select>
-          </Label>
-          <Button type="submit">Add Game</Button>
-          {message !== "" && <span>{message}</span>}
-        </StyledForm>
-      </>
+              placeholder="Select home team"
+              options={teamOptions}
+              onChange={(e) => handleTeamSelect(e.target.value, true)}
+            />
+          </TeamsContainer>
+        </div>
+
+        <DateContainer>
+          <Typography style={{ fontWeight: "500" }}>Date and time</Typography>
+          <DatePicker
+            showTimeInput
+            dateFormat="MMMM d, yyyy HH:mm"
+            onChange={(date) => setStartTime(date)}
+            selected={startTime}
+          />
+          <Typography style={{ marginTop: "12px" }}>
+            {startTime && format(startTime, "HH:mm - dd MMMM, yyyy")}
+          </Typography>
+        </DateContainer>
+
+        <Select
+          label="Game type"
+          value={gameType}
+          placeholder="Select type"
+          options={possibleGameType.map((type) => ({
+            value: type,
+            label: type,
+          }))}
+          onChange={(e) => setGameType(e.target.value as GameType)}
+        />
+
+        <Select
+          label="Game stage"
+          value={gameStage}
+          placeholder="Select stage"
+          options={possibleGameStage.map((stage) => ({
+            value: stage,
+            label: stage,
+          }))}
+          onChange={(e) => setGameStage(e.target.value as GameStage)}
+        />
+
+        <div style={{ marginTop: "32px" }}>
+          <Button type="submit" onClick={() => {}}>
+            Add game
+          </Button>
+        </div>
+        {message !== "" && (
+          <Typography style={{ marginTop: "24px" }}>{message}</Typography>
+        )}
+      </StyledForm>
     </Container>
   );
 };
 
 const Container = styled.div`
-  margin: auto;
-  height: 100%;
-  width: 90%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-self: start;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-  margin-right: 0;
-  margin-left: auto;
-`;
-
-const Label = styled.div`
+const StyledForm = styled.form`
   width: 100%;
   display: flex;
-  flex-direction: row;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: 12px;
+  flex-direction: column;
+  gap: 24px;
 `;
 
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: auto;
-  width: 45%;
-  padding: 8px;
+const TeamsContainer = styled.div`
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const DateContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 8px;
-`;
-
-const StyledForm = styled.form`
-  width: 100%;
 `;

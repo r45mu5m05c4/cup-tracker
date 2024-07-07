@@ -7,6 +7,8 @@ import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { UpdatePlayerModal } from "./UpdatePlayerModal";
+import { Typography } from "../../molecules/Typography";
+import { Select } from "../../molecules/Select";
 
 export type NewPlayer = {
   name: string;
@@ -23,7 +25,7 @@ export type NewPlayer = {
 export const UpdatePlayers = () => {
   const [showModal, setShowModal] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[] | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
@@ -70,23 +72,28 @@ export const UpdatePlayers = () => {
 
   return (
     <Container>
-      <h2>Admin Page - Update Players</h2>
-      <select onChange={(e) => handleTeamSelect(e.target.value)}>
-        <option value="">Select a team update</option>
-        {teams.map((team) => (
-          <option key={team._id} value={team._id}>
-            {team.name}
-          </option>
-        ))}
-      </select>
-      {players.length &&
-        players.map((p: Player) => (
+      <Select
+        label="Teams"
+        placeholder="Select team"
+        options={teams.map((team) => ({
+          value: team._id,
+          label: team.name,
+        }))}
+        onChange={(e) => handleTeamSelect(e.target.value)}
+      />
+      {players && players.length > 0 ? (
+        players?.map((p: Player) => (
           <PlayerCard key={p._id} onClick={() => editPlayer(p)}>
             <PlayerCell>{p.name}</PlayerCell>
             <PlayerCell>{p.jerseyNumber}</PlayerCell>
             <PlayerCell>{p.position}</PlayerCell>
           </PlayerCard>
-        ))}
+        ))
+      ) : (
+        <Typography style={{ marginTop: "24px" }}>
+          {players === null ? "" : "No players yet."}
+        </Typography>
+      )}
       {showModal && selectedPlayer && (
         <UpdatePlayerModal
           player={selectedPlayer}
@@ -100,7 +107,6 @@ export const UpdatePlayers = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px;
 `;
 
 const PlayerCard = styled.div`
@@ -110,7 +116,6 @@ const PlayerCard = styled.div`
   cursor: pointer;
   border: 1px solid;
   margin-top: 5px;
-  padding: 10px;
 `;
 
 const PlayerCell = styled.p`

@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-import { useState } from "react";
 import UpdatePlayers from "./UpdatePlayers";
 import GameManager from "./GameManager";
 import RemoveGame from "./RemoveGame";
@@ -8,121 +7,89 @@ import { AddPlayer } from "./AddPlayer";
 import { AddTeamStats } from "./AddTeamStats";
 import { ScheduleGame } from "./ScheduleGame";
 import { AddLogo } from "./AddLogo";
+import { Tabs } from "../molecules/Tabs";
+import { Typography } from "../molecules/Typography";
 
 export const Admin = () => {
-  const [currentAdminPage, setCurrentAdminPage] = useState("");
-  const showAdminPage = () => {
-    switch (currentAdminPage) {
-      case "teamStats":
-        return <AddTeamStats />;
-      case "teamLogo":
-        return <AddLogo />;
-      case "playerStats":
-        return <UpdatePlayers />;
-      case "addPlayer":
-        return <AddPlayer />;
-      case "removePlayer":
-        return <RemovePlayer />;
-      case "addGame":
-        return <ScheduleGame />;
-      case "removeGame":
-        return <RemoveGame />;
-      case "updateGame":
-        return <GameManager />;
-      default:
-        break;
-    }
-  };
+  const tabs = [
+    {
+      label: "Game",
+      content: (
+        <TabContentContainer>
+          <Typography variant="h4">Schedule game</Typography>
+          <ScheduleGame />
+          <Separator />
+          <Typography variant="h4">Remove game</Typography>
+          <RemoveGame />
+          <Separator />
+          <Typography variant="h4">Live game manager</Typography>
+          <GameManager />
+        </TabContentContainer>
+      ),
+    },
+    {
+      label: "Team",
+      content: (
+        <TabContentContainer>
+          <Typography variant="h4">Update a teams stats</Typography>
+          <AddTeamStats />
+          <Separator />
+          <Typography variant="h4">Update/add a teams logo</Typography>
+          <AddLogo />
+        </TabContentContainer>
+      ),
+    },
+    {
+      label: "Player",
+      content: (
+        <TabContentContainer>
+          <Typography variant="h4">Update a player</Typography>
+          <UpdatePlayers />
+          <Separator />
+          <Typography variant="h4">Add a player</Typography>
+          <AddPlayer />
+          <Separator />
+          <Typography variant="h4">Remove a player</Typography>
+          <RemovePlayer />
+        </TabContentContainer>
+      ),
+    },
+  ];
+
   return (
     <Container>
-      {currentAdminPage !== "" && (
-        <AdminButton onClick={() => setCurrentAdminPage("")}>
-          Back to admin
-        </AdminButton>
-      )}
-      {currentAdminPage === "" ? (
-        <>
-          <TeamControlContainer>
-            <h3>Team</h3>
-            <AdminButton onClick={() => setCurrentAdminPage("teamStats")}>
-              Update a teams stats
-            </AdminButton>
-            <AdminButton onClick={() => setCurrentAdminPage("teamLogo")}>
-              Update/add a teams logo
-            </AdminButton>
-          </TeamControlContainer>
-          <PlayerControlContainer>
-            <h3>Player</h3>
-            <AdminButton onClick={() => setCurrentAdminPage("playerStats")}>
-              Update a player
-            </AdminButton>
-            <AdminButton onClick={() => setCurrentAdminPage("addPlayer")}>
-              Add player
-            </AdminButton>
-            <AdminButton onClick={() => setCurrentAdminPage("removePlayer")}>
-              Remove player
-            </AdminButton>
-          </PlayerControlContainer>
-          <GameControlContainer>
-            <h3>Game</h3>
-            <AdminButton onClick={() => setCurrentAdminPage("addGame")}>
-              Add game
-            </AdminButton>
-            <AdminButton onClick={() => setCurrentAdminPage("removeGame")}>
-              Remove game
-            </AdminButton>
-            <AdminButton onClick={() => setCurrentAdminPage("updateGame")}>
-              Live game manager
-            </AdminButton>
-          </GameControlContainer>
-        </>
-      ) : (
-        showAdminPage()
-      )}
+      <Typography variant="h2">Tournament settings</Typography>
+      <Tabs items={tabs} />
     </Container>
   );
 };
 
 const Container = styled.div`
-  height: 100%;
-  width: 100%;
+  min-height: 80vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  padding: 24px 24px 42px 24px;
+  margin: 14px 14px 32px 14px;
+  background-color: var(--neutral-surface-contrast);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+  gap: 24px;
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
 `;
 
-const AdminButton = styled.button`
+const TabContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--text-muted);
-  color: var(--text-base);
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
+  padding: 8px;
 `;
 
-const TeamControlContainer = styled.div`
-  padding-left: 5px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const PlayerControlContainer = styled.div`
-  padding-left: 5px;
-  border-left: 1px solid;
-  display: flex;
-  flex-direction: column;
-`;
-
-const GameControlContainer = styled.div`
-  padding-left: 5px;
-  border-left: 1px solid;
-  display: flex;
-  flex-direction: column;
+const Separator = styled("div")`
+  background-color: var(--neutral-border-onContrast);
+  margin: 24px 0;
+  height: 1px;
 `;

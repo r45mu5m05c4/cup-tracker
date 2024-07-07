@@ -6,6 +6,9 @@ import { addPlayer, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { PlayerPosition } from "../utils/types/Player";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { Typography } from "../molecules/Typography";
+import { Button } from "../molecules/Button";
+import { Select } from "../molecules/Select";
 
 export type NewPlayer = {
   generatedId: string;
@@ -95,18 +98,21 @@ export const AddPlayer = () => {
   ];
   return (
     <Container>
-      <h2>Admin Page - Add Player</h2>
-      <Select onChange={(e) => handleTeamSelect(e.target.value)}>
-        <option value="">Select a team to add a player to</option>
-        {teams.map((team) => (
-          <option key={team._id} value={team._id}>
-            {team.name}
-          </option>
-        ))}
-      </Select>
+      <Select
+        label="Select a team to add a player to"
+        placeholder="Select a team"
+        options={teams.map((team) => ({
+          value: team._id,
+          label: team.name,
+        }))}
+        onChange={(e) => handleTeamSelect(e.target.value)}
+      />
       {selectedTeam && (
         <div>
-          <h3>Add player to: {selectedTeam.name}</h3>
+          <Typography style={{ fontWeight: "600", marginTop: "12px" }}>
+            Add player to: {selectedTeam.name}{" "}
+          </Typography>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -114,7 +120,7 @@ export const AddPlayer = () => {
             }}
           >
             <Label>
-              Name:
+              Name
               <input
                 type="text"
                 value={playerName}
@@ -122,27 +128,30 @@ export const AddPlayer = () => {
               />
             </Label>
             <Label>
-              Jersey Number:
+              Jersey Number
               <input
                 type="number"
                 value={jerseyNumber}
                 onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
               />
             </Label>
-            <Label>
-              Position:
-              <Select
-                value={position}
-                onChange={(e) => setPosition(e.target.value as PlayerPosition)}
-              >
-                {possiblePlayerPositions.map((pos) => (
-                  <option key={pos} value={pos}>
-                    {pos}
-                  </option>
-                ))}
-              </Select>
-            </Label>
-            <Button type="submit">Add Player</Button>
+
+            <Select
+              label="Position"
+              value={position}
+              placeholder="Select position"
+              options={possiblePlayerPositions.map((position) => ({
+                value: position,
+                label: position,
+              }))}
+              onChange={(e) => setPosition(e.target.value as PlayerPosition)}
+            />
+
+            <div style={{ marginTop: "24px" }}>
+              <Button type="submit" onClick={() => {}}>
+                Add Player
+              </Button>
+            </div>
           </form>
         </div>
       )}
@@ -152,55 +161,21 @@ export const AddPlayer = () => {
 };
 
 const Container = styled.div`
-  margin: auto;
-  height: 100%;
-  width: 60%;
   display: flex;
   flex-direction: column;
 `;
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: grey;
-  color: var(--text-base);
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-  &:disabled {
-    background-color: var(--text-muted);
-    cursor: default;
-    &:hover {
-      border: 1px solid transparent;
-    }
-  }
-`;
+
 const Label = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  margin: 5px;
+  margin: 24px 0 8px 0px;
+
   @media (max-width: 768px) {
     font-size: 0.8em;
     flex-direction: column;
-  }
-`;
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: auto;
-  margin-right: 0;
-  width: 70%;
-  padding: 8px;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    width: 100%;
   }
 `;

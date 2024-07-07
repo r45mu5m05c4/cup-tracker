@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { updatePlayerStats } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
+import { Button } from "../../molecules/Button";
+import { Select } from "../../molecules/Select";
+import { Typography } from "../../molecules/Typography";
 
 interface UpdatePlayerModalProps {
   player: Player;
@@ -60,7 +63,7 @@ export const UpdatePlayerModal = ({
   return (
     <Modal>
       <Container>
-        <h2>Update {player.name}</h2>
+        <Typography variant="h3">Update {player.name}</Typography>
 
         {player && (
           <div>
@@ -134,23 +137,22 @@ export const UpdatePlayerModal = ({
                 />
               </Label>
               <br />
-              <Label>
-                Position:
-                <Select
-                  value={position}
-                  onChange={(e) =>
-                    setPosition(e.target.value as PlayerPosition)
-                  }
-                >
-                  {possiblePlayerPositions.map((pos) => (
-                    <option key={pos} value={pos}>
-                      {pos}
-                    </option>
-                  ))}
-                </Select>
-              </Label>
+
+              <Select
+                label="Position"
+                placeholder="Select a team"
+                options={possiblePlayerPositions.map((position) => ({
+                  value: position,
+                  label: position,
+                }))}
+                onChange={(e) => setPosition(e.target.value as PlayerPosition)}
+              />
               <br />
-              <Button type="submit">Update Player</Button>
+              <div>
+                <Button type="submit" onClick={() => {}}>
+                  Update Player
+                </Button>
+              </div>
             </form>
           </div>
         )}
@@ -166,27 +168,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-  &:disabled {
-    background-color: #bababa;
-    cursor: default;
-    &:hover {
-      border: 1px solid transparent;
-    }
-  }
+  gap: 24px;
 `;
 
 const Label = styled.div`
@@ -197,23 +179,10 @@ const Label = styled.div`
   font-weight: 500;
   font-family: inherit;
   margin: auto;
+  
   @media (max-width: 768px) {
     font-size: 0.8em;
     flex-direction: column;
-  }
-`;
-
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  margin: auto;
-  margin-right: 0;
-  width: 70%;
-  padding: 8px;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    width: 100%;
   }
 `;
 
@@ -223,8 +192,8 @@ const Modal = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
+  background-color: var(--neutral-surface-base);
+  border: none;
+  border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
 `;

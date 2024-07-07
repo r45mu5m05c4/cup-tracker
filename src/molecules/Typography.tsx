@@ -1,14 +1,14 @@
 import { CSSProperties, ReactNode } from "react";
 
 interface TypographyProps {
-  variant: "h1" | "h2" | "h3" | "h4" | "p" | "span";
+  variant?: "h1" | "h2" | "h3" | "h4" | "p" | "span";
   children: ReactNode;
   color?: string;
   style?: CSSProperties;
 }
 
 export const Typography = ({
-  variant,
+  variant = "p",
   color,
   children,
   style,

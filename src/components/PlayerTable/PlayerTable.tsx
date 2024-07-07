@@ -114,7 +114,7 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
       {players.length ? (
         <Table data={players} columns={playerColumns}></Table>
       ) : (
-        <Typography variant="p" style={{ padding: "12px 24px" }}>
+        <Typography style={{ padding: "12px 24px" }}>
           No players registered yet.
         </Typography>
       )}

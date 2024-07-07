@@ -4,6 +4,9 @@ import { Team } from "../utils/types/Team";
 import { getTeams, uploadLogo } from "../utils/queries";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { Typography } from "../molecules/Typography";
+import { Select } from "../molecules/Select";
+import { Button } from "../molecules/Button";
 
 export const AddLogo = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -78,15 +81,15 @@ export const AddLogo = () => {
 
   return (
     <Container>
-      <h2>Admin Page - Update Teams</h2>
-      <select onChange={(e) => handleTeamSelect(e.target.value)}>
-        <option value="">Select a team to update</option>
-        {teams.map((team) => (
-          <option key={team._id} value={team._id}>
-            {team.name}
-          </option>
-        ))}
-      </select>
+      <Select
+        label="Team"
+        placeholder="Select team"
+        options={teams.map((team) => ({
+          value: team._id,
+          label: team.name,
+        }))}
+        onChange={(e) => handleTeamSelect(e.target.value)}
+      />
       {selectedTeam && (
         <>
           <label>
@@ -94,7 +97,11 @@ export const AddLogo = () => {
             <input type="file" onChange={handleLogoChange} />
           </label>
           <br />
-          <Button onClick={handleUpdateLogo}>Update Logo</Button>
+          <div>
+            <Button disabled={!updatedLogo} onClick={handleUpdateLogo}>
+              Update Logo
+            </Button>
+          </div>
           {message && <p>{message}</p>}
         </>
       )}
@@ -105,18 +112,4 @@ export const AddLogo = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: grey;
-  color: var(--text-base);
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: auto;
 `;

@@ -183,10 +183,11 @@ const Modal = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
+  background-color: var(--neutral-surface-base);
+  border: none;
+  border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+
   @media (max-width: 768px) {
     top: 0;
     left: 0;

@@ -30,6 +30,21 @@ a:hover {
 
 input {
   padding: 8px;
+  border: none;
+  border-radius: 6px;
+  width: 240px;
+
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+}
+
+select {
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
 }
 
 body {
@@ -57,17 +72,20 @@ h1 {
 
 h2 {
   font-size: 1.6em;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: 'Space Mono', sans-serif;
 }
 
 h3 {
   font-size: 1.3em;
   font-weight: 600;
+  font-family: 'Space Mono', sans-serif;
 }
 
 h4 {
   font-size: 1.1em;
   font-weight: 600;
+  font-family: 'Space Mono', sans-serif;
 }
 
 .green-theme {
@@ -95,6 +113,11 @@ h4 {
   --decorative-brand-main: #15BA83;
   --decorative-brand-dark: #1d715d;
   --decorative-brand-darker: #0f4644;
+
+  --disabled-surface-base: #9E9E9E;
+
+  --disabled-text-base: #E8E8E8;
+
 }
 
 .red-theme {
@@ -122,4 +145,8 @@ h4 {
   --decorative-brand-main: #BA3D3D;
   --decorative-brand-dark: #9B3434;
   --decorative-brand-darker: #872D2D;
+
+  --disabled-surface-base: #9E9E9E;
+
+  --disabled-text-base: #E8E8E8;
 }

@@ -7,11 +7,13 @@ import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { RemovePlayerModal } from "./RemovePlayerModal";
+import { Typography } from "../../molecules/Typography";
+import { Select } from "../../molecules/Select";
 
 export const RemovePlayer = () => {
   const [showModal, setShowModal] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[] | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
@@ -58,24 +60,28 @@ export const RemovePlayer = () => {
 
   return (
     <Container>
-      <h2>Admin Page - Remove Players</h2>
-      <Select onChange={(e) => handleTeamSelect(e.target.value)}>
-        <option value="">Select a team</option>
-        {teams.map((team) => (
-          <option key={team._id} value={team._id}>
-            {team.name}
-          </option>
-        ))}
-      </Select>
-      {players.length
-        ? players.map((p: Player) => (
-            <PlayerCard key={p._id} onClick={() => removePlayer(p)}>
-              <PlayerCell>{p.name}</PlayerCell>
-              <PlayerCell>{p.jerseyNumber}</PlayerCell>
-              <PlayerCell>{p.position}</PlayerCell>
-            </PlayerCard>
-          ))
-        : "No players in team"}
+      <Select
+        label="Select a team to remove a player from"
+        placeholder="Select a team"
+        options={teams.map((team) => ({
+          value: team._id,
+          label: team.name,
+        }))}
+        onChange={(e) => handleTeamSelect(e.target.value)}
+      />
+      {players && players.length > 0 ? (
+        players.map((p: Player) => (
+          <PlayerCard key={p._id} onClick={() => removePlayer(p)}>
+            <PlayerCell>{p.name}</PlayerCell>
+            <PlayerCell>{p.jerseyNumber}</PlayerCell>
+            <PlayerCell>{p.position}</PlayerCell>
+          </PlayerCard>
+        ))
+      ) : (
+        <Typography style={{ marginTop: "24px" }}>
+          {players === null ? "" : "No players yet."}
+        </Typography>
+      )}
       {selectedPlayer && showModal && (
         <RemovePlayerModal
           player={selectedPlayer}
@@ -87,12 +93,8 @@ export const RemovePlayer = () => {
 };
 
 const Container = styled.div`
-  margin: auto;
-  height: 100%;
-  width: 90%;
   display: flex;
   flex-direction: column;
-  align-items: center;
 `;
 
 const PlayerCard = styled.div`
@@ -110,16 +112,4 @@ const PlayerCell = styled.p`
   margin: auto;
   margin-left: 10px;
   width: 33%;
-`;
-
-const Select = styled.select`
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  width: 80%;
-  padding: 8px;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    width: 100%;
-  }
 `;
