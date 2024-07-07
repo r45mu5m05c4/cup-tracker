@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Team } from "./types/Team";
 import { Player } from "./types/Player";
-import { NewPlayer } from "../Admin/AddPlayer";
-import { NewGame } from "../Admin/ScheduleGame";
+import { NewPlayer } from "../admin/AddPlayer";
+import { NewGame } from "../admin/ScheduleGame";
 import { Game, Penalty } from "./types/Game";
 import { Goal } from "./types/Game";
 import { Competition } from "./types/Competition";
