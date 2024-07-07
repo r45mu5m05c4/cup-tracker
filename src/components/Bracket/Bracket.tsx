@@ -3,11 +3,11 @@ import { getGames } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Game } from "../../utils/types/Game";
 import { styled } from "styled-components";
-import GameItem from "../../molecules/GameItem";
-import GameModal from "../Games/GameModal";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { GameModal } from "../Games/GameModal";
+import { GameItem } from "../../molecules/GameItem";
 
-const Bracket = () => {
+export const Bracket = () => {
   const [games, setGames] = useState<Game[]>();
   const [semisA, setSemisA] = useState<Game[]>([]);
   const [semisB, setSemisB] = useState<Game[]>([]);
@@ -283,7 +283,6 @@ const Bracket = () => {
     </PlayoffContainer>
   );
 };
-export default Bracket;
 
 const PlayoffContainer = styled.div`
   display: flex;
@@ -294,6 +293,7 @@ const PlayoffContainer = styled.div`
     gap: 0;
   }
 `;
+
 const PlayoffA = styled.div`
   display: flex;
   flex-direction: row;
@@ -304,6 +304,7 @@ const PlayoffA = styled.div`
     gap: 0;
   }
 `;
+
 const PlayoffB = styled.div`
   display: flex;
   flex-direction: row;
@@ -314,6 +315,7 @@ const PlayoffB = styled.div`
     gap: 0;
   }
 `;
+
 const SemiFinal = styled.div`
   display: flex;
   flex-direction: column;
@@ -325,9 +327,11 @@ const SemiFinal = styled.div`
     gap: 0;
   }
 `;
+
 const SemiFinalItem = styled.div`
   position: relative;
 `;
+
 const Final = styled.div`
   position: relative;
   padding: 24px;
@@ -336,11 +340,13 @@ const Final = styled.div`
     width: 90%;
   }
 `;
+
 const ThirdPlace = styled.div`
   @media (max-width: 768px) {
     width: 90%;
   }
 `;
+
 const PlaceHolderCard = styled.div`
   background-color: var(--decorative-brand-light);
   border: 1px solid var(--decorative-brand-light);

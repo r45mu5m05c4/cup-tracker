@@ -1,3 +1,3 @@
-import TeamTable from "./TeamTable";
+import { TeamTable } from "./TeamTable";
 
 export default TeamTable;

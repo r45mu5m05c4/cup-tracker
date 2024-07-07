@@ -1,16 +1,16 @@
 import styled from "styled-components";
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { Game, Goal, Penalty } from "../../utils/types/Game";
 import { getGameById } from "../../utils/queries";
-import GameTimer from "../../molecules/GameTimer";
+import { GameTimer } from "../../molecules/GameTimer";
 
-interface Props {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface GameModalProps {
   game: Game;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameModal: FC<Props> = ({ setShowModal, game }) => {
+export const GameModal = ({ setShowModal, game }: GameModalProps) => {
   const [activeGame, setActiveGame] = useState<Game>(game);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,8 +141,6 @@ const GameModal: FC<Props> = ({ setShowModal, game }) => {
   );
 };
 
-export default GameModal;
-
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -161,9 +159,11 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
+
 const GameTimeContainer = styled.div`
   margin: auto;
 `;
+
 const Overlay = styled.div`
   cursor: default;
   position: fixed;

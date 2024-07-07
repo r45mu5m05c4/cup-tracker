@@ -4,7 +4,7 @@ import {
 } from "../../utils/queries";
 import { Goal } from "../../utils/types/Game";
 
-const addGoal = async (
+export const addGoal = async (
   goal: Goal,
   accessToken: string,
   competition: string
@@ -73,5 +73,3 @@ const addGoal = async (
     console.error("Error updating team:", error);
   }
 };
-
-export default addGoal;

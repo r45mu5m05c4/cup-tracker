@@ -1,5 +1,4 @@
-import { FC, useEffect, useState } from "react";
-import Table from "../../molecules/Table";
+import { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
 import { styled } from "styled-components";
@@ -7,13 +6,14 @@ import { Player } from "../../utils/types/Player";
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import Typography from "../../molecules/Typography";
+import { Table } from "../../molecules/Table";
+import { Typography } from "../../molecules/Typography";
 
-interface Props {
+interface PlayerTableProps {
   small: boolean;
 }
 
-const PlayerTable: FC<Props> = ({ small }) => {
+export const PlayerTable = ({ small }: PlayerTableProps) => {
   const [players, setPlayers] = useState<any[]>([]);
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
@@ -71,43 +71,43 @@ const PlayerTable: FC<Props> = ({ small }) => {
 
   const playerColumns = small
     ? [
-      { key: "name", header: "Name" },
-      {
-        key: "logo",
-        header: "Team",
-        render: (logo: string) => (
-          <img
-            src={logo}
-            alt="team"
-            style={{ width: "20px", height: "20px" }}
-          />
-        ),
-      },
-      { key: "goals", header: "G" },
-      { key: "assists", header: "A" },
-      { key: "points", header: "P" },
-    ]
+        { key: "name", header: "Name" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
+        { key: "goals", header: "G" },
+        { key: "assists", header: "A" },
+        { key: "points", header: "P" },
+      ]
     : [
-      { key: "name", header: "Name" },
-      { key: "jerseyNumber", header: "#" },
-      {
-        key: "logo",
-        header: "Team",
-        render: (logo: string) => (
-          <img
-            src={logo}
-            alt="team"
-            style={{ width: "20px", height: "20px" }}
-          />
-        ),
-      },
-      { key: "position", header: "Pos" },
-      { key: "goals", header: "G" },
-      { key: "assists", header: "A" },
-      { key: "points", header: "P" },
-      { key: "gamesPlayed", header: "GP" },
-      { key: "penaltyMinutes", header: "PIM" },
-    ];
+        { key: "name", header: "Name" },
+        { key: "jerseyNumber", header: "#" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
+        { key: "position", header: "Pos" },
+        { key: "goals", header: "G" },
+        { key: "assists", header: "A" },
+        { key: "points", header: "P" },
+        { key: "gamesPlayed", header: "GP" },
+        { key: "penaltyMinutes", header: "PIM" },
+      ];
 
   return (
     <Container $small={small}>
@@ -122,16 +122,15 @@ const PlayerTable: FC<Props> = ({ small }) => {
   );
 };
 
-export default PlayerTable;
-
 const Container = styled.div<{ $small: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
+  padding: ${(props) => (props.$small ? "0" : "24px")};
+
   @media (max-width: 768px) {
     padding: 0;
-    padding-bottom:  ${(props) => (props.$small ? "0" : "50px")};
-    min-height:  ${(props) => (props.$small ? "0" : "500px")};
+    padding-bottom: ${(props) => (props.$small ? "0" : "50px")};
+    min-height: ${(props) => (props.$small ? "0" : "500px")};
   }
-  padding: ${(props) => (props.$small ? "0" : "24px")};
 `;

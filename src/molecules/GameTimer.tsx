@@ -1,12 +1,14 @@
-import { useEffect, useState, useRef, FC } from "react";
+import { useEffect, useState, useRef } from "react";
 import { differenceInMilliseconds } from "date-fns";
 import { format, isBefore, isToday, isTomorrow, isYesterday } from "date-fns";
 import styled, { keyframes } from "styled-components";
 
-const GameTimer: FC<{ startTime: Date; ended: boolean }> = ({
-  startTime,
-  ended,
-}) => {
+interface GameTimerProps {
+  startTime: Date;
+  ended: boolean;
+}
+
+export const GameTimer = ({ startTime, ended }: GameTimerProps) => {
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -67,8 +69,6 @@ const GameTimer: FC<{ startTime: Date; ended: boolean }> = ({
     <> {getDateString(startTime)}</>
   );
 };
-
-export default GameTimer;
 
 const GameTimeContainer = styled.div`
   width: 100%;

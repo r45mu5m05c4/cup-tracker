@@ -5,10 +5,10 @@ import { Team } from "../../utils/types/Team";
 import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
-import RemovePlayerModal from "./RemovePlayerModal";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { RemovePlayerModal } from "./RemovePlayerModal";
 
-const RemovePlayer = () => {
+export const RemovePlayer = () => {
   const [showModal, setShowModal] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -86,8 +86,6 @@ const RemovePlayer = () => {
   );
 };
 
-export default RemovePlayer;
-
 const Container = styled.div`
   margin: auto;
   height: 100%;
@@ -96,6 +94,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
 const PlayerCard = styled.div`
   display: flex;
   flex-direction: row;
@@ -106,6 +105,7 @@ const PlayerCard = styled.div`
   padding: 10px;
   width: 80%;
 `;
+
 const PlayerCell = styled.p`
   margin: auto;
   margin-left: 10px;

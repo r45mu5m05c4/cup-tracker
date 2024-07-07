@@ -1,3 +1,3 @@
-import RemoveGame from "./RemoveGame";
+import { RemoveGame } from "./RemoveGame";
 
 export default RemoveGame;

@@ -5,16 +5,16 @@ import {
   ChevronRightIcon,
   Bars3Icon,
 } from "@heroicons/react/20/solid";
-import NavHeader from "./NavHeader";
-import NavLinks from "./NavLinks";
-import MobileMenu from "./MobileMenu";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { MobileMenu } from "./MobileMenu";
+import { NavLinks } from "./NavLinks";
+import { NavHeader } from "./NavHeader";
 
 interface LeftBarProps {
   $collapsed: boolean;
 }
 
-const NavMenu = () => {
+export const DesktopMenu = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const { competition } = useCompetition();
@@ -34,12 +34,12 @@ const NavMenu = () => {
   return isMobileDevice() ? (
     <>
       {isMobileNavOpen ? (
-        <MobileMenu isOpenProp={setIsMobileNavOpen} />)
-        : (
-          <HamburgerButton onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}>
-            <StyledHamburgerIcon />
-          </HamburgerButton>
-        )}
+        <MobileMenu onClose={() => setIsMobileNavOpen(false)} />
+      ) : (
+        <HamburgerButton onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}>
+          <StyledHamburgerIcon />
+        </HamburgerButton>
+      )}
     </>
   ) : (
     <LeftBar $collapsed={collapsed}>
@@ -60,7 +60,6 @@ const NavMenu = () => {
     </LeftBar>
   );
 };
-export default NavMenu;
 
 const LeftBar = styled.div<LeftBarProps>`
   display: flex;

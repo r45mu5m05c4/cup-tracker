@@ -1,19 +1,19 @@
 import { styled } from "styled-components";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import Typography from "../../molecules/Typography";
 import { useUser } from "../../utils/context/UserContext";
 import { useEffect, useRef, useState } from "react";
 import { getCompetitions } from "../../utils/queries";
 import { Competition } from "../../utils/types/Competition";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
-import LoginModal from "../../home/LoginModal";
 import { competitionPosters } from "./../../utils/Logos";
+import { LoginModal } from "../../home/LoginModal";
+import { Typography } from "../../molecules/Typography";
 
 interface CompetitionWithLogo extends Competition {
   logo: string;
 }
 
-const CompetitionPicker = () => {
+export const CompetitionPicker = () => {
   const { setCompetition } = useCompetition();
   const { user, refreshAccessToken } = useUser();
   const [competitions, setCompetitions] = useState<
@@ -86,7 +86,6 @@ const CompetitionPicker = () => {
     </Container>
   );
 };
-export default CompetitionPicker;
 
 const Container = styled.div`
   position: fixed;
@@ -102,6 +101,7 @@ const Container = styled.div`
     gap: 0;
   }
 `;
+
 const Row = styled.div`
   display: flex;
   flex-direction: row;
@@ -115,6 +115,7 @@ const Row = styled.div`
     flex-direction: column;
   }
 `;
+
 const ImgButton = styled.img`
   cursor: pointer;
   width: 20%;
@@ -142,6 +143,7 @@ const Button = styled.button`
   transition: border-color 0.25s;
   margin: auto;
 `;
+
 const Header = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -153,6 +155,7 @@ const Header = styled.div`
     flex-direction: column;
   }
 `;
+
 const IconButton = styled.button`
   background-color: transparent;
   border: 1px solid transparent;
@@ -173,6 +176,7 @@ const IconButton = styled.button`
     border-color: #e0e0e0;
   }
 `;
+
 const LoginIcon = styled(UserCircleIcon)`
   color: #e0e0e0;
   width: 28px;

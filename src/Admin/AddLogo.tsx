@@ -5,7 +5,7 @@ import { getTeams, uploadLogo } from "../utils/queries";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
 
-const AddLogo = () => {
+export const AddLogo = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [updatedLogo, setUpdatedLogo] = useState<File | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -101,8 +101,6 @@ const AddLogo = () => {
     </Container>
   );
 };
-
-export default AddLogo;
 
 const Container = styled.div`
   display: flex;

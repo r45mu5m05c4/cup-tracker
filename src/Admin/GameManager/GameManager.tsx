@@ -15,11 +15,11 @@ import {
   giveLoss,
   giveWin,
 } from "./helperFunctions";
-import addGoal from "./addGoal";
-import GameTimer from "../../molecules/GameTimer";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { addGoal } from "./addGoal";
+import { GameTimer } from "../../molecules/GameTimer";
 
-const GameManager = () => {
+export const GameManager = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
   const [homeEvent, setHomeEvent] = useState("");
@@ -144,7 +144,6 @@ const GameManager = () => {
       };
       await refreshAccessToken();
       await addGoal(goal, user.accessToken, game.competition);
-
       await addGoalToHomeTeamCurrentGame(
         game.gameId,
         goal,
@@ -628,7 +627,6 @@ const GameManager = () => {
     </>
   );
 };
-export default GameManager;
 
 const Container = styled.div`
   margin: auto;
@@ -641,6 +639,7 @@ const Container = styled.div`
     flex-direction: column;
   }
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -661,6 +660,7 @@ const Button = styled.button`
     }
   }
 `;
+
 const HomeContainer = styled.div`
   height: 100%;
   width: 45%;
@@ -672,6 +672,7 @@ const HomeContainer = styled.div`
     width: 100%;
   }
 `;
+
 const AwayContainer = styled.div`
   height: 100%;
   width: 45%;
@@ -682,6 +683,7 @@ const AwayContainer = styled.div`
     width: 100%;
   }
 `;
+
 const Label = styled.div`
   width: 100%;
   display: flex;
@@ -695,6 +697,7 @@ const Label = styled.div`
     flex-direction: column;
   }
 `;
+
 const Select = styled.select`
   font-size: 1em;
   font-weight: 500;
@@ -708,31 +711,37 @@ const Select = styled.select`
     width: 100%;
   }
 `;
+
 const LiveGame = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   margin: auto;
 `;
+
 const Header = styled.h2`
   margin: auto;
 `;
+
 const GoalsRow = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
 `;
+
 const HomeGoals = styled.h1`
   width: 50%;
   margin-right: 5%;
   margin-left: auto;
   text-align: right;
 `;
+
 const AwayGoals = styled.h1`
   width: 50%;
   margin-right: auto;
   margin-left: 5%;
 `;
+
 const EventsRow = styled.p.withConfig({
   shouldForwardProp: (prop) => prop !== "home",
 })<{ home: boolean }>`
@@ -740,17 +749,21 @@ const EventsRow = styled.p.withConfig({
   border-top: 1px solid;
   margin: 0;
 `;
+
 const EventText = styled.p`
   margin: 0;
 `;
+
 const EventHeader = styled.p`
   margin: 0;
   font-weight: 500;
 `;
+
 const GoalHeader = styled.p`
   margin: 0;
   font-weight: bold;
 `;
+
 const GameTimeContainer = styled.div`
   margin: auto;
 `;

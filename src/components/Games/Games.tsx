@@ -3,11 +3,11 @@ import { Game } from "../../utils/types/Game";
 import { getGames } from "../../utils/queries";
 import { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
-import GameModal from "./GameModal";
-import GameItem from "../../molecules/GameItem";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { GameItem } from "../../molecules/GameItem";
+import { GameModal } from "./GameModal";
 
-const Games = () => {
+export const Games = () => {
   const [games, setGames] = useState<Game[]>();
   const [openGame, setOpenGame] = useState<Game>();
   const [showModal, setShowModal] = useState(false);
@@ -64,7 +64,6 @@ const Games = () => {
     </Container>
   );
 };
-export default Games;
 
 const Container = styled.div`
   height: 100%;
@@ -77,6 +76,7 @@ const Container = styled.div`
     min-height: 500px;
   }
 `;
+
 const NoGamesText = styled.h2`
   margin: auto;
   padding: 24px;

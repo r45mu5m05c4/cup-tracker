@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { addGame, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
@@ -21,7 +21,7 @@ export type NewGame = {
   competition: string;
 };
 
-const ScheduleGame: React.FC = () => {
+export const ScheduleGame = () => {
   const [homeTeam, setHomeTeam] = useState<string | null>(null);
   const [awayTeam, setAwayTeam] = useState<string | null>(null);
   const initialStartTime = new Date("2024-11-16T08:00:00"); // Hardcoded for MVP - start date of folkets cup
@@ -190,8 +190,6 @@ const ScheduleGame: React.FC = () => {
   );
 };
 
-export default ScheduleGame;
-
 const Container = styled.div`
   margin: auto;
   height: 100%;
@@ -200,6 +198,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -215,6 +214,7 @@ const Button = styled.button`
   margin-right: 0;
   margin-left: auto;
 `;
+
 const Label = styled.div`
   width: 100%;
   display: flex;
@@ -224,6 +224,7 @@ const Label = styled.div`
   font-family: inherit;
   margin: 12px;
 `;
+
 const Select = styled.select`
   font-size: 1em;
   font-weight: 500;
@@ -232,11 +233,13 @@ const Select = styled.select`
   width: 45%;
   padding: 8px;
 `;
+
 const DateContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 8px;
 `;
+
 const StyledForm = styled.form`
   width: 100%;
 `;

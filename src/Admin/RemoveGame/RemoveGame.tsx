@@ -3,10 +3,10 @@ import { Game } from "../../utils/types/Game";
 import { useUser } from "../../utils/context/UserContext";
 import { getGames } from "../../utils/queries";
 import { styled } from "styled-components";
-import RemoveGameModal from "./RemoveGameModal";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { RemoveGameModal } from "./RemoveGameModal";
 
-const RemoveGame = () => {
+export const RemoveGame = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
   const [modalOpen, setModalOpen] = useState(false);
@@ -57,8 +57,6 @@ const RemoveGame = () => {
     </Container>
   );
 };
-
-export default RemoveGame;
 
 const Container = styled.div`
   margin: auto;

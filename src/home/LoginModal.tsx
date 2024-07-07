@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import { FC, useState } from "react";
+import { BaseSyntheticEvent, useState } from "react";
 import * as Realm from "realm-web";
 import { useUser } from "../utils/context/UserContext";
 
-interface Props {
+interface LoginProps {
   popupPosition: number;
   showLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoginModal: FC<Props> = ({ popupPosition, showLoginModal }) => {
+export const LoginModal = ({ popupPosition, showLoginModal }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ const LoginModal: FC<Props> = ({ popupPosition, showLoginModal }) => {
       setError("Could not log you in, please contact admin");
     }
   };
-  const handleLogout = (e: any) => {
+  const handleLogout = (e: BaseSyntheticEvent) => {
     e.preventDefault();
     e.stopPropagation();
     logout();
@@ -75,19 +75,18 @@ const LoginModal: FC<Props> = ({ popupPosition, showLoginModal }) => {
   );
 };
 
-export default LoginModal;
-
 const Overlay = styled.div`
-      cursor: default;
-      position: fixed;
-      inset: 0;
-      opacity: 10%;
-      background-color: #000;
-      z-index: 50;
-      `;
+  cursor: default;
+  position: fixed;
+  inset: 0;
+  opacity: 10%;
+  background-color: #000;
+  z-index: 50;
+`;
+
 const Modal = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "top",
-}) <{ top: number }>`
+})<{ top: number }>`
       z-index: 100;
       position: absolute;
       display: flex;
@@ -102,25 +101,27 @@ const Modal = styled.div.withConfig({
         margin - right: -200px;
       margin-left: auto;
   }
-      `;
+`;
+
 const LoginOrOutButton = styled.a`
-      border-radius: 30px;
-      border: 1px solid transparent;
-      padding: 0.6em 1.2em;
-      font-size: 1em;
-      font-weight: 600;
-      font-family: inherit;
-      background-color: #3C8271;
-      color: #fff;
-      cursor: pointer;
-      transition: border-color 0.25s;
-      width: 70px;
-      margin-top: 12px;
-      `;
+  border-radius: 30px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 600;
+  font-family: inherit;
+  background-color: #3c8271;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  width: 70px;
+  margin-top: 12px;
+`;
+
 const Input = styled.input`
-      margin: auto;
-      margin-bottom: 6%;
-      background-color: #fff;
-      border-radius: 4px;
-      border: 1px solid transparent;
+  margin: auto;
+  margin-bottom: 6%;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid transparent;
 `;

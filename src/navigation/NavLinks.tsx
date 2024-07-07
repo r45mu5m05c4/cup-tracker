@@ -1,14 +1,5 @@
 import styled, { css } from "styled-components";
 import { Link, useLocation } from "react-router-dom";
-import Typography from "../molecules/Typography";
-import {
-  ROUTE_PATH_ADMIN,
-  ROUTE_PATH_BRACKET,
-  ROUTE_PATH_GAMES,
-  ROUTE_PATH_NEWS,
-  ROUTE_PATH_PLAYERS,
-  ROUTE_PATH_TEAMS,
-} from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
 import { useCompetition } from "../utils/context/CompetitionContext";
 import {
@@ -19,12 +10,14 @@ import {
   PresentationChartLineIcon,
   TrophyIcon,
 } from "@heroicons/react/20/solid";
+import { ROUTES } from "../constants/routes";
+import { Typography } from "../molecules/Typography";
 
 interface NavLinksProps {
   collapsed: boolean;
 }
 
-const NavLinks = ({ collapsed }: NavLinksProps) => {
+export const NavLinks = ({ collapsed }: NavLinksProps) => {
   const location = useLocation();
   const { user } = useUser();
   const { competition, setCompetition } = useCompetition();
@@ -42,32 +35,32 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
   return (
     <Container>
       <StyledLink
-        to={ROUTE_PATH_NEWS}
-        $active={isActive(ROUTE_PATH_NEWS)}
+        to={ROUTES.START}
+        $active={isActive(ROUTES.START)}
         $collapsed={collapsed}
       >
         <StyledLinkIcon />
         {!collapsed && <Typography variant="p">Start</Typography>}
       </StyledLink>
       <StyledLink
-        to={ROUTE_PATH_GAMES}
-        $active={isActive(ROUTE_PATH_GAMES)}
+        to={ROUTES.GAMES}
+        $active={isActive(ROUTES.GAMES)}
         $collapsed={collapsed}
       >
         <StyledGamesIcon />
         {!collapsed && <Typography variant="p">Games</Typography>}
       </StyledLink>
       <StyledLink
-        to={ROUTE_PATH_PLAYERS}
-        $active={isActive(ROUTE_PATH_PLAYERS)}
+        to={ROUTES.PLAYERS}
+        $active={isActive(ROUTES.PLAYERS)}
         $collapsed={collapsed}
       >
         <StyledPlayerStatsIcon />
         {!collapsed && <Typography variant="p">Player stats</Typography>}
       </StyledLink>
       <StyledLink
-        to={ROUTE_PATH_TEAMS}
-        $active={isActive(ROUTE_PATH_TEAMS)}
+        to={ROUTES.TEAMS}
+        $active={isActive(ROUTES.TEAMS)}
         $collapsed={collapsed}
       >
         <StyledTeamStatsIcon />
@@ -75,8 +68,8 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
       </StyledLink>
       {competition?.type === "cup" && (
         <StyledLink
-          to={ROUTE_PATH_BRACKET}
-          $active={isActive(ROUTE_PATH_BRACKET)}
+          to={ROUTES.BRACKET}
+          $active={isActive(ROUTES.BRACKET)}
           $collapsed={collapsed}
         >
           <StyledPlayoffBracketIcon />
@@ -88,8 +81,8 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
           <Separator />
           {isTeamAdmin && (
             <StyledLink
-              to={ROUTE_PATH_ADMIN}
-              $active={isActive(ROUTE_PATH_ADMIN)}
+              to={ROUTES.ADMIN}
+              $active={isActive(ROUTES.ADMIN)}
               $collapsed={collapsed}
             >
               {!collapsed && <Typography variant="p">My team</Typography>}
@@ -97,8 +90,8 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
           )}
           {isCupAdmin && (
             <StyledLink
-              to={ROUTE_PATH_ADMIN}
-              $active={isActive(ROUTE_PATH_ADMIN)}
+              to={ROUTES.ADMIN}
+              $active={isActive(ROUTES.ADMIN)}
               $collapsed={collapsed}
             >
               {!collapsed && <Typography variant="p">Manage cup</Typography>}
@@ -106,8 +99,8 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
           )}
           {isAdmin && (
             <StyledLink
-              to={ROUTE_PATH_ADMIN}
-              $active={isActive(ROUTE_PATH_ADMIN)}
+              to={ROUTES.ADMIN}
+              $active={isActive(ROUTES.ADMIN)}
               $collapsed={collapsed}
             >
               <StyledSuperAdminIcon />
@@ -116,7 +109,6 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
               )}
             </StyledLink>
           )}
-
         </>
       )}
       <Separator />
@@ -133,8 +125,6 @@ const NavLinks = ({ collapsed }: NavLinksProps) => {
   );
 };
 
-export default NavLinks;
-
 const Container = styled("div")`
   flex: 1;
   margin-top: 6px;
@@ -143,37 +133,44 @@ const Container = styled("div")`
   width: 100%;
   white-space: nowrap;
 `;
+
 const StyledLinkIcon = styled(HomeIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledGamesIcon = styled(PaperAirplaneIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledPlayerStatsIcon = styled(ChartBarSquareIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledTeamStatsIcon = styled(PresentationChartLineIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledSuperAdminIcon = styled(Cog6ToothIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledPlayoffBracketIcon = styled(TrophyIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
-const StyledLink = styled(Link) <{ $active: boolean; $collapsed: boolean }>`
+
+const StyledLink = styled(Link)<{ $active: boolean; $collapsed: boolean }>`
   height: 38px;
   display: flex;
   gap: 12px;
@@ -183,11 +180,16 @@ const StyledLink = styled(Link) <{ $active: boolean; $collapsed: boolean }>`
   margin: 12px;
   border-radius: 4px;
   font-weight: 600;
-  background-color: ${(props) => (props.$active ? "var(--decorative-brand-light)" : "transparent")};
-  color: ${(props) => (props.$active ? "var(--text-base)" : "var(--text-muted)")};
+  background-color: ${(props) =>
+    props.$active ? "var(--decorative-brand-light)" : "transparent"};
+  color: ${(props) =>
+    props.$active ? "var(--text-base)" : "var(--text-muted)"};
 
   &:hover {
-    background-color: ${(props) => (!props.$active ? "var(--neutral-surface-muted)" : "var(--decorative-brand-light)")};
+    background-color: ${(props) =>
+      !props.$active
+        ? "var(--neutral-surface-muted)"
+        : "var(--decorative-brand-light)"};
     color: var(--text-base);
     cursor: pointer;
   }

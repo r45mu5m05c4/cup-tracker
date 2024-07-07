@@ -1,3 +1,3 @@
-import PlayerTable from "./PlayerTable";
+import { PlayerTable } from "./PlayerTable";
 
 export default PlayerTable;

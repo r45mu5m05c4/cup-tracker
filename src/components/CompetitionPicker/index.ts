@@ -1,3 +1,3 @@
-import CompetitionPicker from "./CompetitionPicker";
+import { CompetitionPicker } from "./CompetitionPicker";
 
 export default CompetitionPicker;

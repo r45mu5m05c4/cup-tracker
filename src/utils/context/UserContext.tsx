@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -16,9 +16,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUserState] = useState<Realm.User | null>(null);
   const app = new Realm.App({ id: "data-lcjxaso" });
 

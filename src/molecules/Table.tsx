@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
 
 type TableColumn<T> = {
@@ -18,7 +18,7 @@ type SortConfig<T> = {
   direction: "asc" | "desc";
 };
 
-const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
+export const Table = ({ data, columns, className }: TableProps<any>) => {
   const [sortConfig, setSortConfig] = useState<SortConfig<any> | null>(null);
 
   const sortedData = React.useMemo(() => {
@@ -90,25 +90,25 @@ const Table: FC<TableProps<any>> = ({ data, columns, className }) => {
   );
 };
 
-export default Table;
-
 const ScrollableWrapper = styled.div`
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 `;
+
 const NoDataText = styled.h2`
   margin: auto;
 `;
+
 const TableContainer = styled.table`
   width: 100%;
   border-collapse: collapse;
-  font-size: .9em;
+  font-size: 0.9em;
   padding: 6px;
 `;
 
 const TableHeader = styled.th.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky",
-}) <{ sticky: boolean }>`
+})<{ sticky: boolean }>`
   padding: 8px;
   text-align: left;
   border-bottom: 2px solid var(--neutral-border-onContrast);
@@ -121,7 +121,7 @@ const TableHeader = styled.th.withConfig({
 
 const TableCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky" && prop !== "isLogo",
-}) <{ sticky: boolean; isLogo: boolean }>`
+})<{ sticky: boolean; isLogo: boolean }>`
   padding: 8px 14px;
   padding-right: ${({ isLogo }) => (isLogo ? "0" : "8px")};
   width: ${({ isLogo }) => (isLogo ? "1%" : "8px")};

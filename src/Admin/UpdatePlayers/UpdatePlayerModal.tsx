@@ -1,18 +1,18 @@
 import { styled } from "styled-components";
-
 import React, { useState } from "react";
 import { updatePlayerStats } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
 
-interface Props {
+interface UpdatePlayerModalProps {
   player: Player;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const UpdatePlayerModal: React.FC<Props> = ({
+
+export const UpdatePlayerModal = ({
   player,
   setShowModal,
-}: Props) => {
+}: UpdatePlayerModalProps) => {
   const [playerName, setPlayerName] = useState<string>(player.name);
   const [jerseyNumber, setJerseyNumber] = useState<number>(player.jerseyNumber);
   const [goals, setGoals] = useState<number>(player.goals);
@@ -160,8 +160,6 @@ const UpdatePlayerModal: React.FC<Props> = ({
   );
 };
 
-export default UpdatePlayerModal;
-
 const Container = styled.div`
   margin: auto;
   height: 100%;
@@ -169,6 +167,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -189,6 +188,7 @@ const Button = styled.button`
     }
   }
 `;
+
 const Label = styled.div`
   width: 90%;
   display: flex;
@@ -202,6 +202,7 @@ const Label = styled.div`
     flex-direction: column;
   }
 `;
+
 const Select = styled.select`
   font-size: 1em;
   font-weight: 500;
@@ -215,6 +216,7 @@ const Select = styled.select`
     width: 100%;
   }
 `;
+
 const Modal = styled.div`
   z-index: 100;
   position: absolute;

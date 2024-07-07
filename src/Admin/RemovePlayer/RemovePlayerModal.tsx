@@ -1,15 +1,18 @@
 import styled from "styled-components";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { removePlayerById } from "../../utils/queries";
 import { Player } from "../../utils/types/Player";
 
-interface Props {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface RemovePlayerModalProps {
   player: Player;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RemovePlayerModal: FC<Props> = ({ setShowModal, player }) => {
+export const RemovePlayerModal = ({
+  player,
+  setShowModal,
+}: RemovePlayerModalProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -72,18 +75,18 @@ const RemovePlayerModal: FC<Props> = ({ setShowModal, player }) => {
   );
 };
 
-export default RemovePlayerModal;
-
 const ErrorMessage = styled.p`
   color: red;
   font-size: 1em;
   margin: 16px 0;
 `;
+
 const SuccessMessage = styled.p`
   color: green;
   font-size: 1em;
   margin: 16px 0;
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;

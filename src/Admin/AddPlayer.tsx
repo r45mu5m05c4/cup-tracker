@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { addPlayer, getTeams } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
@@ -21,7 +21,7 @@ export type NewPlayer = {
   competition: string;
 };
 
-const AddPlayer: React.FC = () => {
+export const AddPlayer = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [playerName, setPlayerName] = useState<string>("");
   const [jerseyNumber, setJerseyNumber] = useState<number>(0);
@@ -150,8 +150,6 @@ const AddPlayer: React.FC = () => {
     </Container>
   );
 };
-
-export default AddPlayer;
 
 const Container = styled.div`
   margin: auto;

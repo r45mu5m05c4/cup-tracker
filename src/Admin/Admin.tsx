@@ -1,15 +1,15 @@
 import { styled } from "styled-components";
-import React, { useState } from "react";
-import AddTeamStats from "./AddTeamStats";
-import AddPlayer from "./AddPlayer";
+import { useState } from "react";
 import UpdatePlayers from "./UpdatePlayers";
-import ScheduleGame from "./ScheduleGame";
 import GameManager from "./GameManager";
 import RemoveGame from "./RemoveGame";
 import RemovePlayer from "./RemovePlayer";
-import AddLogo from "./AddLogo";
+import { AddPlayer } from "./AddPlayer";
+import { AddTeamStats } from "./AddTeamStats";
+import { ScheduleGame } from "./ScheduleGame";
+import { AddLogo } from "./AddLogo";
 
-const Admin: React.FC = () => {
+export const Admin = () => {
   const [currentAdminPage, setCurrentAdminPage] = useState("");
   const showAdminPage = () => {
     switch (currentAdminPage) {
@@ -83,8 +83,6 @@ const Admin: React.FC = () => {
   );
 };
 
-export default Admin;
-
 const Container = styled.div`
   height: 100%;
   width: 100%;
@@ -94,6 +92,7 @@ const Container = styled.div`
     flex-direction: column;
   }
 `;
+
 const AdminButton = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -107,17 +106,20 @@ const AdminButton = styled.button`
   transition: border-color 0.25s;
   margin: 24px;
 `;
+
 const TeamControlContainer = styled.div`
   padding-left: 5px;
   display: flex;
   flex-direction: column;
 `;
+
 const PlayerControlContainer = styled.div`
   padding-left: 5px;
   border-left: 1px solid;
   display: flex;
   flex-direction: column;
 `;
+
 const GameControlContainer = styled.div`
   padding-left: 5px;
   border-left: 1px solid;

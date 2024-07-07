@@ -1,14 +1,4 @@
-import { FC } from "react";
 import styled, { css } from "styled-components";
-import Typography from "../molecules/Typography";
-import {
-  ROUTE_PATH_ADMIN,
-  ROUTE_PATH_BRACKET,
-  ROUTE_PATH_GAMES,
-  ROUTE_PATH_NEWS,
-  ROUTE_PATH_PLAYERS,
-  ROUTE_PATH_TEAMS,
-} from "../constants/routes";
 import { useUser } from "../utils/context/UserContext";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -20,12 +10,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { HomeIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useCompetition } from "../utils/context/CompetitionContext";
+import { ROUTES } from "../constants/routes";
+import { Typography } from "../molecules/Typography";
 
-interface Props {
-  isOpenProp: React.Dispatch<React.SetStateAction<boolean>>;
+interface MobileMenuProps {
+  onClose: () => void;
 }
 
-const MobileMenu: FC<Props> = ({ isOpenProp }) => {
+export const MobileMenu = ({ onClose }: MobileMenuProps) => {
   const location = useLocation();
   const { user } = useUser();
   const { setCompetition } = useCompetition();
@@ -42,47 +34,47 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
 
   return (
     <>
-      <Overlay onClick={() => isOpenProp(false)} />
+      <Overlay onClick={onClose} />
       <Menu>
-        <CloseButton onClick={() => isOpenProp(false)}>
+        <CloseButton onClick={onClose}>
           <StyledCloseIcon />
         </CloseButton>
         <StyledLink
-          to={ROUTE_PATH_NEWS}
-          $active={isActive(ROUTE_PATH_NEWS)}
-          onClick={() => isOpenProp(false)}
+          to={ROUTES.START}
+          $active={isActive(ROUTES.START)}
+          onClick={onClose}
         >
           <StyledLinkIcon />
           {<Typography variant="p">Start</Typography>}
         </StyledLink>
         <StyledLink
-          to={ROUTE_PATH_GAMES}
-          $active={isActive(ROUTE_PATH_GAMES)}
-          onClick={() => isOpenProp(false)}
+          to={ROUTES.GAMES}
+          $active={isActive(ROUTES.GAMES)}
+          onClick={onClose}
         >
           <StyledGamesIcon />
           {<Typography variant="p">Games</Typography>}
         </StyledLink>
         <StyledLink
-          to={ROUTE_PATH_PLAYERS}
-          $active={isActive(ROUTE_PATH_PLAYERS)}
-          onClick={() => isOpenProp(false)}
+          to={ROUTES.PLAYERS}
+          $active={isActive(ROUTES.PLAYERS)}
+          onClick={onClose}
         >
           <StyledPlayerStatsIcon />
           {<Typography variant="p">Player stats</Typography>}
         </StyledLink>
         <StyledLink
-          to={ROUTE_PATH_TEAMS}
-          $active={isActive(ROUTE_PATH_TEAMS)}
-          onClick={() => isOpenProp(false)}
+          to={ROUTES.TEAMS}
+          $active={isActive(ROUTES.TEAMS)}
+          onClick={onClose}
         >
           <StyledTeamStatsIcon />
           {<Typography variant="p">Standings</Typography>}
         </StyledLink>
         <StyledLink
-          to={ROUTE_PATH_BRACKET}
-          $active={isActive(ROUTE_PATH_BRACKET)}
-          onClick={() => isOpenProp(false)}
+          to={ROUTES.BRACKET}
+          $active={isActive(ROUTES.BRACKET)}
+          onClick={onClose}
         >
           <StyledPlayoffBracketIcon />
           {<Typography variant="p">Playoff bracket</Typography>}
@@ -92,27 +84,27 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
             <Separator />
             {isTeamAdmin && (
               <StyledLink
-                to={ROUTE_PATH_ADMIN}
-                $active={isActive(ROUTE_PATH_ADMIN)}
-                onClick={() => isOpenProp(false)}
+                to={ROUTES.ADMIN}
+                $active={isActive(ROUTES.ADMIN)}
+                onClick={onClose}
               >
                 {<Typography variant="p">My team</Typography>}
               </StyledLink>
             )}
             {isCupAdmin && (
               <StyledLink
-                to={ROUTE_PATH_ADMIN}
-                $active={isActive(ROUTE_PATH_ADMIN)}
-                onClick={() => isOpenProp(false)}
+                to={ROUTES.ADMIN}
+                $active={isActive(ROUTES.ADMIN)}
+                onClick={onClose}
               >
                 {<Typography variant="p">Manage cup</Typography>}
               </StyledLink>
             )}
             {isAdmin && (
               <StyledLink
-                to={ROUTE_PATH_ADMIN}
-                $active={isActive(ROUTE_PATH_ADMIN)}
-                onClick={() => isOpenProp(false)}
+                to={ROUTES.ADMIN}
+                $active={isActive(ROUTES.ADMIN)}
+                onClick={onClose}
               >
                 <StyledSuperAdminIcon />
                 {<Typography variant="p">Super admin tools</Typography>}
@@ -125,7 +117,7 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
           to="/"
           $active={false}
           onClick={() => {
-            isOpenProp(false);
+            onClose();
             setCompetition(null);
           }}
         >
@@ -134,18 +126,14 @@ const MobileMenu: FC<Props> = ({ isOpenProp }) => {
         </StyledLink>
       </Menu>
     </>
-
-
   );
 };
-
-export default MobileMenu;
 
 const Overlay = styled.div`
   cursor: default;
   position: fixed;
   inset: 0;
-  opacity: 10%;
+  opacity: 30%;
   background-color: #000;
   z-index: 50;
 `;
@@ -161,8 +149,8 @@ const Menu = styled.div`
   z-index: 150;
   border-top-right-radius: 30px;
   width: 85%;
-  animation: .6s expand;
-  
+  animation: 0.6s expand;
+
   p {
     font-size: 1.2em;
   }
@@ -175,9 +163,9 @@ const Menu = styled.div`
       width: 85%;
     }
   }
-
 `;
-const StyledLink = styled(Link) <{ $active: boolean }>`
+
+const StyledLink = styled(Link)<{ $active: boolean }>`
   height: 38px;
   display: flex;
   gap: 14px;
@@ -187,12 +175,14 @@ const StyledLink = styled(Link) <{ $active: boolean }>`
   margin: 8px 12px;
   border-radius: 4px;
   font-weight: 600;
-  background-color: ${(props) => (props.$active ? "var(--decorative-brand-light)" : "transparent")};
-  color: ${(props) => (props.$active ? "#fff" : "var(--color-text-primary)")};
+  background-color: ${(props) =>
+    props.$active ? "var(--decorative-brand-light)" : "transparent"};
+  color: ${(props) => (props.$active ? "#fff" : "var(--text-muted)")};
   white-space: nowrap;
 
   &:hover {
-    background-color: ${(props) => (!props.$active ? "#07333F" : "var(--decorative-brand-light)")};
+    background-color: ${(props) =>
+      !props.$active ? "#07333F" : "var(--decorative-brand-light)"};
     color: #fff;
     cursor: pointer;
   }
@@ -204,36 +194,43 @@ const StyledLink = styled(Link) <{ $active: boolean }>`
       color: #fff;
     `}
 `;
+
 const StyledLinkIcon = styled(HomeIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledGamesIcon = styled(BoltIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledPlayerStatsIcon = styled(PresentationChartBarIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledTeamStatsIcon = styled(PresentationChartLineIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledSuperAdminIcon = styled(WrenchScrewdriverIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const StyledPlayoffBracketIcon = styled(TrophyIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
 `;
+
 const CloseButton = styled.button`
   background-color: transparent;
   height: 46px;
@@ -249,16 +246,18 @@ const CloseButton = styled.button`
     outline-offset: 2px;
   }
 `;
+
 const StyledCloseIcon = styled(XMarkIcon)`
   height: 34px;
   width: 34px;
   min-width: 24px;
-  color: #E5E5E5;
+  color: #e5e5e5;
 
   &:hover {
     cursor: pointer;
   }
 `;
+
 const Separator = styled("div")`
   background-color: var(--neutral-border-onBase);
   margin: 24px 14px;

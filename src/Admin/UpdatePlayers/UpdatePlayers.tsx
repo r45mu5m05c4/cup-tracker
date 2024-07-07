@@ -1,12 +1,12 @@
 import { styled } from "styled-components";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { getPlayerByTeam, getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
-import UpdatePlayerModal from "./UpdatePlayerModal";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { UpdatePlayerModal } from "./UpdatePlayerModal";
 
 export type NewPlayer = {
   name: string;
@@ -20,7 +20,7 @@ export type NewPlayer = {
   teamName: string;
 };
 
-const UpdatePlayers: React.FC = () => {
+export const UpdatePlayers = () => {
   const [showModal, setShowModal] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -97,13 +97,12 @@ const UpdatePlayers: React.FC = () => {
   );
 };
 
-export default UpdatePlayers;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
 `;
+
 const PlayerCard = styled.div`
   display: flex;
   flex-direction: row;
@@ -113,6 +112,7 @@ const PlayerCard = styled.div`
   margin-top: 5px;
   padding: 10px;
 `;
+
 const PlayerCell = styled.p`
   margin: auto;
   margin-left: 10px;

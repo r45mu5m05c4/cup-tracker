@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { useParams } from "react-router-dom";
 import { useCompetition } from "../../utils/context/CompetitionContext";
@@ -6,7 +6,7 @@ import { competitionPosters } from "./../../utils/Logos";
 import { Competition } from "../../utils/types/Competition";
 import { getCompetitions } from "../../utils/queries";
 
-const SetCompetitionFromUrl: React.FC = () => {
+export const SetCompetitionFromUrl = () => {
   const { competitionName } = useParams<{ competitionName: string }>();
   const { setCompetition } = useCompetition();
   const { user } = useUser();
@@ -37,5 +37,3 @@ const SetCompetitionFromUrl: React.FC = () => {
 
   return null;
 };
-
-export default SetCompetitionFromUrl;

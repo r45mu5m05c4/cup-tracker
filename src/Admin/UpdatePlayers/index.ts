@@ -1,3 +1,3 @@
-import UpdatePlayers from "./UpdatePlayers";
+import { UpdatePlayers } from "./UpdatePlayers";
 
 export default UpdatePlayers;

@@ -1,15 +1,18 @@
 import styled from "styled-components";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { Game } from "../../utils/types/Game";
 import { removeGameById } from "../../utils/queries";
 
-interface Props {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface RemoveGameModalProps {
   game: Game;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RemoveGameModal: FC<Props> = ({ setShowModal, game }) => {
+export const RemoveGameModal = ({
+  game,
+  setShowModal,
+}: RemoveGameModalProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -72,18 +75,18 @@ const RemoveGameModal: FC<Props> = ({ setShowModal, game }) => {
   );
 };
 
-export default RemoveGameModal;
-
 const ErrorMessage = styled.p`
   color: red;
   font-size: 1em;
   margin: 16px 0;
 `;
+
 const SuccessMessage = styled.p`
   color: green;
   font-size: 1em;
   margin: 16px 0;
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;

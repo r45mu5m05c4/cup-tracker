@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import Typography from "../molecules/Typography";
 import { FireIcon } from "@heroicons/react/20/solid";
+import { Typography } from "../molecules/Typography";
 
 interface NavHeaderProps {
   collapsed: boolean;
   competitionName: string;
 }
 
-const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
+export const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
   <Container>
     <LogoContainer>
       <StyledTrophyIcon />
@@ -19,8 +19,6 @@ const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
     )}
   </Container>
 );
-
-export default NavHeader;
 
 const Container = styled("div")`
   display: flex;

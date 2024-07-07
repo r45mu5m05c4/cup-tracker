@@ -1,7 +1,6 @@
-import Table from "../../molecules/Table";
 import { useUser } from "../../utils/context/UserContext";
 import { getTeams } from "../../utils/queries";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { styled } from "styled-components";
 import {
@@ -12,12 +11,13 @@ import {
 import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
+import { Table } from "../../molecules/Table";
 
-interface Props {
+interface TeamTableProps {
   small: boolean;
 }
 
-const TeamTable: FC<Props> = ({ small }) => {
+export const TeamTable = ({ small }: TeamTableProps) => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
@@ -52,40 +52,41 @@ const TeamTable: FC<Props> = ({ small }) => {
 
   const teamColumns = small
     ? [
-      {
-        key: "logo",
-        header: "Team",
-        render: (logo: string) => (
-          <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
-        ),
-      },
-      { key: "points", header: "P" },
-      { key: "wins", header: "W" },
-      { key: "draws", header: "D" },
-      { key: "losses", header: "L" },
-      { key: "gamesPlayed", header: "GP" },
-    ]
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
+          ),
+        },
+        { key: "points", header: "P" },
+        { key: "wins", header: "W" },
+        { key: "draws", header: "D" },
+        { key: "losses", header: "L" },
+        { key: "gamesPlayed", header: "GP" },
+      ]
     : [
-      {
-        key: "logo",
-        header: "Team",
-        render: (logo: string) => (
-          <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
-        ),
-      },
-      { key: "name", header: "" },
-      { key: "points", header: "P" },
-      { key: "wins", header: "W" },
-      { key: "draws", header: "D" },
-      { key: "losses", header: "L" },
-      { key: "goals", header: "GF" },
-      { key: "goalsAgainst", header: "GA" },
-      { key: "gamesPlayed", header: "GP" },
-    ];
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img src={logo} alt="" style={{ width: "24px", height: "24px" }} />
+          ),
+        },
+        { key: "name", header: "" },
+        { key: "points", header: "P" },
+        { key: "wins", header: "W" },
+        { key: "draws", header: "D" },
+        { key: "losses", header: "L" },
+        { key: "goals", header: "GF" },
+        { key: "goalsAgainst", header: "GA" },
+        { key: "gamesPlayed", header: "GP" },
+      ];
 
   const toggleGroup = () => {
     setActiveGroup(activeGroup === "A" ? "B" : "A");
   };
+
   const getHeader = () => {
     if (activeGroup === "A") {
       if (competition?.type === "league") return "Division 1";
@@ -96,6 +97,7 @@ const TeamTable: FC<Props> = ({ small }) => {
       if (competition?.type === "cup") return "Group B";
     }
   };
+
   return (
     <Container $small={small}>
       {small ? (
@@ -138,8 +140,6 @@ const TeamTable: FC<Props> = ({ small }) => {
   );
 };
 
-export default TeamTable;
-
 const Container = styled.div<{ $small: boolean }>`
   @media (max-width: 768px) {
     padding: 0;
@@ -180,13 +180,13 @@ const LinkIconButton = styled(ArrowLongRightIcon)`
 `;
 
 const SmallHeader = styled.div`
-  height: 10%;
+  height: 40px;
   display: flex;
   align-items: center;
   border-bottom: 0.5px solid var(--neutral-border-onContrast);
   padding: 6px 10px;
   font-weight: 500;
-  font-size: .8em;
+  font-size: 0.8em;
   background-color: var(--neutral-surface-third);
 `;
 
@@ -201,6 +201,7 @@ const Link = styled.a`
     color: var(--decorative-brand-light);
   }
 `;
+
 const NoTeamsText = styled.h2`
   margin: auto;
   padding: 24px;

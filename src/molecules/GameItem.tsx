@@ -1,15 +1,14 @@
 import styled from "styled-components";
 import { Game } from "../utils/types/Game";
 import { isBefore } from "date-fns";
-import { FC } from "react";
-import GameTimer from "./GameTimer";
+import { GameTimer } from "./GameTimer";
 
-interface Props {
+interface GameItemProps {
   game: Game;
   handleOpenGame: (gameId: string | undefined) => void;
 }
 
-const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
+export const GameItem = ({ game, handleOpenGame }: GameItemProps) => {
   const $isActive = isBefore(game.startTime, new Date()) && !game.ended;
   return (
     <GameItemCard key={game._id} onClick={() => handleOpenGame(game._id)}>
@@ -35,7 +34,6 @@ const GameItem: FC<Props> = ({ game, handleOpenGame }) => {
     </GameItemCard>
   );
 };
-export default GameItem;
 
 const GameItemCard = styled.div`
   margin: auto;

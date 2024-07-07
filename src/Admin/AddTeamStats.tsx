@@ -1,12 +1,12 @@
 import { styled } from "styled-components";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Team } from "../utils/types/Team";
 import { getTeams, updateTeamStats } from "../utils/queries";
 import { useUser } from "../utils/context/UserContext";
 import { useCompetition } from "../utils/context/CompetitionContext";
 
-const AddTeamStats: React.FC = () => {
+export const AddTeamStats = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [updatedWins, setUpdatedWins] = useState<number>(0);
   const [updatedDraws, setUpdatedDraws] = useState<number>(0);
@@ -202,8 +202,6 @@ const AddTeamStats: React.FC = () => {
   );
 };
 
-export default AddTeamStats;
-
 const Container = styled.div`
   margin: auto;
   height: 100%;
@@ -211,6 +209,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -231,6 +230,7 @@ const Button = styled.button`
     }
   }
 `;
+
 const Label = styled.div`
   width: 90%;
   display: flex;
@@ -244,6 +244,7 @@ const Label = styled.div`
     flex-direction: column;
   }
 `;
+
 const Select = styled.select`
   font-size: 1em;
   font-weight: 500;
