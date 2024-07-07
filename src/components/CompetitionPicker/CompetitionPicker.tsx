@@ -6,7 +6,7 @@ import { getCompetitions } from "../../utils/queries";
 import { Competition } from "../../utils/types/Competition";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import { competitionPosters } from "./../../utils/Logos";
-import { LoginModal } from "../../home/LoginModal";
+import { LoginModal } from "../Login/LoginModal";
 import { Typography } from "../../molecules/Typography";
 
 interface CompetitionWithLogo extends Competition {

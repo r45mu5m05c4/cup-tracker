@@ -2,24 +2,20 @@ import styled from "styled-components";
 import { FireIcon } from "@heroicons/react/20/solid";
 import { Typography } from "../molecules/Typography";
 
-interface NavHeaderProps {
+interface DesktopMenuHeaderProps {
   collapsed: boolean;
   competitionName: string;
 }
 
-export const NavHeader = ({ collapsed, competitionName }: NavHeaderProps) => (
+export const DesktopMenuHeader = ({
+  collapsed,
+  competitionName,
+}: DesktopMenuHeaderProps) => (
   <Container>
     <LogoContainer>
       <StyledTrophyIcon />
     </LogoContainer>
-    {!collapsed && (
-      <Typography
-        variant="h4"
-        style={{ whiteSpace: "nowrap", fontFamily: "'Roboto', sans-serif" }}
-      >
-        {competitionName}
-      </Typography>
-    )}
+    {!collapsed && <Typography variant="h4">{competitionName}</Typography>}
   </Container>
 );
 
@@ -29,6 +25,11 @@ const Container = styled("div")`
   padding: 8px;
   margin-top: 12px;
   color: #fff;
+
+  h4 {
+    font-family: "Roboto", sans-serif;
+    white-space: nowrap;
+  }
 `;
 
 const LogoContainer = styled("div")`

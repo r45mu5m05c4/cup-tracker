@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { BaseSyntheticEvent, useState } from "react";
 import * as Realm from "realm-web";
-import { useUser } from "../utils/context/UserContext";
-import { Button } from "../molecules/Button";
+import { useUser } from "../../utils/context/UserContext";
+import { Button } from "../../molecules/Button";
 
 interface LoginProps {
   popupPosition: number;

@@ -7,8 +7,8 @@ import {
 } from "@heroicons/react/20/solid";
 import { useCompetition } from "../utils/context/CompetitionContext";
 import { MobileMenu } from "./MobileMenu";
-import { NavLinks } from "./NavLinks";
-import { NavHeader } from "./NavHeader";
+import { DesktopMenuLinks } from "./DesktopMenuLinks";
+import { DesktopMenuHeader } from "./DesktopMenuHeader";
 
 interface LeftBarProps {
   $collapsed: boolean;
@@ -43,12 +43,12 @@ export const DesktopMenu = () => {
     </>
   ) : (
     <LeftBar $collapsed={collapsed}>
-      <NavHeader
+      <DesktopMenuHeader
         collapsed={collapsed}
         competitionName={competition ? competition.name : ""}
       />
-      <NavLinks collapsed={collapsed} />
-      <NavFooter>
+      <DesktopMenuLinks collapsed={collapsed} />
+      <Footer>
         <CollapseSideMenuButton onClick={handleCollapse}>
           {collapsed ? (
             <StyledChevronLeftIcon onClick={handleCollapse} />
@@ -56,7 +56,7 @@ export const DesktopMenu = () => {
             <StyledChevronRightIcon />
           )}
         </CollapseSideMenuButton>
-      </NavFooter>
+      </Footer>
     </LeftBar>
   );
 };
@@ -111,7 +111,7 @@ const StyledChevronLeftIcon = styled(ChevronRightIcon)`
   }
 `;
 
-const NavFooter = styled("div")`
+const Footer = styled("div")`
   display: flex;
   margin-bottom: 24px;
   margin-left: 10px;

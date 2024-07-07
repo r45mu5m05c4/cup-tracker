@@ -11,19 +11,20 @@ import { useCompetition } from "../utils/context/CompetitionContext";
 import { ROUTES } from "../constants/routes";
 import { Start } from "../components/Start/Start";
 import { DesktopMenu } from "../navigation/DesktopMenu";
-import { LoginModal } from "./LoginModal";
+import { LoginModal } from "../components/Login/LoginModal";
 import { SetCompetitionFromUrl } from "../components/CompetitionPicker/SetCompetitionFromUrl";
 import { Bracket } from "../components/Bracket/Bracket";
 import { Games } from "../components/Games/Games";
 import { IconButton } from "../molecules/IconButton";
 
-export const Home = () => {
+export const MainContainer = () => {
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [popupPosition, setPopupPosition] = useState<number>(0);
+  const [hasScrolled, setHasScrolled] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
   const { competition } = useCompetition();
   const { user } = useUser();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [popupPosition, setPopupPosition] = useState(0);
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const togglePopup = () => {
     if (buttonRef.current) {
@@ -34,10 +35,6 @@ export const Home = () => {
   };
 
   window.onscroll = function () {
-    scrollFunction();
-  };
-
-  const scrollFunction = () => {
     if (
       document.body.scrollTop > 50 ||
       document.documentElement.scrollTop > 50
@@ -54,7 +51,7 @@ export const Home = () => {
     >
       {!competition && <CompetitionPicker />}
       <DesktopMenu />
-      <PageContainer>
+      <Page>
         <Header>
           <IconButton
             ref={buttonRef}
@@ -102,7 +99,7 @@ export const Home = () => {
             </Routes>
           </Content>
         </Row>
-      </PageContainer>
+      </Page>
     </Container>
   );
 };
@@ -112,8 +109,9 @@ const Container = styled.div`
   display: flex;
 `;
 
-const PageContainer = styled.div`
+const Page = styled.div`
   width: 100%;
+
   @media (max-width: 768px) {
     margin: 0;
   }

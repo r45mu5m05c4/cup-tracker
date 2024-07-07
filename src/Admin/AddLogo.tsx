@@ -4,7 +4,6 @@ import { Team } from "../utils/types/Team";
 import { getTeams, uploadLogo } from "../utils/queries";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
-import { Typography } from "../molecules/Typography";
 import { Select } from "../molecules/Select";
 import { Button } from "../molecules/Button";
 

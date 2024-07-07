@@ -13,11 +13,11 @@ import {
 import { ROUTES } from "../constants/routes";
 import { Typography } from "../molecules/Typography";
 
-interface NavLinksProps {
+interface DesktopMenuLinksProps {
   collapsed: boolean;
 }
 
-export const NavLinks = ({ collapsed }: NavLinksProps) => {
+export const DesktopMenuLinks = ({ collapsed }: DesktopMenuLinksProps) => {
   const location = useLocation();
   const { user } = useUser();
   const { competition, setCompetition } = useCompetition();
