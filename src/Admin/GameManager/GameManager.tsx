@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
 import { Game, Penalty } from "../../utils/types/Game";
-import { getGames, getPlayerByTeam } from "../../utils/queries";
+import {
+  addShotToGame,
+  getGameById,
+  getGames,
+  getPlayerByTeam,
+  updateGoalieStatsAfterGame,
+} from "../../utils/queries";
 import { Goal } from "../../utils/types/Game";
 import {
   addGoalToAwayTeamCurrentGame,
@@ -25,8 +31,12 @@ import { Button } from "../../molecules/Button";
 export const GameManager = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [game, setGame] = useState<Game>();
+  const [homeGoalie, setHomeGoalie] = useState<string>("");
+  const [awayGoalie, setAwayGoalie] = useState<string>("");
+  const [homeShots, setHomeShots] = useState<number>(0);
+  const [awayShots, setAwayShots] = useState<number>(0);
   const [homeEvent, setHomeEvent] = useState("");
-  const [homePlayer, setHomePlayer] = useState<string | null>(null);
+  const [homePlayer, setHomePlayer] = useState<string>("");
   const [homeAssister, setHomeAssister] = useState<string | null>(null);
   const [homeSecondaryAssister, setHomeSecondaryAssister] = useState<
     string | null
@@ -96,6 +106,37 @@ export const GameManager = () => {
     }
   }, [game]);
 
+  const refetchGame = useCallback(async () => {
+    if (!user?.accessToken || !game?.gameId) return;
+
+    try {
+      await refreshAccessToken();
+      const gameFromAPI = await getGameById(
+        user.accessToken,
+        game.gameId,
+        game.competition
+      );
+      setGame(gameFromAPI);
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  }, [game?.gameId, game?.competition, user?.accessToken, refreshAccessToken]);
+
+  useEffect(() => {
+    const addShot = async () => {
+      if (game && user?.accessToken) {
+        const updatedGame = {
+          ...game,
+          homeTeamShots: homeShots,
+          awayTeamShots: awayShots,
+        };
+        await addShotToGame(updatedGame, user.accessToken);
+      }
+    };
+
+    addShot();
+  }, [homeShots, awayShots]);
+
   const getHomeTeamPlayers = async () => {
     if (game && user?.accessToken) {
       try {
@@ -129,18 +170,11 @@ export const GameManager = () => {
   };
 
   const addHomeGoalHandler = async () => {
-    if (
-      homePlayer &&
-      homeAssister &&
-      homeSecondaryAssister &&
-      game?.gameId &&
-      gameMinute &&
-      user?.accessToken
-    ) {
+    if (homePlayer && game?.gameId && gameMinute && user?.accessToken) {
       const goal: Goal = {
         scorer: homePlayer,
-        primaryAssist: homeAssister,
-        secondaryAssist: homeSecondaryAssister,
+        primaryAssist: homeAssister ? homeAssister : "Unassisted",
+        secondaryAssist: homeSecondaryAssister ? homeSecondaryAssister : "",
         scoringTeamId: game.homeTeam,
         concedingTeamId: game.awayTeam,
         gameMinute: gameMinute,
@@ -153,6 +187,7 @@ export const GameManager = () => {
         user.accessToken,
         game.competition
       );
+      refetchGame();
     }
   };
 
@@ -175,6 +210,7 @@ export const GameManager = () => {
         user.accessToken,
         game.competition
       );
+      refetchGame();
     }
   };
   const addHomePenaltyHandler = async () => {
@@ -212,6 +248,7 @@ export const GameManager = () => {
         user.accessToken,
         game.competition
       );
+      refetchGame();
     }
   };
 
@@ -249,6 +286,7 @@ export const GameManager = () => {
         user.accessToken,
         game.competition
       );
+      refetchGame();
     }
   };
   const endMatchHandler = async () => {
@@ -270,6 +308,32 @@ export const GameManager = () => {
             : game.homeTeam;
         await giveWin(winner, user.accessToken, game.competition);
         await giveLoss(loser, user.accessToken, game.competition);
+      }
+      if (homeGoalie && awayGoalie) {
+        const awayWinner =
+          game.awayTeamGoals.length > game.homeTeamGoals.length;
+        const homeWinner =
+          game.awayTeamGoals.length < game.homeTeamGoals.length;
+        try {
+          await updateGoalieStatsAfterGame(
+            homeGoalie,
+            homeWinner ? 1 : 0,
+            game.awayTeamShots,
+            game.awayTeamGoals.length,
+            game.competition,
+            user.accessToken
+          );
+          await updateGoalieStatsAfterGame(
+            awayGoalie,
+            awayWinner ? 1 : 0,
+            game.homeTeamShots,
+            game.homeTeamGoals.length,
+            game.competition,
+            user.accessToken
+          );
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
   };
@@ -375,6 +439,18 @@ export const GameManager = () => {
           <>
             <TeamContainer>
               <Typography variant="h3">Away</Typography>
+              <Select
+                label="Away goalie"
+                value={awayGoalie}
+                placeholder="Select goalie"
+                options={awayPlayers
+                  .filter((ap: Player) => ap.position === "G")
+                  .map((player) => ({
+                    value: player.generatedId,
+                    label: `${player.jerseyNumber} - ${player.name}`,
+                  }))}
+                onChange={(e) => setAwayGoalie(e.target.value)}
+              />
               <div>
                 <Typography>Game minute</Typography>
                 <input
@@ -383,7 +459,14 @@ export const GameManager = () => {
                   onChange={(e) => setGameMinute(parseInt(e.target.value))}
                 />
               </div>
-
+              <div>
+                <Typography>Shot counter</Typography>
+                <input
+                  type="number"
+                  value={awayShots}
+                  onChange={(e) => setAwayShots(parseInt(e.target.value))}
+                />
+              </div>
               <div>
                 <Select
                   label="Event"
@@ -405,7 +488,7 @@ export const GameManager = () => {
                     placeholder="Select player"
                     options={awayPlayers.map((player) => ({
                       value: player.generatedId,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setAwayPlayer(e.target.value)}
                   />
@@ -436,7 +519,7 @@ export const GameManager = () => {
                     placeholder="Select player"
                     options={awayPlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setAwayPlayer(e.target.value)}
                   />
@@ -446,7 +529,7 @@ export const GameManager = () => {
                     placeholder="Select player"
                     options={awayPlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setAwayAssister(e.target.value)}
                   />
@@ -456,7 +539,7 @@ export const GameManager = () => {
                     placeholder="Select player"
                     options={awayPlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setAwaySecondaryAssister(e.target.value)}
                   />
@@ -472,6 +555,18 @@ export const GameManager = () => {
             </TeamContainer>
             <TeamContainer>
               <Typography variant="h3">Home</Typography>
+              <Select
+                label="Home goalie"
+                value={homeGoalie}
+                placeholder="Select goalie"
+                options={homePlayers
+                  .filter((hp: Player) => hp.position === "G")
+                  .map((player) => ({
+                    value: player.generatedId,
+                    label: `${player.jerseyNumber} - ${player.name}`,
+                  }))}
+                onChange={(e) => setHomeGoalie(e.target.value)}
+              />
               <div>
                 <Typography>Game minute</Typography>
                 <input
@@ -480,10 +575,17 @@ export const GameManager = () => {
                   onChange={(e) => setGameMinute(parseInt(e.target.value))}
                 />
               </div>
-
+              <div>
+                <Typography>Shot counter</Typography>
+                <input
+                  type="number"
+                  value={homeShots}
+                  onChange={(e) => setHomeShots(parseInt(e.target.value))}
+                />
+              </div>
               <Select
                 label="Event"
-                value={awaySecondaryAssister || ""}
+                value={homeEvent || ""}
                 placeholder="Select event"
                 options={[
                   { label: "Goal", value: "goal" },
@@ -496,11 +598,11 @@ export const GameManager = () => {
                 <>
                   <Select
                     label="Player"
-                    value={homePlayer || ""}
+                    value={homePlayer}
                     placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
+                    options={homePlayers.map((player) => ({
                       value: player.generatedId,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setHomePlayer(e.target.value)}
                   />
@@ -530,9 +632,9 @@ export const GameManager = () => {
                     label="Scorer"
                     value={homePlayer || ""}
                     placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
+                    options={homePlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setHomePlayer(e.target.value)}
                   />
@@ -540,9 +642,9 @@ export const GameManager = () => {
                     label="Primary assist"
                     value={homeAssister || ""}
                     placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
+                    options={homePlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setHomeAssister(e.target.value)}
                   />
@@ -550,9 +652,9 @@ export const GameManager = () => {
                     label="Secondary assist"
                     value={homeSecondaryAssister || ""}
                     placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
+                    options={homePlayers.map((player) => ({
                       value: player.name,
-                      label: `${player.jerseyNumber} - $${player.name}`,
+                      label: `${player.jerseyNumber} - ${player.name}`,
                     }))}
                     onChange={(e) => setHomeSecondaryAssister(e.target.value)}
                   />
@@ -634,7 +736,7 @@ const AwayGoals = styled.h1`
   margin-left: 5%;
 `;
 
-const EventsRow = styled.p.withConfig({
+const EventsRow = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "home",
 })<{ home: boolean }>`
   text-align: ${(props) => (props.home ? "right" : "left")};

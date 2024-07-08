@@ -17,8 +17,6 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
   const { user, refreshAccessToken } = useUser();
 
   const refetchGame = useCallback(async () => {
-    console.log("Fetching game with ID:", game.gameId);
-    console.log(game.gameId);
     if (!user?.accessToken || !game.gameId) return;
 
     setLoading(true);
@@ -31,18 +29,20 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
         game.gameId,
         game.competition
       );
-      console.log("Fetched game data:", gameFromAPI);
       setActiveGame(gameFromAPI);
       setLoading(false);
     } catch (error) {
       setError("Error fetching game data. Please try again.");
       console.error("Error fetching games:", error);
+      setLoading(false); // Ensure loading is set to false in case of an error
     }
-  }, [game.gameId, user?.accessToken]);
+  }, [game.gameId, game.competition, user?.accessToken, refreshAccessToken]);
 
   useEffect(() => {
-    refetchGame();
-  }, [refetchGame]);
+    if (!activeGame) {
+      refetchGame();
+    }
+  }, [refetchGame, activeGame]);
 
   const handleClose = () => {
     setShowModal(false);
@@ -118,7 +118,6 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
       <Modal onClick={(e) => e.stopPropagation()}>
         <LiveGame>
           <Header>{`${game.awayTeam} @ ${game.homeTeam}`}</Header>
-          {loading && <p>"Loading..."</p>}
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <GoalsRow>
             <AwayGoals>{activeGame?.awayTeamGoals.length}</AwayGoals>
@@ -130,6 +129,10 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
             </GameTimeContainer>
             <HomeGoals>{activeGame?.homeTeamGoals.length}</HomeGoals>
           </GoalsRow>
+          <GoalsRow>
+            <AwayShots>{activeGame?.awayTeamShots}</AwayShots>shots
+            <HomeShots>{activeGame?.homeTeamShots}</HomeShots>
+          </GoalsRow>
           {eventRenderer()}
         </LiveGame>
         <Button onClick={refetchGame} disabled={loading}>
@@ -140,7 +143,18 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
     </>
   );
 };
-
+const HomeShots = styled.p`
+  width: 45%;
+  margin-right: 5%;
+  margin-left: auto;
+  text-align: right;
+`;
+const AwayShots = styled.p`
+  width: 45%;
+  margin-left: 5%;
+  margin-right: auto;
+  text-align: left;
+`;
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid transparent;
@@ -225,7 +239,7 @@ const AwayGoals = styled.h1`
   margin-left: 5%;
 `;
 
-const EventsRow = styled.p.withConfig({
+const EventsRow = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "home",
 })<{ home: boolean }>`
   text-align: ${(props) => (props.home ? "right" : "left")};

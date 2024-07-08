@@ -22,6 +22,9 @@ export type NewPlayer = {
   jerseyNumber: number;
   teamName: string;
   competition: string;
+  wins?: number;
+  saves?: number;
+  goalsAgainst?: number;
 };
 
 export const AddPlayer = () => {
@@ -64,19 +67,38 @@ export const AddPlayer = () => {
   const handleAddPlayer = async () => {
     if (user?.accessToken && competition) {
       if (selectedTeam && position) {
-        const newPlayer: NewPlayer = {
-          generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
-          name: playerName,
-          goals: 0,
-          assists: 0,
-          points: 0,
-          penaltyMinutes: 0,
-          gamesPlayed: 0,
-          position: position,
-          jerseyNumber: jerseyNumber,
-          teamName: selectedTeam.name,
-          competition: competition.name,
-        };
+        const newPlayer: NewPlayer =
+          position === "G"
+            ? {
+                generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
+                name: playerName,
+                goals: 0,
+                assists: 0,
+                points: 0,
+                penaltyMinutes: 0,
+                gamesPlayed: 0,
+                position: position,
+                jerseyNumber: jerseyNumber,
+                teamName: selectedTeam.name,
+                competition: competition.name,
+                wins: 0,
+                saves: 0,
+                goalsAgainst: 0,
+              }
+            : {
+                generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
+                name: playerName,
+                goals: 0,
+                assists: 0,
+                points: 0,
+                penaltyMinutes: 0,
+                gamesPlayed: 0,
+                position: position,
+                jerseyNumber: jerseyNumber,
+                teamName: selectedTeam.name,
+                competition: competition.name,
+              };
+
         console.log(newPlayer);
         try {
           await refreshAccessToken();

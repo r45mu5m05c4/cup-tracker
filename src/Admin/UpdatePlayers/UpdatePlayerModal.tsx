@@ -20,12 +20,17 @@ export const UpdatePlayerModal = ({
   const [jerseyNumber, setJerseyNumber] = useState<number>(player.jerseyNumber);
   const [goals, setGoals] = useState<number>(player.goals);
   const [assists, setAssists] = useState<number>(player.assists);
-  const [points, setPoints] = useState<number>(player.points);
   const [penaltyMinutes, setPenaltyMinutes] = useState<number>(
     player.penaltyMinutes
   );
   const [gamesPlayed, setGamesPlayed] = useState<number>(player.gamesPlayed);
   const [position, setPosition] = useState<PlayerPosition>(player.position);
+
+  const [wins, setWins] = useState<number | undefined>(player.wins);
+  const [saves, setSaves] = useState<number | undefined>(player.saves);
+  const [goalsAgainst, setGoalsAgainst] = useState<number | undefined>(
+    player.goalsAgainst
+  );
   const [message, setMessage] = useState("");
   const { user } = useUser();
 
@@ -37,13 +42,16 @@ export const UpdatePlayerModal = ({
         name: playerName,
         goals: goals,
         assists: assists,
-        points: points,
+        points: goals + assists,
         penaltyMinutes: penaltyMinutes,
         gamesPlayed: gamesPlayed,
         position: position,
         jerseyNumber: jerseyNumber,
         teamName: player.teamName,
         competition: player.competition,
+        wins: wins,
+        saves: saves,
+        goalsAgainst: goalsAgainst,
       };
       updatePlayerStats(updatedPlayer, user?.accessToken);
       setMessage(`Successfully updated ${updatedPlayer.name}`);
@@ -101,13 +109,7 @@ export const UpdatePlayerModal = ({
               </Label>
               <br />
               <Label>
-                Points:
-                <input
-                  type="number"
-                  value={goals + assists}
-                  disabled
-                  onChange={(e) => setPoints(parseInt(e.target.value))}
-                />
+                Points: <p>{goals + assists}</p>
               </Label>
               <br />
               <Label>
@@ -140,7 +142,7 @@ export const UpdatePlayerModal = ({
 
               <Select
                 label="Position"
-                placeholder="Select a team"
+                placeholder="Select a position"
                 options={possiblePlayerPositions.map((position) => ({
                   value: position,
                   label: position,
@@ -148,11 +150,47 @@ export const UpdatePlayerModal = ({
                 onChange={(e) => setPosition(e.target.value as PlayerPosition)}
               />
               <br />
-              <div>
+              <Label>Goalie stats</Label>
+              <br />
+              <Label>
+                Saves:
+                <input
+                  type="number"
+                  value={saves}
+                  onChange={(e) => setSaves(parseInt(e.target.value))}
+                />
+              </Label>
+              <br />
+              <Label>
+                Goals against:
+                <input
+                  type="number"
+                  value={goalsAgainst}
+                  onChange={(e) => setGoalsAgainst(parseInt(e.target.value))}
+                />
+              </Label>
+              <br />
+              <Label>
+                Wins:
+                <input
+                  type="number"
+                  value={wins}
+                  onChange={(e) => setWins(parseInt(e.target.value))}
+                />
+              </Label>
+              <br />
+              <ButtonContainer>
                 <Button type="submit" onClick={() => {}}>
                   Update Player
                 </Button>
-              </div>
+                <Button
+                  onClick={() => {
+                    setShowModal(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </ButtonContainer>
             </form>
           </div>
         )}
@@ -161,7 +199,14 @@ export const UpdatePlayerModal = ({
     </Modal>
   );
 };
-
+const ButtonContainer = styled.div`
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+`;
 const Container = styled.div`
   margin: auto;
   height: 100%;
@@ -179,7 +224,9 @@ const Label = styled.div`
   font-weight: 500;
   font-family: inherit;
   margin: auto;
-  
+  align-items: center;
+  gap: 10px;
+
   @media (max-width: 768px) {
     font-size: 0.8em;
     flex-direction: column;

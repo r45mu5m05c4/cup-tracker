@@ -6,6 +6,7 @@ export interface Goal {
   concedingTeamId: string;
   gameMinute: number;
 }
+
 export interface Penalty {
   playerId: string;
   playerName: string;
@@ -22,6 +23,8 @@ export interface Game {
   startTime: string;
   homeTeamGoals: Goal[];
   awayTeamGoals: Goal[];
+  homeTeamShots: number;
+  awayTeamShots: number;
   ended: boolean;
   gameType: GameType;
   gameStage: GameStage;

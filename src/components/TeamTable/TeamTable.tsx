@@ -114,6 +114,8 @@ export const TeamTable = ({ small }: TeamTableProps) => {
           <Table
             data={activeGroup === "A" ? teamsA : teamsB}
             columns={teamColumns}
+            team
+            small
           />
         </>
       ) : (
@@ -122,7 +124,7 @@ export const TeamTable = ({ small }: TeamTableProps) => {
             {competition?.type === "cup" ? "Group A" : "Division 1"}
           </Header>
           {teamsA.length ? (
-            <Table data={teamsA} columns={teamColumns} />
+            <Table data={teamsA} columns={teamColumns} team />
           ) : (
             <NoTeamsText>No teams in group</NoTeamsText>
           )}
@@ -130,7 +132,7 @@ export const TeamTable = ({ small }: TeamTableProps) => {
             {competition?.type === "cup" ? "Group B" : "Division 2"}
           </Header>
           {teamsB.length ? (
-            <Table data={teamsB} columns={teamColumns} />
+            <Table data={teamsB} columns={teamColumns} team />
           ) : (
             <NoTeamsText>No teams in group</NoTeamsText>
           )}
@@ -142,9 +144,9 @@ export const TeamTable = ({ small }: TeamTableProps) => {
 
 const Container = styled.div<{ $small: boolean }>`
   @media (max-width: 768px) {
-    padding: 0;
+    padding: ${(props) => (props.$small ? "0" : "20px")};
     padding-bottom: 50px;
-    min-height: 500px;
+    min-height: ${(props) => (props.$small ? "0" : "500px")};
   }
   padding: ${(props) => (props.$small ? "0" : "24px")};
 `;

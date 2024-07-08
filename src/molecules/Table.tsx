@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useMemo } from "react";
 import styled from "styled-components";
 
 type TableColumn<T> = {
@@ -11,6 +11,8 @@ type TableProps<T> = {
   data: T[];
   columns: TableColumn<T>[];
   className?: string;
+  team?: boolean;
+  small?: boolean;
 };
 
 type SortConfig<T> = {
@@ -18,23 +20,52 @@ type SortConfig<T> = {
   direction: "asc" | "desc";
 };
 
-export const Table = ({ data, columns, className }: TableProps<any>) => {
-  const [sortConfig, setSortConfig] = useState<SortConfig<any> | null>(null);
+export const Table = ({
+  data,
+  columns,
+  className,
+  team,
+  small,
+}: TableProps<any>) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig<any>>({
+    key: "points",
+    direction: "desc",
+  });
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [teamFilter, setTeamFilter] = useState<string>("");
 
-  const sortedData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
+    let filtered = data;
+    if (teamFilter) {
+      filtered = filtered.filter((item) => item.teamName === teamFilter);
+    }
+    if (searchQuery) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return filtered;
+  }, [data, teamFilter, searchQuery]);
+
+  const sortedData = useMemo(() => {
     if (sortConfig !== null) {
-      return [...data].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+      return [...filteredData].sort((a, b) => {
+        const aValue =
+          sortConfig.key === "points" ? a.goals + a.assists : a[sortConfig.key];
+        const bValue =
+          sortConfig.key === "points" ? b.goals + b.assists : b[sortConfig.key];
+
+        if (aValue < bValue) {
           return sortConfig.direction === "asc" ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aValue > bValue) {
           return sortConfig.direction === "asc" ? 1 : -1;
         }
         return 0;
       });
     }
-    return data;
-  }, [data, sortConfig]);
+    return filteredData;
+  }, [filteredData, sortConfig]);
 
   const requestSort = (key: keyof any) => {
     let direction: "asc" | "desc" = "desc";
@@ -48,47 +79,101 @@ export const Table = ({ data, columns, className }: TableProps<any>) => {
     setSortConfig({ key, direction });
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTeamFilter(event.target.value);
+  };
+
   return (
-    <ScrollableWrapper>
-      <TableContainer className={className}>
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <TableHeader
-                key={index}
-                sticky={index === 0}
-                onClick={() => requestSort(column.key)}
-              >
-                {column.header}
-              </TableHeader>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedData ? (
-            sortedData.map((item, rowIndex) => (
-              <tr key={rowIndex}>
-                {columns.map((column, colIndex) => (
-                  <TableCell
-                    key={colIndex}
-                    sticky={colIndex === 0}
-                    isLogo={column.key === "logo"}
-                  >
-                    {column.render
-                      ? column.render(item[column.key])
-                      : item[column.key]}
-                  </TableCell>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <NoDataText>No data</NoDataText>
+    <>
+      {!small && (
+        <FilterContainer>
+          <SearchInput
+            name="search-field"
+            type="text"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          {!team && (
+            <TeamFilter name="team-filter" onChange={handleFilterChange}>
+              <option value="">All Teams</option>
+              {[...new Set(data.map((item) => item.teamName))].map(
+                (team, i) => (
+                  <option key={i} value={team}>
+                    {team}
+                  </option>
+                )
+              )}
+            </TeamFilter>
           )}
-        </tbody>
-      </TableContainer>
-    </ScrollableWrapper>
+        </FilterContainer>
+      )}
+      <ScrollableWrapper>
+        <TableContainer className={className}>
+          <thead>
+            <tr>
+              {columns.map((column, index) => (
+                <TableHeader
+                  key={index}
+                  sticky={index === 0}
+                  onClick={() => requestSort(column.key)}
+                >
+                  {column.header}
+                </TableHeader>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData ? (
+              sortedData.map((item, rowIndex) => (
+                <tr key={rowIndex}>
+                  {columns.map((column, colIndex) => (
+                    <TableCell
+                      key={colIndex}
+                      sticky={colIndex === 0}
+                      isLogo={column.key === "logo"}
+                    >
+                      {column.render
+                        ? column.render(item[column.key])
+                        : item[column.key]}
+                    </TableCell>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <NoDataText>No data</NoDataText>
+            )}
+          </tbody>
+        </TableContainer>
+      </ScrollableWrapper>
+    </>
   );
 };
+
+const FilterContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+`;
+
+const SearchInput = styled.input`
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid var(--neutral-border-onContrast);
+  border-radius: 4px;
+  margin-right: 5px;
+`;
+
+const TeamFilter = styled.select`
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid var(--neutral-border-onContrast);
+  border-radius: 4px;
+`;
 
 const ScrollableWrapper = styled.div`
   overflow-x: auto;

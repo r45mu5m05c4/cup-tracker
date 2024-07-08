@@ -9,33 +9,21 @@ import { Button } from "../../molecules/Button";
 
 export const RemoveGame = () => {
   const [games, setGames] = useState<Game[]>([]);
-  const [game, setGame] = useState<Game>();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
-  const gamePicker = (gameId: string) => {
-    const foundGame = games && games.find((g) => g.gameId === gameId);
-    foundGame && setGame(foundGame);
-  };
-
   const onRemoveGame = async (removeGame: Game) => {
-    console.log("Fetching game with ID:", removeGame.gameId);
-    console.log(removeGame.gameId);
-
     if (!user?.accessToken || !removeGame.gameId) return;
-
     setError(null);
-
     try {
       await refreshAccessToken();
-      const gameFromAPI = await removeGameById(
+      await removeGameById(
         user.accessToken,
         removeGame.gameId,
         removeGame.competition
       );
-      console.log("Removed:", gameFromAPI);
       setMessage("Removed game");
     } catch (error) {
       setError("Error removing game data. Please try again.");
@@ -71,7 +59,7 @@ export const RemoveGame = () => {
           <GameList>
             {games.map((g) => (
               <GameWrapper key={g.gameId}>
-                <GameItem key={g._id} onClick={() => gamePicker(g.gameId)}>
+                <GameItem key={g._id}>
                   {g.awayTeam} @ {g.homeTeam}, {g.gameStage}, {g.gameType}
                 </GameItem>
                 <Button onClick={() => onRemoveGame(g)}>Remove game</Button>
@@ -82,6 +70,8 @@ export const RemoveGame = () => {
       ) : (
         <Typography>No games yet.</Typography>
       )}
+      {message && <p>{message}</p>}
+      {error && <p>{error}</p>}
     </Container>
   );
 };

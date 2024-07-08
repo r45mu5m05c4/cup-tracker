@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import Admin from "../admin";
+import Admin from "./../Admin";
 import PlayerTable from "../components/PlayerTable";
 import TeamTable from "../components/TeamTable";
 import { UserCircleIcon } from "@heroicons/react/20/solid";

@@ -11,6 +11,9 @@ export type Player = {
   jerseyNumber: number;
   teamName: string;
   competition: string;
+  wins?: number;
+  saves?: number;
+  goalsAgainst?: number;
 };
 
 export enum PlayerPosition {

@@ -93,6 +93,7 @@ export const endMatch = async (game: Game, userAccessToken: string) => {
   } catch (error) {
     console.error("Error adding penalty:", error);
   }
+  
 };
 export const giveWin = async (
   teamName: string,

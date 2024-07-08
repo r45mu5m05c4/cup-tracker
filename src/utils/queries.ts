@@ -1,11 +1,11 @@
 import axios from "axios";
 import { Team } from "./types/Team";
 import { Player } from "./types/Player";
-import { NewPlayer } from "../admin/AddPlayer";
-import { NewGame } from "../admin/ScheduleGame";
 import { Game, Penalty } from "./types/Game";
 import { Goal } from "./types/Game";
 import { Competition } from "./types/Competition";
+import { NewGame } from "../Admin/ScheduleGame";
+import { NewPlayer } from "../Admin/AddPlayer";
 
 export const getCompetitions = async (accessToken: string) => {
   try {
@@ -370,6 +370,51 @@ export const uploadLogo = async (
     throw error;
   }
 };
+export const updateGoalieStatsAfterGame = async (
+  goalieId: string,
+  wins: number,
+  saves: number,
+  goalsAgainst: number,
+  competition: string,
+  accessToken: string
+) => {
+  try {
+    const data = {
+      collection: "players",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: {
+        generatedId: goalieId,
+        competition: competition,
+      },
+      update: {
+        $inc: {
+          gamesPlayed: 1,
+          wins: wins,
+          saves: saves,
+          goalsAgainst: goalsAgainst,
+        },
+      },
+    };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player:", error);
+    throw error;
+  }
+};
 export const updatePlayerStats = async (
   player: Player,
   accessToken: string
@@ -393,6 +438,9 @@ export const updatePlayerStats = async (
           position: player.position,
           teamName: player.teamName,
           jerseyNumber: player.jerseyNumber,
+          wins: player.wins,
+          saves: player.saves,
+          goalsAgainst: player.goalsAgainst,
         },
       },
     };
@@ -434,6 +482,9 @@ export const addPlayer = async (player: NewPlayer, accessToken: string) => {
         teamName: player.teamName,
         jerseyNumber: player.jerseyNumber,
         competition: player.competition,
+        wins: player.wins,
+        saves: player.saves,
+        goalsAgainst: player.goalsAgainst,
       },
     };
 
@@ -542,6 +593,8 @@ export const updateGame = async (
           startTime: game.startTime,
           homeTeamGoals: game.homeTeamGoals,
           awayTeamGoals: game.awayTeamGoals,
+          homeTeamShots: game.homeTeamShots,
+          awayTeamShots: game.awayTeamShots,
           ended: game.ended,
           gameType: game.gameType,
           gameStage: game.gameStage,
@@ -826,6 +879,39 @@ export const addGoalToGame = async (
             },
           },
         };
+
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding goal:", error);
+    throw error;
+  }
+};
+export const addShotToGame = async (game: Game, accessToken: string) => {
+  try {
+    const data = {
+      collection: "games",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { gameId: game.gameId, competition: game.competition },
+      update: {
+        $set: {
+          homeTeamShots: game.homeTeamShots,
+          awayTeamShots: game.awayTeamShots,
+        },
+      },
+    };
 
     const config = {
       method: "post",

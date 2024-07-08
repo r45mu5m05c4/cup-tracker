@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
 import { styled } from "styled-components";
@@ -14,60 +14,54 @@ interface PlayerTableProps {
 }
 
 export const PlayerTable = ({ small }: PlayerTableProps) => {
-  const [players, setPlayers] = useState<any[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [goalies, setGoalies] = useState<Player[]>([]);
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllPlayers = async () => {
-      if (user?.accessToken && competition)
+      if (user?.accessToken && competition) {
         try {
           await refreshAccessToken();
           const playersFromAPI = await getPlayers(
-            user?.accessToken,
+            user.accessToken,
             competition.name
           );
           const playersWithLogo = playersFromAPI.map((p: Player) => {
             const teamLogo = logoItems.find(
               (l: Logo) => p.teamName === l.teamName
             );
-
             return { ...p, logo: teamLogo?.logo };
           });
-          if (isMobileDevice()) {
-            const abbreviatedPlayers = playersWithLogo.map((p: Player) => {
-              p.name = abbreviateName(p.name);
-              return p;
-            });
-            setPlayers(abbreviatedPlayers);
-          } else setPlayers(playersWithLogo);
+          const formattedPlayers = playersWithLogo.map((p: Player) => {
+            if (
+              p.position === "G" &&
+              p.saves !== undefined &&
+              p.goalsAgainst !== undefined
+            ) {
+              const savePercent =
+                p.goalsAgainst === 0
+                  ? 100
+                  : ((p.saves / (p.saves + p.goalsAgainst)) * 100).toFixed(2);
+              return { ...p, savePercent };
+            }
+            return p;
+          });
+          setPlayers(
+            formattedPlayers.filter((p: Player) => p.position !== "G")
+          );
+          setGoalies(
+            formattedPlayers.filter((p: Player) => p.position === "G")
+          );
         } catch (error) {
-          console.error("Error fetching teams:", error);
+          console.error("Error fetching players:", error);
         }
+      }
     };
 
     fetchAllPlayers();
   }, []);
-
-  const abbreviateName = (fullName: string) => {
-    const nameParts = fullName.split(" ");
-
-    if (nameParts.length >= 2) {
-      const abbreviatedFirstName = nameParts[0].charAt(0) + ".";
-
-      const abbreviatedName = [
-        abbreviatedFirstName,
-        ...nameParts.slice(1),
-      ].join(" ");
-
-      return abbreviatedName;
-    }
-
-    return fullName;
-  };
-  const isMobileDevice = () => {
-    return /Mobi|Android/i.test(navigator.userAgent);
-  };
 
   const playerColumns = small
     ? [
@@ -109,13 +103,76 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
         { key: "penaltyMinutes", header: "PIM" },
       ];
 
+  const goalieColumns = small
+    ? [
+        { key: "name", header: "Name" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
+        { key: "saves", header: "SV" },
+        { key: "goalsAgainst", header: "GA" },
+        { key: "wins", header: "W" },
+        { key: "savePercent", header: "SV%" },
+      ]
+    : [
+        { key: "name", header: "Name" },
+        { key: "jerseyNumber", header: "#" },
+        {
+          key: "logo",
+          header: "Team",
+          render: (logo: string) => (
+            <img
+              src={logo}
+              alt="team"
+              style={{ width: "20px", height: "20px" }}
+            />
+          ),
+        },
+        { key: "saves", header: "SV" },
+        { key: "goalsAgainst", header: "GA" },
+        { key: "savePercent", header: "SV%" },
+        { key: "wins", header: "W" },
+        { key: "gamesPlayed", header: "GP" },
+        { key: "goals", header: "G" },
+        { key: "assists", header: "A" },
+        { key: "points", header: "P" },
+        { key: "penaltyMinutes", header: "PIM" },
+      ];
+
   return (
     <Container $small={small}>
+      <Header>Players</Header>
       {players.length ? (
-        <Table data={players} columns={playerColumns}></Table>
+        <Table
+          data={players}
+          columns={playerColumns}
+          small={small}
+          className="player-table"
+        />
       ) : (
         <Typography style={{ padding: "12px 24px" }}>
           No players registered yet.
+        </Typography>
+      )}
+      <Header>Goalies</Header>
+      {!small && goalies.length ? (
+        <Table
+          data={goalies}
+          columns={goalieColumns}
+          small={small}
+          className="goalie-table"
+        />
+      ) : (
+        <Typography style={{ padding: "12px 24px" }}>
+          No goalies registered yet.
         </Typography>
       )}
     </Container>
@@ -129,8 +186,12 @@ const Container = styled.div<{ $small: boolean }>`
   padding: ${(props) => (props.$small ? "0" : "24px")};
 
   @media (max-width: 768px) {
-    padding: 0;
-    padding-bottom: ${(props) => (props.$small ? "0" : "50px")};
+    padding: ${(props) => (props.$small ? "0" : "20px")};
     min-height: ${(props) => (props.$small ? "0" : "500px")};
+  }
+`;
+const Header = styled.h2`
+  @media (max-width: 768px) {
+    padding: 10px;
   }
 `;

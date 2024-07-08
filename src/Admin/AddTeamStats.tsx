@@ -181,8 +181,8 @@ export const AddTeamStats = () => {
               value={updatedGroup}
               placeholder="Select group"
               options={[
-                { label: "Group A", value: "A" },
-                { label: "Group B", value: "B" },
+                { label: "Group A", value: "a" },
+                { label: "Group B", value: "b" },
               ]}
               onChange={(e) => setUpdatedGroup(e.target.value)}
             />
@@ -195,8 +195,8 @@ export const AddTeamStats = () => {
               value={updatedPlayoffGroup}
               placeholder="Select group"
               options={[
-                { label: "Playoff group A", value: "A" },
-                { label: "Playoff group B", value: "B" },
+                { label: "Playoff group A", value: "a" },
+                { label: "Playoff group B", value: "b" },
               ]}
               onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
             />
