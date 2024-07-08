@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { getPlayers } from "../../utils/queries";
 import { styled } from "styled-components";
