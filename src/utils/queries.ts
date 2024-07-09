@@ -762,35 +762,53 @@ export const addWinOrLossToTeam = async (
   win: boolean,
   teamName: string,
   accessToken: string,
-  competition: string
+  competition: string,
+  overTimeLoss: boolean
 ) => {
   try {
-    const data = win
-      ? {
-          collection: "teams",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: teamName, competition: competition },
-          update: {
-            $inc: {
-              wins: 1,
-              points: 3,
-              gamesPlayed: 1,
-            },
+    let data;
+    if (win) {
+      data = {
+        collection: "teams",
+        database: "folkets-cup",
+        dataSource: "folketsCup",
+        filter: { name: teamName, competition: competition },
+        update: {
+          $inc: {
+            wins: 1,
+            points: 3,
+            gamesPlayed: 1,
           },
-        }
-      : {
-          collection: "teams",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: teamName, competition: competition },
-          update: {
-            $inc: {
-              losses: 1,
-              gamesPlayed: 1,
-            },
+        },
+      };
+    } else if (overTimeLoss) {
+      data = {
+        collection: "teams",
+        database: "folkets-cup",
+        dataSource: "folketsCup",
+        filter: { name: teamName, competition: competition },
+        update: {
+          $inc: {
+            overtimeLosses: 1,
+            points: 1,
+            gamesPlayed: 1,
           },
-        };
+        },
+      };
+    } else {
+      data = {
+        collection: "teams",
+        database: "folkets-cup",
+        dataSource: "folketsCup",
+        filter: { name: teamName, competition: competition },
+        update: {
+          $inc: {
+            losses: 1,
+            gamesPlayed: 1,
+          },
+        },
+      };
+    }
 
     const config = {
       method: "post",

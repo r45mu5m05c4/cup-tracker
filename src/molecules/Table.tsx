@@ -100,12 +100,12 @@ export const Table = ({
           />
           {!team && (
             <TeamFilter name="team-filter" onChange={handleFilterChange}>
-              <option value="">All Teams</option>
+              <Option value="">All Teams</Option>
               {[...new Set(data.map((item) => item.teamName))].map(
                 (team, i) => (
-                  <option key={i} value={team}>
+                  <Option key={i} value={team}>
                     {team}
-                  </option>
+                  </Option>
                 )
               )}
             </TeamFilter>
@@ -163,16 +163,38 @@ const FilterContainer = styled.div`
 const SearchInput = styled.input`
   padding: 8px;
   font-size: 1em;
-  border: 1px solid var(--neutral-border-onContrast);
-  border-radius: 4px;
+  border-bottom: 1px solid var(--neutral-border-onContrast);
+  border-radius: 0;
+  background-color: transparent;
+  color: #fff;
   margin-right: 5px;
+  &:focus {
+    outline: none;
+    border-bottom: 2px solid white;
+  }
 `;
 
 const TeamFilter = styled.select`
   padding: 8px;
   font-size: 1em;
-  border: 1px solid var(--neutral-border-onContrast);
-  border-radius: 4px;
+  border: none;
+  border-bottom: 1px solid var(--neutral-border-onContrast);
+  border-radius: 0;
+  background-color: var(--neutral-surface-base); /* Ensure background is set */
+  color: #fff;
+  &:focus {
+    outline: none;
+  }
+`;
+
+const Option = styled.option`
+  background-color: var(--neutral-surface-base);
+  padding: 15px;
+  border: none;
+  color: #fff;
+  &:hover {
+    background-color: var(--neutral-surface-contrast);
+  }
 `;
 
 const ScrollableWrapper = styled.div`

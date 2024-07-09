@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #fff;
@@ -67,86 +67,85 @@ h4 {
 h1 {
   font-size: 3.2em;
   font-weight: 900;
-  font-family: 'Futura', sans-serif;
+  font-family: "Futura", sans-serif;
 }
 
 h2 {
   font-size: 1.6em;
   font-weight: 600;
-  font-family: 'Space Mono', sans-serif;
+  font-family: "Space Mono", sans-serif;
 }
 
 h3 {
   font-size: 1.3em;
   font-weight: 600;
-  font-family: 'Space Mono', sans-serif;
+  font-family: "Space Mono", sans-serif;
 }
 
 h4 {
   font-size: 1.1em;
   font-weight: 600;
-  font-family: 'Space Mono', sans-serif;
+  font-family: "Space Mono", sans-serif;
 }
 
 .green-theme {
   --text-base: #ffffff;
-  --text-muted: #E0E0E0;
+  --text-muted: #e0e0e0;
 
   --neutral-icon-base: #e5e5e5;
 
   --neutral-surface-base: #052029;
-  --neutral-surface-second: #093A48;
-  --neutral-surface-third: #093A47;
-  --neutral-surface-navMenu: #03181E;
-  --neutral-surface-muted: #07333F;
-  --neutral-surface-contrast: #072B38;
+  --neutral-surface-second: #093a48;
+  --neutral-surface-third: #093a47;
+  --neutral-surface-navMenu: #03181e;
+  --neutral-surface-muted: #07333f;
+  --neutral-surface-contrast: #072b38;
 
   --neutral-surface-linear-gradient-base: #054c54;
   --neutral-surface-linear-gradient-contrast: #054c5400;
 
   --neutral-border-base: #e0e0e0;
-  --neutral-border-onBase: #06323F;
-  --neutral-border-onContrast: #0E4051;
+  --neutral-border-onBase: #06323f;
+  --neutral-border-onContrast: #0e4051;
 
-  --decorative-brand-lighter: #4EAB95;
-  --decorative-brand-light: #42917E;
-  --decorative-brand-main: #15BA83;
+  --decorative-brand-lighter: #4eab95;
+  --decorative-brand-light: #42917e;
+  --decorative-brand-main: #15ba83;
   --decorative-brand-dark: #1d715d;
   --decorative-brand-darker: #0f4644;
 
-  --disabled-surface-base: #9E9E9E;
+  --disabled-surface-base: #9e9e9e;
 
-  --disabled-text-base: #E8E8E8;
-
+  --disabled-text-base: #e8e8e8;
 }
 
 .red-theme {
   --text-base: #ffffff;
-  --text-muted: #E0E0E0;
+  --text-muted: #e0e0e0;
 
   --neutral-icon-base: #e5e5e5;
 
-  --neutral-surface-base: #0D0B11;
-  --neutral-surface-second: #0D0B11;
-  --neutral-surface-third: #18151E;
-  --neutral-surface-navMenu: #0D0B12;
-  --neutral-surface-muted: #100E15;
-  --neutral-surface-contrast: #100E15;
+  --neutral-surface-base: #0d0b11;
+  --neutral-surface-second: #0d0b11;
+  --neutral-surface-third: #18151e;
+  --neutral-surface-navMenu: #0d0b12;
+  --neutral-surface-muted: #100e15;
+  --neutral-surface-contrast: #100e15;
 
   --neutral-surface-linear-gradient-base: #5b2218;
   --neutral-surface-linear-gradient-contrast: #54130500;
 
   --neutral-border-base: #e0e0e0;
   --neutral-border-onBase: #222024;
-  --neutral-border-onContrast: #1B1924;
+  --neutral-border-onContrast: #1b1924;
 
-  --decorative-brand-lighter: #4EAB95;
-  --decorative-brand-light: #AA4C4C;
-  --decorative-brand-main: #BA3D3D;
-  --decorative-brand-dark: #9B3434;
-  --decorative-brand-darker: #872D2D;
+  --decorative-brand-lighter: #4eab95;
+  --decorative-brand-light: #aa4c4c;
+  --decorative-brand-main: #ba3d3d;
+  --decorative-brand-dark: #9b3434;
+  --decorative-brand-darker: #872d2d;
 
-  --disabled-surface-base: #9E9E9E;
+  --disabled-surface-base: #9e9e9e;
 
-  --disabled-text-base: #E8E8E8;
+  --disabled-text-base: #e8e8e8;
 }

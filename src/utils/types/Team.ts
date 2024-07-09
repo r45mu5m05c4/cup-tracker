@@ -4,6 +4,7 @@ export type Team = {
   wins: number;
   draws: number;
   losses: number;
+  overtimeLosses: number;
   points: number;
   goals: number;
   goalsAgainst: number;

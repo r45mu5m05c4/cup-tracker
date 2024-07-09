@@ -14,6 +14,7 @@ export const AddTeamStats = () => {
   const [updatedWins, setUpdatedWins] = useState<number>(0);
   const [updatedDraws, setUpdatedDraws] = useState<number>(0);
   const [updatedLosses, setUpdatedLosses] = useState<number>(0);
+  const [updatedOvertimeLosses, setUpdatedOvertimeLosses] = useState<number>(0);
   const [updatedPoints, setUpdatedPoints] = useState<number>(0);
   const [updatedGoals, setUpdatedGoals] = useState<number>(0);
   const [updatedGoalsAgainst, setUpdatedGoalsAgainst] = useState<number>(0);
@@ -52,6 +53,7 @@ export const AddTeamStats = () => {
       setUpdatedWins(foundTeam.wins);
       setUpdatedDraws(foundTeam.draws);
       setUpdatedLosses(foundTeam.losses);
+      setUpdatedOvertimeLosses(foundTeam.overtimeLosses);
       setUpdatedPoints(foundTeam.points);
       setUpdatedGoals(foundTeam.goals);
       setUpdatedGoalsAgainst(foundTeam.goalsAgainst);
@@ -69,6 +71,7 @@ export const AddTeamStats = () => {
           wins: updatedWins,
           draws: updatedDraws,
           losses: updatedLosses,
+          overtimeLosses: updatedOvertimeLosses,
           points: updatedPoints,
           goals: updatedGoals,
           goalsAgainst: updatedGoalsAgainst,
@@ -135,6 +138,17 @@ export const AddTeamStats = () => {
             </Label>
             <br />
             <Label>
+              Overtime Losses
+              <input
+                type="number"
+                value={updatedOvertimeLosses}
+                onChange={(e) =>
+                  setUpdatedOvertimeLosses(parseInt(e.target.value))
+                }
+              />
+            </Label>
+            <br />
+            <Label>
               Points
               <input
                 type="number"
@@ -175,7 +189,6 @@ export const AddTeamStats = () => {
             </Label>
             <br />
             <br />
-
             <Select
               label="Group"
               value={updatedGroup}
@@ -186,10 +199,8 @@ export const AddTeamStats = () => {
               ]}
               onChange={(e) => setUpdatedGroup(e.target.value)}
             />
-
             <br />
             <br />
-
             <Select
               label="Playoff group"
               value={updatedPlayoffGroup}
@@ -200,7 +211,6 @@ export const AddTeamStats = () => {
               ]}
               onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
             />
-
             <br />
             <div style={{ marginTop: "24px" }}>
               <Button type="submit" onClick={() => {}}>

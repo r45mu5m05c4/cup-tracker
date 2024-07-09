@@ -52,7 +52,8 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
                   : ((p.saves / (p.saves + p.goalsAgainst)) * 100).toFixed(2);
               return { ...p, savePercent };
             }
-            return p;
+            const ppg = calculatePointPerGame(p.points, p.gamesPlayed);
+            return { ...p, ppg };
           });
           setPlayers(
             formattedPlayers.filter((p: Player) => p.position !== "G")
@@ -68,6 +69,14 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
 
     fetchAllPlayers();
   }, []);
+
+  const calculatePointPerGame = (points: number, gamesPlayed: number) => {
+    if (points === 0) return "-";
+
+    const pointPerGame = points / gamesPlayed;
+
+    return pointPerGame;
+  };
 
   const playerColumns = small
     ? [
@@ -105,6 +114,7 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
         { key: "goals", header: "G" },
         { key: "assists", header: "A" },
         { key: "points", header: "P" },
+        { key: "ppg", header: "PPG" },
         { key: "gamesPlayed", header: "GP" },
         { key: "penaltyMinutes", header: "PIM" },
       ];

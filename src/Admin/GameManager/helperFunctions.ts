@@ -93,7 +93,6 @@ export const endMatch = async (game: Game, userAccessToken: string) => {
   } catch (error) {
     console.error("Error adding penalty:", error);
   }
-  
 };
 export const giveWin = async (
   teamName: string,
@@ -105,7 +104,8 @@ export const giveWin = async (
       true,
       teamName,
       userAccessToken,
-      competition
+      competition,
+      false
     );
     console.log(statUpdate);
   } catch (error) {
@@ -115,14 +115,16 @@ export const giveWin = async (
 export const giveLoss = async (
   teamName: string,
   userAccessToken: string,
-  competition: string
+  competition: string,
+  overTimeLoss: boolean
 ) => {
   try {
     const statUpdate = await addWinOrLossToTeam(
       false,
       teamName,
       userAccessToken,
-      competition
+      competition,
+      overTimeLoss
     );
     console.log(statUpdate);
   } catch (error) {

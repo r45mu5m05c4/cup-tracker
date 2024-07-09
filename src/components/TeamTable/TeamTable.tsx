@@ -35,8 +35,15 @@ export const TeamTable = ({ small }: TeamTableProps) => {
           );
           const teamLogoLoop = teamsFromAPI.map((t: Team) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
-
-            return { ...t, logo: teamLogo?.logo };
+            const pointPercent = calculatePointPercentage(
+              t.points,
+              t.gamesPlayed
+            );
+            return {
+              ...t,
+              logo: teamLogo?.logo,
+              pointPercentage: pointPercent,
+            };
           });
           const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
           const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
@@ -63,6 +70,7 @@ export const TeamTable = ({ small }: TeamTableProps) => {
         { key: "wins", header: "W" },
         { key: "draws", header: "D" },
         { key: "losses", header: "L" },
+        { key: "overtimeLosses", header: "OTL" },
         { key: "gamesPlayed", header: "GP" },
       ]
     : [
@@ -75,9 +83,11 @@ export const TeamTable = ({ small }: TeamTableProps) => {
         },
         { key: "name", header: "" },
         { key: "points", header: "P" },
+        { key: "pointPercentage", header: "P%" },
         { key: "wins", header: "W" },
         { key: "draws", header: "D" },
         { key: "losses", header: "L" },
+        { key: "overtimeLosses", header: "OTL" },
         { key: "goals", header: "GF" },
         { key: "goalsAgainst", header: "GA" },
         { key: "gamesPlayed", header: "GP" },
@@ -97,7 +107,14 @@ export const TeamTable = ({ small }: TeamTableProps) => {
       if (competition?.type === "cup") return "Group B";
     }
   };
+  const calculatePointPercentage = (points: number, gamesPlayed: number) => {
+    if (points === 0) return "-";
+    const maxPoints = gamesPlayed * 3;
 
+    const pointPercentage = (points / maxPoints) * 100;
+
+    return pointPercentage;
+  };
   return (
     <Container $small={small}>
       {small ? (

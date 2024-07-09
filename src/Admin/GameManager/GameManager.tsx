@@ -60,6 +60,7 @@ export const GameManager = () => {
   const [gameMinute, setGameMinute] = useState<number>();
   const [homePlayers, setHomePlayers] = useState<Player[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
@@ -307,7 +308,7 @@ export const GameManager = () => {
             ? game.awayTeam
             : game.homeTeam;
         await giveWin(winner, user.accessToken, game.competition);
-        await giveLoss(loser, user.accessToken, game.competition);
+        await giveLoss(loser, user.accessToken, game.competition, isOverTime);
       }
       if (homeGoalie && awayGoalie) {
         const awayWinner =
@@ -593,7 +594,6 @@ export const GameManager = () => {
                 ]}
                 onChange={(e) => setHomeEvent(e.target.value)}
               />
-
               {homeEvent !== "" && homeEvent === "pim" ? (
                 <>
                   <Select
@@ -660,6 +660,7 @@ export const GameManager = () => {
                   />
                 </>
               )}
+
               {homeEvent === "goal" ? (
                 <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
               ) : (
@@ -671,7 +672,11 @@ export const GameManager = () => {
           </>
         )}
       </Container>
+      <p>{isOverTime && "Overtime active"}</p>
       <div>
+        <Button onClick={() => setIsOverTime(!isOverTime)}>
+          Toggle Overtime
+        </Button>
         <Button
           disabled={!game || game?.ended}
           onClick={() => endMatchHandler()}
