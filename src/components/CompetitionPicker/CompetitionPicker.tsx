@@ -89,11 +89,12 @@ export const CompetitionPicker = () => {
 
 const Container = styled.div`
   position: fixed;
-  z-index: 150;
+  z-index: 170;
   inset: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
   background-color: var(--neutral-surface-base);
   gap: 24px;
   padding: 24px;

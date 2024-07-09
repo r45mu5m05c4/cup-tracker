@@ -8,6 +8,11 @@ import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Table } from "../../molecules/Table";
 import { Typography } from "../../molecules/Typography";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ArrowLongRightIcon,
+} from "@heroicons/react/20/solid";
 
 interface PlayerTableProps {
   small: boolean;
@@ -16,6 +21,7 @@ interface PlayerTableProps {
 export const PlayerTable = ({ small }: PlayerTableProps) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [goalies, setGoalies] = useState<Player[]>([]);
+  const [activePlayers, setActivePlayers] = useState<string>("Players");
   const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
@@ -147,33 +153,65 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
         { key: "penaltyMinutes", header: "PIM" },
       ];
 
+  const togglePlayers = () => {
+    setActivePlayers(activePlayers === "Players" ? "Goalies" : "Players");
+  };
+
   return (
     <Container $small={small}>
-      <Header>Players</Header>
-      {players.length ? (
-        <Table
-          data={players}
-          columns={playerColumns}
-          small={small}
-          className="player-table"
-        />
+      {!small ? (
+        <>
+          <Header>Players</Header>
+          {players.length ? (
+            <Table
+              data={players}
+              columns={playerColumns}
+              small={small}
+              className="player-table"
+            />
+          ) : (
+            <Typography style={{ padding: "12px 24px" }}>
+              No players registered yet.
+            </Typography>
+          )}
+        </>
       ) : (
-        <Typography style={{ padding: "12px 24px" }}>
-          No players registered yet.
-        </Typography>
+        <>
+          <SmallHeader>
+            {activePlayers}
+            <LeftIconButton onClick={togglePlayers} />
+            <RightIconButton onClick={togglePlayers} />
+            <Link href="/#/players">
+              Go to player stats
+              <LinkIconButton />
+            </Link>
+          </SmallHeader>
+          <Table
+            data={activePlayers === "Players" ? players : goalies}
+            columns={
+              activePlayers === "Players" ? playerColumns : goalieColumns
+            }
+            small
+          />
+        </>
       )}
-      <Header>Goalies</Header>
-      {!small && goalies.length ? (
-        <Table
-          data={goalies}
-          columns={goalieColumns}
-          small={small}
-          className="goalie-table"
-        />
-      ) : (
-        <Typography style={{ padding: "12px 24px" }}>
-          No goalies registered yet.
-        </Typography>
+
+      {!small && (
+        <>
+          <Header>Goalies</Header>
+          {goalies.length ? (
+            <Table
+              data={goalies}
+              columns={goalieColumns}
+              small={small}
+              className="goalie-table"
+            />
+          ) : (
+            <Typography style={{ padding: "12px 24px" }}>
+              No goalies registered yet.
+            </Typography>
+          )}
+        </>
       )}
     </Container>
   );
@@ -193,5 +231,49 @@ const Container = styled.div<{ $small: boolean }>`
 const Header = styled.h2`
   @media (max-width: 768px) {
     padding: 10px;
+  }
+`;
+const SmallHeader = styled.div`
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.5px solid var(--neutral-border-onContrast);
+  padding: 6px 10px;
+  font-weight: 500;
+  font-size: 0.8em;
+  background-color: var(--neutral-surface-third);
+`;
+const RightIconButton = styled(ChevronRightIcon)`
+  height: 20px;
+  cursor: pointer;
+  &:hover {
+    color: var(--decorative-brand-light);
+  }
+`;
+
+const LeftIconButton = styled(ChevronLeftIcon)`
+  height: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  &:hover {
+    color: var(--decorative-brand-light);
+  }
+`;
+
+const LinkIconButton = styled(ArrowLongRightIcon)`
+  height: 20px;
+  cursor: pointer;
+  margin: auto;
+  margin-left: 5px;
+`;
+const Link = styled.a`
+  display: flex;
+  align-items: center;
+  color: var(--text-base);
+  padding: 10px 0;
+  margin-left: auto;
+  margin-right: 0;
+  &:hover {
+    color: var(--decorative-brand-light);
   }
 `;

@@ -28,7 +28,7 @@ export const Start = ({ hasScrolled }: StartProps) => {
           <TeamTable small={true} />
         </WidgetContainer>
         <WidgetContainer
-          title="Players"
+          title="Stats"
           fadeIn={hasScrolled}
           style={{ backgroundColor: "var(--neutral-surface-second)" }}
         >
