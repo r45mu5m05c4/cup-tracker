@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useUser } from "../../utils/context/UserContext";
 import { removePlayerById } from "../../utils/queries";
 import { Player } from "../../utils/types/Player";
+import { Button } from "../../molecules/Button";
 
 interface RemovePlayerModalProps {
   player: Player;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const RemovePlayerModal = ({
+const RemovePlayerModal = ({
   player,
   setShowModal,
 }: RemovePlayerModalProps) => {
@@ -19,8 +20,6 @@ export const RemovePlayerModal = ({
   const { user, refreshAccessToken } = useUser();
 
   const removePlayer = async () => {
-    console.log("Fetching player with ID:", player.generatedId);
-    console.log(player.generatedId);
     if (!user?.accessToken || !player.generatedId) return;
 
     setLoading(true);
@@ -28,12 +27,11 @@ export const RemovePlayerModal = ({
 
     try {
       await refreshAccessToken();
-      const playerFromAPI = await removePlayerById(
+      await removePlayerById(
         user.accessToken,
         player.generatedId,
         player.competition
       );
-      console.log("Removed:", playerFromAPI);
       setMessage("Removed player");
       setLoading(false);
     } catch (error) {
@@ -65,16 +63,17 @@ export const RemovePlayerModal = ({
             {`, ${player.position}`}
           </b>
         </Info>
-
-        <Button onClick={removePlayer} disabled={loading}>
-          {loading ? "Removing..." : "Remove"}
-        </Button>
-        <Button onClick={handleClose}>Close</Button>
+        <ButtonContainer>
+          <Button onClick={removePlayer} disabled={loading}>
+            {loading ? "Removing..." : "Remove"}
+          </Button>
+          <Button onClick={handleClose}>Close</Button>
+        </ButtonContainer>
       </Modal>
     </>
   );
 };
-
+export default RemovePlayerModal;
 const ErrorMessage = styled.p`
   color: red;
   font-size: 1em;
@@ -87,25 +86,13 @@ const SuccessMessage = styled.p`
   margin: 16px 0;
 `;
 
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+const ButtonContainer = styled.div`
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  margin-top: 24px;
+  gap: 24px;
 `;
-
 const Overlay = styled.div`
   cursor: default;
   position: fixed;
@@ -128,7 +115,7 @@ const Modal = styled.div`
   background-color: #ffffff;
   border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: var(--neutral-surface-contrast);
   @media (max-width: 768px) {
     top: 0;
     left: 0;

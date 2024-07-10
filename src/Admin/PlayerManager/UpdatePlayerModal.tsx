@@ -69,18 +69,19 @@ export const UpdatePlayerModal = ({
     PlayerPosition.RightWing,
   ];
   return (
-    <Modal>
-      <Container>
+    <>
+      <Overlay onClick={() => setShowModal(false)} />
+      <Modal>
         <Typography variant="h3">Update {player.name}</Typography>
 
         {player && (
-          <div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdatePlayer();
-              }}
-            >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleUpdatePlayer();
+            }}
+          >
+            <Container>
               <Label>
                 Name:
                 <input
@@ -89,7 +90,19 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setPlayerName(e.target.value)}
                 />
               </Label>
-              <br />
+              <Label>
+                <Select
+                  label="Position"
+                  placeholder="Select a position"
+                  options={possiblePlayerPositions.map((position) => ({
+                    value: position,
+                    label: position,
+                  }))}
+                  onChange={(e) =>
+                    setPosition(e.target.value as PlayerPosition)
+                  }
+                />
+              </Label>
               <Label>
                 Goals:
                 <input
@@ -98,7 +111,6 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setGoals(parseInt(e.target.value))}
                 />
               </Label>
-              <br />
               <Label>
                 Assists:
                 <input
@@ -107,11 +119,9 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setAssists(parseInt(e.target.value))}
                 />
               </Label>
-              <br />
               <Label>
                 Points: <p>{goals + assists}</p>
               </Label>
-              <br />
               <Label>
                 Penalty Minutes:
                 <input
@@ -120,7 +130,6 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setPenaltyMinutes(parseInt(e.target.value))}
                 />
               </Label>
-              <br />
               <Label>
                 Games Played:
                 <input
@@ -129,7 +138,6 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setGamesPlayed(parseInt(e.target.value))}
                 />
               </Label>
-              <br />
               <Label>
                 Jersey Number:
                 <input
@@ -138,47 +146,38 @@ export const UpdatePlayerModal = ({
                   onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
                 />
               </Label>
-              <br />
 
-              <Select
-                label="Position"
-                placeholder="Select a position"
-                options={possiblePlayerPositions.map((position) => ({
-                  value: position,
-                  label: position,
-                }))}
-                onChange={(e) => setPosition(e.target.value as PlayerPosition)}
-              />
-              <br />
-              <Label>Goalie stats</Label>
-              <br />
-              <Label>
-                Saves:
-                <input
-                  type="number"
-                  value={saves}
-                  onChange={(e) => setSaves(parseInt(e.target.value))}
-                />
-              </Label>
-              <br />
-              <Label>
-                Goals against:
-                <input
-                  type="number"
-                  value={goalsAgainst}
-                  onChange={(e) => setGoalsAgainst(parseInt(e.target.value))}
-                />
-              </Label>
-              <br />
-              <Label>
-                Wins:
-                <input
-                  type="number"
-                  value={wins}
-                  onChange={(e) => setWins(parseInt(e.target.value))}
-                />
-              </Label>
-              <br />
+              {position === "G" && (
+                <>
+                  <Label>Goalie stats</Label>
+                  <Label>
+                    Saves:
+                    <input
+                      type="number"
+                      value={saves}
+                      onChange={(e) => setSaves(parseInt(e.target.value))}
+                    />
+                  </Label>
+                  <Label>
+                    Goals against:
+                    <input
+                      type="number"
+                      value={goalsAgainst}
+                      onChange={(e) =>
+                        setGoalsAgainst(parseInt(e.target.value))
+                      }
+                    />
+                  </Label>
+                  <Label>
+                    Wins:
+                    <input
+                      type="number"
+                      value={wins}
+                      onChange={(e) => setWins(parseInt(e.target.value))}
+                    />
+                  </Label>
+                </>
+              )}
               <ButtonContainer>
                 <Button type="submit" onClick={() => {}}>
                   Update Player
@@ -191,12 +190,12 @@ export const UpdatePlayerModal = ({
                   Close
                 </Button>
               </ButtonContainer>
-            </form>
-          </div>
+            </Container>
+          </form>
         )}
         {message !== "" && <span>{message}</span>}
-      </Container>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 const ButtonContainer = styled.div`
@@ -207,15 +206,19 @@ const ButtonContainer = styled.div`
   flex-direction: row;
   gap: 24px;
 `;
+const Overlay = styled.div`
+  cursor: default;
+  position: fixed;
+  inset: 0;
+  opacity: 10%;
+  background-color: #000;
+  z-index: 50;
+`;
 const Container = styled.div`
-  margin: auto;
-  height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 14px;
 `;
-
 const Label = styled.div`
   width: 90%;
   display: flex;
@@ -234,13 +237,22 @@ const Label = styled.div`
 `;
 
 const Modal = styled.div`
+  top: 5%;
+  left: 25%;
+  width: 50%;
   z-index: 100;
   position: absolute;
+  margin: auto;
   display: flex;
   flex-direction: column;
   padding: 24px;
-  background-color: var(--neutral-surface-base);
-  border: none;
-  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--neutral-surface-contrast);
+  @media (max-width: 768px) {
+    top: 0;
+    left: 0;
+    width: 90%;
+  }
 `;

@@ -1,14 +1,14 @@
 import { styled } from "styled-components";
 
 import { useEffect, useState } from "react";
-import { Team } from "../utils/types/Team";
-import { addPlayer, getTeams } from "../utils/queries";
-import { useUser } from "../utils/context/UserContext";
-import { PlayerPosition } from "../utils/types/Player";
-import { useCompetition } from "../utils/context/CompetitionContext";
-import { Typography } from "../molecules/Typography";
-import { Button } from "../molecules/Button";
-import { Select } from "../molecules/Select";
+import { Team } from "../../utils/types/Team";
+import { addPlayer, getTeams } from "../../utils/queries";
+import { useUser } from "../../utils/context/UserContext";
+import { PlayerPosition } from "../../utils/types/Player";
+import { useCompetition } from "../../utils/context/CompetitionContext";
+import { Typography } from "../../molecules/Typography";
+import { Button } from "../../molecules/Button";
+import { Select } from "../../molecules/Select";
 
 export type NewPlayer = {
   generatedId: string;
@@ -26,8 +26,10 @@ export type NewPlayer = {
   saves?: number;
   goalsAgainst?: number;
 };
-
-export const AddPlayer = () => {
+interface AddPlayerModalProps {
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [playerName, setPlayerName] = useState<string>("");
   const [jerseyNumber, setJerseyNumber] = useState<number>(0);
@@ -119,74 +121,106 @@ export const AddPlayer = () => {
     PlayerPosition.RightWing,
   ];
   return (
-    <Container>
-      <Select
-        label="Select a team to add a player to"
-        placeholder="Select a team"
-        options={teams.map((team) => ({
-          value: team._id,
-          label: team.name,
-        }))}
-        onChange={(e) => handleTeamSelect(e.target.value)}
-      />
-      {selectedTeam && (
-        <div>
-          <Typography style={{ fontWeight: "600", marginTop: "12px" }}>
-            Add player to: {selectedTeam.name}{" "}
-          </Typography>
+    <>
+      <Overlay onClick={() => setShowModal(false)} />
+      <Modal onClick={(e) => e.stopPropagation()}>
+        <Select
+          label="Select a team to add a player to"
+          placeholder="Select a team"
+          options={teams.map((team) => ({
+            value: team._id,
+            label: team.name,
+          }))}
+          onChange={(e) => handleTeamSelect(e.target.value)}
+        />
+        {selectedTeam && (
+          <div>
+            <Typography style={{ fontWeight: "600", marginTop: "12px" }}>
+              Add player to: {selectedTeam.name}{" "}
+            </Typography>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleAddPlayer();
-            }}
-          >
-            <Label>
-              Name
-              <input
-                type="text"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddPlayer();
+              }}
+            >
+              <Label>
+                Name
+                <input
+                  type="text"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                />
+              </Label>
+              <Label>
+                Jersey Number
+                <input
+                  type="number"
+                  value={jerseyNumber}
+                  onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
+                />
+              </Label>
+
+              <Select
+                label="Position"
+                value={position}
+                placeholder="Select position"
+                options={possiblePlayerPositions.map((position) => ({
+                  value: position,
+                  label: position,
+                }))}
+                onChange={(e) => setPosition(e.target.value as PlayerPosition)}
               />
-            </Label>
-            <Label>
-              Jersey Number
-              <input
-                type="number"
-                value={jerseyNumber}
-                onChange={(e) => setJerseyNumber(parseInt(e.target.value))}
-              />
-            </Label>
 
-            <Select
-              label="Position"
-              value={position}
-              placeholder="Select position"
-              options={possiblePlayerPositions.map((position) => ({
-                value: position,
-                label: position,
-              }))}
-              onChange={(e) => setPosition(e.target.value as PlayerPosition)}
-            />
-
-            <div style={{ marginTop: "24px" }}>
-              <Button type="submit" onClick={() => {}}>
-                Add Player
-              </Button>
-            </div>
-          </form>
-        </div>
-      )}
-      {message !== "" && <span>{message}</span>}
-    </Container>
+              <ButtonContainer>
+                <Button type="submit" onClick={() => {}}>
+                  Add Player
+                </Button>
+                <Button onClick={() => setShowModal(false)}>Close</Button>
+              </ButtonContainer>
+            </form>
+          </div>
+        )}
+        {message !== "" && <span>{message}</span>}
+      </Modal>
+    </>
   );
 };
-
-const Container = styled.div`
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: 24px;
+  gap: 24px;
+`;
+const Modal = styled.div`
+  top: 5%;
+  left: 25%;
+  width: 50%;
+  z-index: 100;
+  position: absolute;
+  margin: auto;
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--neutral-surface-contrast);
+  @media (max-width: 768px) {
+    top: 0;
+    left: 0;
+    width: 90%;
+  }
 `;
-
+const Overlay = styled.div`
+  cursor: default;
+  position: fixed;
+  inset: 0;
+  opacity: 10%;
+  background-color: #000;
+  z-index: 50;
+`;
 const Label = styled.div`
   width: 100%;
   display: flex;
