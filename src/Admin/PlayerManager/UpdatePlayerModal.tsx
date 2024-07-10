@@ -52,6 +52,7 @@ export const UpdatePlayerModal = ({
         wins: wins,
         saves: saves,
         goalsAgainst: goalsAgainst,
+        savePercent: player.savePercent,
       };
       updatePlayerStats(updatedPlayer, user?.accessToken);
       setMessage(`Successfully updated ${updatedPlayer.name}`);

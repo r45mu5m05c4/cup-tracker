@@ -47,9 +47,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-  }
 `;
 const CloseIcon = styled(XMarkIcon)`
   height: 38px;
