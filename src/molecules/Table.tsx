@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Player } from "../utils/types/Player";
 import { Team } from "../utils/types/Team";
 import { TeamProfile } from "../components/TeamProfile/TeamProfile";
+import { PlayerProfile } from "../components/PlayerProfile/PlayerProfile";
 
 type TableColumn<T> = {
   key: keyof T;
@@ -94,7 +95,7 @@ export const Table = ({
     setTeamFilter(event.target.value);
   };
   const isTeam = (item: Team | Player): item is Team => {
-    return (item as Team).name !== undefined;
+    return (item as Team).group !== undefined;
   };
   const handleItemClick = (item: Team | Player) => {
     if (isTeam(item)) {
@@ -108,10 +109,10 @@ export const Table = ({
   return (
     <>
       {showTeamModal && openTeam && (
-        <TeamProfile
-          team={openTeam}
-          setShowModal={setShowTeamModal}
-        />
+        <TeamProfile team={openTeam} setShowModal={setShowTeamModal} />
+      )}
+      {showPlayerModal && openPlayer && (
+        <PlayerProfile player={openPlayer} setShowModal={setShowPlayerModal} />
       )}
 
       {!small && (
