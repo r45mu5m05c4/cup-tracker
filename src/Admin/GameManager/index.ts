@@ -1,3 +1,3 @@
-import { GameManager } from "./GameManager";
+import { GameList } from "./GameList";
 
-export default GameManager;
+export default GameList;

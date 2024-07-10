@@ -74,6 +74,7 @@ const RemovePlayerModal = ({
   );
 };
 export default RemovePlayerModal;
+
 const ErrorMessage = styled.p`
   color: red;
   font-size: 1em;
@@ -100,6 +101,9 @@ const Overlay = styled.div`
   opacity: 10%;
   background-color: #000;
   z-index: 50;
+  @media (max-width: 768px) {
+    opacity: 100%;
+  }
 `;
 
 const Modal = styled.div`
@@ -112,12 +116,11 @@ const Modal = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px;
-  background-color: #ffffff;
   border: 1px solid #ccc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: var(--neutral-surface-contrast);
   @media (max-width: 768px) {
-    top: 0;
+    top: 10%;
     left: 0;
     width: 90%;
   }

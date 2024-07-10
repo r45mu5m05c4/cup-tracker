@@ -6,7 +6,6 @@ import { Game, Penalty } from "../../utils/types/Game";
 import {
   addShotToGame,
   getGameById,
-  getGames,
   getPlayerByTeam,
   updateGoalieStatsAfterGame,
 } from "../../utils/queries";
@@ -21,16 +20,20 @@ import {
   giveLoss,
   giveWin,
 } from "./helperFunctions";
-import { useCompetition } from "../../utils/context/CompetitionContext";
 import { addGoal } from "./addGoal";
 import { GameTimer } from "../../molecules/GameTimer";
 import { Typography } from "../../molecules/Typography";
 import { Select } from "../../molecules/Select";
 import { Button } from "../../molecules/Button";
-
-export const GameManager = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [game, setGame] = useState<Game>();
+interface GameManagerModalProps {
+  pickedGame: Game;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export const GameManagerModal = ({
+  pickedGame,
+  setShowModal,
+}: GameManagerModalProps) => {
+  const [game, setGame] = useState<Game>(pickedGame);
   const [homeGoalie, setHomeGoalie] = useState<string>("");
   const [awayGoalie, setAwayGoalie] = useState<string>("");
   const [homeShots, setHomeShots] = useState<number>(0);
@@ -62,7 +65,6 @@ export const GameManager = () => {
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const { user, refreshAccessToken } = useUser();
-  const { competition } = useCompetition();
 
   const updateElapsedMinutes = () => {
     if (game) {
@@ -75,29 +77,6 @@ export const GameManager = () => {
       minutes < 40 && minutes > 0 && setGameMinute(minutes);
     }
   };
-
-  const gamePicker = (gameId: string) => {
-    const foundGame = games && games.find((g) => g._id === gameId);
-    foundGame && setGame(foundGame);
-  };
-
-  useEffect(() => {
-    const fetchAllGames = async () => {
-      if (user?.accessToken && competition)
-        try {
-          await refreshAccessToken();
-          const gamesFromAPI = await getGames(
-            user.accessToken,
-            competition.name
-          );
-          setGames(gamesFromAPI);
-        } catch (error) {
-          console.error("Error fetching games:", error);
-        }
-    };
-
-    fetchAllGames();
-  }, [user]);
 
   useEffect(() => {
     if (game) {
@@ -398,296 +377,326 @@ export const GameManager = () => {
     return eventItems;
   };
 
-  if (games.length === 0) {
-    return <Typography>No games to manage yet.</Typography>;
-  }
-
   return (
     <>
-      {game && (
-        <LiveGame>
-          <Header>
-            {game.awayTeam} @ {game.homeTeam}
-          </Header>
-          <GoalsRow>
-            <AwayGoals>{game.awayTeamGoals.length}</AwayGoals>
-            <GameTimeContainer>
-              <GameTimer
-                startTime={new Date(game.startTime)}
-                ended={game.ended}
-              />
-            </GameTimeContainer>
-            <HomeGoals>{game.homeTeamGoals.length}</HomeGoals>
-          </GoalsRow>
-          {eventRenderer()}
-        </LiveGame>
-      )}
-
-      <Container>
-        {games.length > 0 && !game && (
-          <Select
-            label="Select game to manage"
-            value={game}
-            placeholder="Select game"
-            options={games.map((game) => ({
-              value: game._id as string,
-              label: `${game.awayTeam} @ ${game.homeTeam}, ${game.gameStage}`,
-            }))}
-            onChange={(e) => gamePicker(e.target.value)}
-          />
-        )}
+      {" "}
+      <Overlay onClick={() => setShowModal(false)} />
+      <Modal onClick={(e) => e.stopPropagation()}>
         {game && (
-          <>
-            <TeamContainer>
-              <Typography variant="h3">Away</Typography>
-              <Select
-                label="Away goalie"
-                value={awayGoalie}
-                placeholder="Select goalie"
-                options={awayPlayers
-                  .filter((ap: Player) => ap.position === "G")
-                  .map((player) => ({
-                    value: player.generatedId,
-                    label: `${player.jerseyNumber} - ${player.name}`,
-                  }))}
-                onChange={(e) => setAwayGoalie(e.target.value)}
-              />
-              <div>
-                <Typography>Game minute</Typography>
-                <input
-                  type="number"
-                  value={gameMinute}
-                  onChange={(e) => setGameMinute(parseInt(e.target.value))}
+          <LiveGame>
+            <Header>
+              {game.awayTeam} @ {game.homeTeam}
+            </Header>
+            <GoalsRow>
+              <AwayGoals>{game.awayTeamGoals.length}</AwayGoals>
+              <GameTimeContainer>
+                <GameTimer
+                  startTime={new Date(game.startTime)}
+                  ended={game.ended}
                 />
-              </div>
-              <div>
-                <Typography>Shot counter</Typography>
-                <input
-                  type="number"
-                  value={awayShots}
-                  onChange={(e) => setAwayShots(parseInt(e.target.value))}
+              </GameTimeContainer>
+              <HomeGoals>{game.homeTeamGoals.length}</HomeGoals>
+            </GoalsRow>
+            {eventRenderer()}
+          </LiveGame>
+        )}
+
+        <Container>
+          {game && (
+            <>
+              <TeamContainer>
+                <Typography variant="h3">Away</Typography>
+                <Select
+                  label="Away goalie"
+                  value={awayGoalie}
+                  placeholder="Select goalie"
+                  options={awayPlayers
+                    .filter((ap: Player) => ap.position === "G")
+                    .map((player) => ({
+                      value: player.generatedId,
+                      label: `${player.jerseyNumber} - ${player.name}`,
+                    }))}
+                  onChange={(e) => setAwayGoalie(e.target.value)}
                 />
-              </div>
-              <div>
+                <div>
+                  <Typography>Game minute</Typography>
+                  <input
+                    type="number"
+                    value={gameMinute}
+                    onChange={(e) => setGameMinute(parseInt(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Typography>Shot counter</Typography>
+                  <input
+                    type="number"
+                    value={awayShots}
+                    onChange={(e) => setAwayShots(parseInt(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Select
+                    label="Event"
+                    value={awayEvent}
+                    placeholder="Select event"
+                    options={[
+                      { label: "Goal", value: "goal" },
+                      { label: "Penalty", value: "pim" },
+                    ]}
+                    onChange={(e) => setAwayEvent(e.target.value)}
+                  />
+                </div>
+
+                {awayEvent === "pim" ? (
+                  <>
+                    <Select
+                      label="Player"
+                      value={awayPlayer}
+                      placeholder="Select player"
+                      options={awayPlayers.map((player) => ({
+                        value: player.generatedId,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setAwayPlayer(e.target.value)}
+                    />
+                    <div>
+                      <Typography>Penalty minutes</Typography>
+                      <input
+                        type="number"
+                        value={awayPenaltyMinutes || ""}
+                        onChange={(e) =>
+                          setAwayPenaltyMinutes(parseInt(e.target.value))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Typography>Penalty type</Typography>
+                      <input
+                        type="text"
+                        value={awayPenaltyType || ""}
+                        onChange={(e) => setAwayPenaltyType(e.target.value)}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Select
+                      label="Scorer"
+                      value={awayPlayer || ""}
+                      placeholder="Select player"
+                      options={awayPlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setAwayPlayer(e.target.value)}
+                    />
+                    <Select
+                      label="Primary assist"
+                      value={awayAssister || ""}
+                      placeholder="Select player"
+                      options={awayPlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setAwayAssister(e.target.value)}
+                    />
+                    <Select
+                      label="Secondary assist"
+                      value={awaySecondaryAssister || ""}
+                      placeholder="Select player"
+                      options={awayPlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setAwaySecondaryAssister(e.target.value)}
+                    />
+                  </>
+                )}
+                {awayEvent === "goal" ? (
+                  <Button onClick={() => addAwayGoalHandler()}>Add goal</Button>
+                ) : (
+                  <Button onClick={() => addAwayPenaltyHandler()}>
+                    Add penalty
+                  </Button>
+                )}
+              </TeamContainer>
+              <TeamContainer>
+                <Typography variant="h3">Home</Typography>
+                <Select
+                  label="Home goalie"
+                  value={homeGoalie}
+                  placeholder="Select goalie"
+                  options={homePlayers
+                    .filter((hp: Player) => hp.position === "G")
+                    .map((player) => ({
+                      value: player.generatedId,
+                      label: `${player.jerseyNumber} - ${player.name}`,
+                    }))}
+                  onChange={(e) => setHomeGoalie(e.target.value)}
+                />
+                <div>
+                  <Typography>Game minute</Typography>
+                  <input
+                    type="number"
+                    value={gameMinute}
+                    onChange={(e) => setGameMinute(parseInt(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Typography>Shot counter</Typography>
+                  <input
+                    type="number"
+                    value={homeShots}
+                    onChange={(e) => setHomeShots(parseInt(e.target.value))}
+                  />
+                </div>
                 <Select
                   label="Event"
-                  value={awayEvent}
+                  value={homeEvent || ""}
                   placeholder="Select event"
                   options={[
                     { label: "Goal", value: "goal" },
                     { label: "Penalty", value: "pim" },
                   ]}
-                  onChange={(e) => setAwayEvent(e.target.value)}
+                  onChange={(e) => setHomeEvent(e.target.value)}
                 />
-              </div>
+                {homeEvent !== "" && homeEvent === "pim" ? (
+                  <>
+                    <Select
+                      label="Player"
+                      value={homePlayer}
+                      placeholder="Select player"
+                      options={homePlayers.map((player) => ({
+                        value: player.generatedId,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setHomePlayer(e.target.value)}
+                    />
 
-              {awayEvent === "pim" ? (
-                <>
-                  <Select
-                    label="Player"
-                    value={awayPlayer}
-                    placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
-                      value: player.generatedId,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setAwayPlayer(e.target.value)}
-                  />
-                  <div>
-                    <Typography>Penalty minutes</Typography>
-                    <input
-                      type="number"
-                      value={awayPenaltyMinutes || ""}
-                      onChange={(e) =>
-                        setAwayPenaltyMinutes(parseInt(e.target.value))
-                      }
+                    <div>
+                      <Typography>Penalty minutes</Typography>
+                      <input
+                        type="number"
+                        value={homePenaltyMinutes || ""}
+                        onChange={(e) =>
+                          setHomePenaltyMinutes(parseInt(e.target.value))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Typography>Penalty type</Typography>
+                      <input
+                        type="text"
+                        value={homePenaltyType || ""}
+                        onChange={(e) => setHomePenaltyType(e.target.value)}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Select
+                      label="Scorer"
+                      value={homePlayer || ""}
+                      placeholder="Select player"
+                      options={homePlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setHomePlayer(e.target.value)}
                     />
-                  </div>
-                  <div>
-                    <Typography>Penalty type</Typography>
-                    <input
-                      type="text"
-                      value={awayPenaltyType || ""}
-                      onChange={(e) => setAwayPenaltyType(e.target.value)}
+                    <Select
+                      label="Primary assist"
+                      value={homeAssister || ""}
+                      placeholder="Select player"
+                      options={homePlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setHomeAssister(e.target.value)}
                     />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Select
-                    label="Scorer"
-                    value={awayPlayer || ""}
-                    placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setAwayPlayer(e.target.value)}
-                  />
-                  <Select
-                    label="Primary assist"
-                    value={awayAssister || ""}
-                    placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setAwayAssister(e.target.value)}
-                  />
-                  <Select
-                    label="Secondary assist"
-                    value={awaySecondaryAssister || ""}
-                    placeholder="Select player"
-                    options={awayPlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setAwaySecondaryAssister(e.target.value)}
-                  />
-                </>
-              )}
-              {awayEvent === "goal" ? (
-                <Button onClick={() => addAwayGoalHandler()}>Add goal</Button>
-              ) : (
-                <Button onClick={() => addAwayPenaltyHandler()}>
-                  Add penalty
-                </Button>
-              )}
-            </TeamContainer>
-            <TeamContainer>
-              <Typography variant="h3">Home</Typography>
-              <Select
-                label="Home goalie"
-                value={homeGoalie}
-                placeholder="Select goalie"
-                options={homePlayers
-                  .filter((hp: Player) => hp.position === "G")
-                  .map((player) => ({
-                    value: player.generatedId,
-                    label: `${player.jerseyNumber} - ${player.name}`,
-                  }))}
-                onChange={(e) => setHomeGoalie(e.target.value)}
-              />
-              <div>
-                <Typography>Game minute</Typography>
-                <input
-                  type="number"
-                  value={gameMinute}
-                  onChange={(e) => setGameMinute(parseInt(e.target.value))}
-                />
-              </div>
-              <div>
-                <Typography>Shot counter</Typography>
-                <input
-                  type="number"
-                  value={homeShots}
-                  onChange={(e) => setHomeShots(parseInt(e.target.value))}
-                />
-              </div>
-              <Select
-                label="Event"
-                value={homeEvent || ""}
-                placeholder="Select event"
-                options={[
-                  { label: "Goal", value: "goal" },
-                  { label: "Penalty", value: "pim" },
-                ]}
-                onChange={(e) => setHomeEvent(e.target.value)}
-              />
-              {homeEvent !== "" && homeEvent === "pim" ? (
-                <>
-                  <Select
-                    label="Player"
-                    value={homePlayer}
-                    placeholder="Select player"
-                    options={homePlayers.map((player) => ({
-                      value: player.generatedId,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setHomePlayer(e.target.value)}
-                  />
+                    <Select
+                      label="Secondary assist"
+                      value={homeSecondaryAssister || ""}
+                      placeholder="Select player"
+                      options={homePlayers.map((player) => ({
+                        value: player.name,
+                        label: `${player.jerseyNumber} - ${player.name}`,
+                      }))}
+                      onChange={(e) => setHomeSecondaryAssister(e.target.value)}
+                    />
+                  </>
+                )}
 
-                  <div>
-                    <Typography>Penalty minutes</Typography>
-                    <input
-                      type="number"
-                      value={homePenaltyMinutes || ""}
-                      onChange={(e) =>
-                        setHomePenaltyMinutes(parseInt(e.target.value))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Typography>Penalty type</Typography>
-                    <input
-                      type="text"
-                      value={homePenaltyType || ""}
-                      onChange={(e) => setHomePenaltyType(e.target.value)}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Select
-                    label="Scorer"
-                    value={homePlayer || ""}
-                    placeholder="Select player"
-                    options={homePlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setHomePlayer(e.target.value)}
-                  />
-                  <Select
-                    label="Primary assist"
-                    value={homeAssister || ""}
-                    placeholder="Select player"
-                    options={homePlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setHomeAssister(e.target.value)}
-                  />
-                  <Select
-                    label="Secondary assist"
-                    value={homeSecondaryAssister || ""}
-                    placeholder="Select player"
-                    options={homePlayers.map((player) => ({
-                      value: player.name,
-                      label: `${player.jerseyNumber} - ${player.name}`,
-                    }))}
-                    onChange={(e) => setHomeSecondaryAssister(e.target.value)}
-                  />
-                </>
-              )}
-
-              {homeEvent === "goal" ? (
-                <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
-              ) : (
-                <Button onClick={() => addHomePenaltyHandler()}>
-                  Add penalty
-                </Button>
-              )}
-            </TeamContainer>
-          </>
-        )}
-      </Container>
-      <p>{isOverTime && "Overtime active"}</p>
-      <div>
-        <Button onClick={() => setIsOverTime(!isOverTime)}>
-          Toggle Overtime
-        </Button>
-        <Button
-          disabled={!game || game?.ended}
-          onClick={() => endMatchHandler()}
-        >
-          End Game
-        </Button>
-      </div>
+                {homeEvent === "goal" ? (
+                  <Button onClick={() => addHomeGoalHandler()}>Add goal</Button>
+                ) : (
+                  <Button onClick={() => addHomePenaltyHandler()}>
+                    Add penalty
+                  </Button>
+                )}
+              </TeamContainer>
+            </>
+          )}
+        </Container>
+        <p>{isOverTime && "Overtime active"}</p>
+        <ButtonContainer>
+          <Button onClick={() => setIsOverTime(!isOverTime)}>
+            Toggle Overtime
+          </Button>
+          <Button
+            disabled={!game || game?.ended}
+            onClick={() => endMatchHandler()}
+          >
+            End Game
+          </Button>
+          <Button onClick={() => setShowModal(false)}>Close</Button>
+        </ButtonContainer>
+      </Modal>
     </>
   );
 };
+const Overlay = styled.div`
+  cursor: default;
+  position: fixed;
+  inset: 0;
+  opacity: 10%;
+  background-color: #000;
+  z-index: 50;
+  @media (max-width: 768px) {
+    opacity: 100%;
+  }
+`;
+const ButtonContainer = styled.div`
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  margin-top: 24px;
+  gap: 24px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 14px;
+  }
+`;
 
+const Modal = styled.div`
+  top: 5%;
+  left: 10%;
+  width: 80%;
+  z-index: 100;
+  position: absolute;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--neutral-surface-contrast);
+  @media (max-width: 768px) {
+    top: 10%;
+    left: 0;
+    width: 90%;
+  }
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: row;

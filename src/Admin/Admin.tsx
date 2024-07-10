@@ -1,12 +1,10 @@
 import { styled } from "styled-components";
-import GameManager from "./GameManager";
-import RemoveGame from "./RemoveGame";
 import { AddTeamStats } from "./AddTeamStats";
-import { ScheduleGame } from "./ScheduleGame";
 import { AddLogo } from "./AddLogo";
 import { Tabs } from "../molecules/Tabs";
 import { Typography } from "../molecules/Typography";
 import { PlayerList } from "./PlayerManager/PlayerList";
+import GameList from "./GameManager";
 
 export const Admin = () => {
   const tabs = [
@@ -14,14 +12,8 @@ export const Admin = () => {
       label: "Game",
       content: (
         <TabContentContainer>
-          <Typography variant="h4">Schedule game</Typography>
-          <ScheduleGame />
-          <Separator />
-          <Typography variant="h4">Remove game</Typography>
-          <RemoveGame />
-          <Separator />
-          <Typography variant="h4">Live game manager</Typography>
-          <GameManager />
+          <Typography variant="h4">Manage games</Typography>
+          <GameList />
         </TabContentContainer>
       ),
     },

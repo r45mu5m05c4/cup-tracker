@@ -213,6 +213,9 @@ const Overlay = styled.div`
   opacity: 10%;
   background-color: #000;
   z-index: 50;
+  @media (max-width: 768px) {
+    opacity: 100%;
+  }
 `;
 const Container = styled.div`
   display: flex;
@@ -251,8 +254,8 @@ const Modal = styled.div`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: var(--neutral-surface-contrast);
   @media (max-width: 768px) {
-    top: 0;
     left: 0;
     width: 90%;
+    top: 10%;
   }
 `;

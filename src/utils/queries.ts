@@ -4,7 +4,7 @@ import { Player } from "./types/Player";
 import { Game, Penalty } from "./types/Game";
 import { Goal } from "./types/Game";
 import { Competition } from "./types/Competition";
-import { NewGame } from "../Admin/ScheduleGame";
+import { NewGame } from "../Admin/GameManager/ScheduleGameModal";
 import { NewPlayer } from "../Admin/PlayerManager/AddPlayerModal";
 
 export const getCompetitions = async (accessToken: string) => {
