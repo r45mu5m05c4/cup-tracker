@@ -97,8 +97,9 @@ export const AddLogo = () => {
           </label>
           <br />
           <div>
-            <Button disabled={!updatedLogo} onClick={handleUpdateLogo}>
-              Update Logo
+            <Button disabled onClick={handleUpdateLogo}>
+              {/* ={!updatedLogo} */}
+              NOT YET IMPLEMENTED
             </Button>
           </div>
           {message && <p>{message}</p>}
