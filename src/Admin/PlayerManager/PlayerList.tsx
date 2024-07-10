@@ -95,7 +95,7 @@ export const PlayerList = () => {
     <Container>
       <TopRow>
         <Select
-          placeholder="Select a team"
+          placeholder="Filter on team"
           options={teams.map((team) => ({
             value: team.name,
             label: team.name,
@@ -152,16 +152,27 @@ export const PlayerList = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+  }
 `;
 const TopRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-bottom: 14px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 14px;
+  }
 `;
 const AddPlayerButtonContainer = styled.div`
   height: 50% !important;
   margin: auto;
+  @media (min-width: 768px) {
+    margin-right: 0;
+  }
 `;
 const PlayerCard = styled.div`
   display: flex;

@@ -41,7 +41,7 @@ export const Admin = () => {
       label: "Player",
       content: (
         <TabContentContainer>
-          <Typography variant="h4">Update a player</Typography>
+          <Typography variant="h4">Manage players</Typography>
           <PlayerList />
         </TabContentContainer>
       ),
