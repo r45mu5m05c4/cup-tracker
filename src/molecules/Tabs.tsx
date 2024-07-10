@@ -29,7 +29,10 @@ export const Tabs = ({ items }: TabsProps) => {
       </TabHeaders>
       <TabContent>
         {items.map((child, index) => (
-          <TabPanel key={index} $active={activeTab === index}>
+          <TabPanel
+            key={index}
+            $active={activeTab === index}
+          >
             {child.content}
           </TabPanel>
         ))}

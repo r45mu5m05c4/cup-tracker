@@ -379,7 +379,6 @@ export const GameManagerModal = ({
 
   return (
     <>
-      {" "}
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
         {game && (

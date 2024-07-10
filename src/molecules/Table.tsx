@@ -1,5 +1,8 @@
 import React, { ReactNode, useState, useMemo } from "react";
 import styled from "styled-components";
+import { Player } from "../utils/types/Player";
+import { Team } from "../utils/types/Team";
+import { TeamProfile } from "../components/TeamProfile/TeamProfile";
 
 type TableColumn<T> = {
   key: keyof T;
@@ -33,6 +36,10 @@ export const Table = ({
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
+  const [openTeam, setOpenTeam] = useState<Team>();
+  const [openPlayer, setOpenPlayer] = useState<Player>();
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [showPlayerModal, setShowPlayerModal] = useState(false);
 
   const filteredData = useMemo(() => {
     let filtered = data;
@@ -86,9 +93,27 @@ export const Table = ({
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTeamFilter(event.target.value);
   };
-
+  const isTeam = (item: Team | Player): item is Team => {
+    return (item as Team).name !== undefined;
+  };
+  const handleItemClick = (item: Team | Player) => {
+    if (isTeam(item)) {
+      setOpenTeam(item);
+      setShowTeamModal(true);
+    } else {
+      setOpenPlayer(item);
+      setShowPlayerModal(true);
+    }
+  };
   return (
     <>
+      {showTeamModal && openTeam && (
+        <TeamProfile
+          team={openTeam}
+          setShowModal={setShowTeamModal}
+        />
+      )}
+
       {!small && (
         <FilterContainer>
           <SearchInput
@@ -130,7 +155,11 @@ export const Table = ({
           <tbody>
             {sortedData ? (
               sortedData.map((item, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr
+                  style={{ cursor: "pointer" }}
+                  key={rowIndex}
+                  onClick={() => handleItemClick(item)}
+                >
                   {columns.map((column, colIndex) => (
                     <TableCell
                       key={colIndex}

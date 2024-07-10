@@ -1,4 +1,5 @@
 export type Team = {
+  logo: string | undefined;
   _id: string;
   name: string;
   wins: number;
