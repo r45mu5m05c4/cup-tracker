@@ -52,17 +52,20 @@ export const TeamProfile = ({ team, setShowModal }: TeamProfileProps) => {
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <CloseIcon
-          style={{ cursor: "pointer" }}
-          onClick={() => setShowModal(false)}
-        />
-        <Container>
-          <h2>{team.name}</h2>
+        <Row>
           <img
             src={team.logo}
             alt=""
-            style={{ width: "74px", height: "74px", margin: 0 }}
+            style={{ width: "74px", height: "74px", marginRight: "15px" }}
           />
+          <h2 style={{ marginRight: "auto", marginLeft: 0 }}>{team.name}</h2>
+
+          <CloseIcon
+            style={{ cursor: "pointer", marginTop: 0 }}
+            onClick={() => setShowModal(false)}
+          />
+        </Row>
+        <Container>
           <ForwardRow>
             <ForwardColumn>
               <h3>LW</h3>
@@ -135,6 +138,12 @@ const ForwardRow = styled.div`
   flex-direction: row;
   width: 100%;
   margin-bottom: 24px;
+`;
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: left;
 `;
 const ForwardColumn = styled.div`
   display: flex;

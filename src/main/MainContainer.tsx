@@ -16,6 +16,7 @@ import { SetCompetitionFromUrl } from "../components/CompetitionPicker/SetCompet
 import { Bracket } from "../components/Bracket/Bracket";
 import { Games } from "../components/Games/Games";
 import { IconButton } from "../molecules/IconButton";
+import TeamList from "../components/TeamList";
 
 export const MainContainer = () => {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -90,6 +91,7 @@ export const MainContainer = () => {
                 path={ROUTES.TEAMS}
                 element={<TeamTable small={false} />}
               />
+              <Route path={ROUTES.ROSTERS} element={<TeamList />} />
               <Route path={ROUTES.BRACKET} element={<Bracket />} />
               <Route path={ROUTES.MY_TEAM} element={<div />} />
               <Route path={ROUTES.MANAGE_CUP} element={<div />} />

@@ -9,6 +9,7 @@ import {
   PaperAirplaneIcon,
   PresentationChartLineIcon,
   TrophyIcon,
+  UserGroupIcon,
 } from "@heroicons/react/20/solid";
 import { ROUTES } from "../constants/routes";
 import { Typography } from "../molecules/Typography";
@@ -65,6 +66,14 @@ export const DesktopMenuLinks = ({ collapsed }: DesktopMenuLinksProps) => {
       >
         <StyledTeamStatsIcon />
         {!collapsed && <Typography>Standings</Typography>}
+      </StyledLink>
+      <StyledLink
+        to={ROUTES.ROSTERS}
+        $active={isActive(ROUTES.ROSTERS)}
+        $collapsed={collapsed}
+      >
+        <StyledRostersIcon />
+        {!collapsed && <Typography>Rosters</Typography>}
       </StyledLink>
       {competition?.type === "cup" && (
         <StyledLink
@@ -155,7 +164,11 @@ const StyledTeamStatsIcon = styled(PresentationChartLineIcon)`
   min-width: 20px;
   height: 20px;
 `;
-
+const StyledRostersIcon = styled(UserGroupIcon)`
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+`;
 const StyledSuperAdminIcon = styled(Cog6ToothIcon)`
   width: 20px;
   min-width: 20px;

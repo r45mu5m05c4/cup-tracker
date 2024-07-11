@@ -8,7 +8,7 @@ import {
   WrenchScrewdriverIcon,
   TrophyIcon,
 } from "@heroicons/react/24/outline";
-import { HomeIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { HomeIcon, UserGroupIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useCompetition } from "../utils/context/CompetitionContext";
 import { ROUTES } from "../constants/routes";
 import { Typography } from "../molecules/Typography";
@@ -72,6 +72,14 @@ export const MobileMenu = ({ onClose }: MobileMenuProps) => {
           {<Typography>Standings</Typography>}
         </StyledLink>
         <StyledLink
+          to={ROUTES.ROSTERS}
+          $active={isActive(ROUTES.ROSTERS)}
+          onClick={onClose}
+        >
+          <StyledRostersIcon />
+          {<Typography>Rosters</Typography>}
+        </StyledLink>
+        <StyledLink
           to={ROUTES.BRACKET}
           $active={isActive(ROUTES.BRACKET)}
           onClick={onClose}
@@ -133,6 +141,7 @@ const Overlay = styled.div`
   cursor: default;
   position: fixed;
   inset: 0;
+  overflow: auto;
   opacity: 30%;
   background-color: #000;
   z-index: 50;
@@ -142,15 +151,16 @@ const Menu = styled.div`
   display: flex;
   flex-direction: column;
   top: 0;
+  bottom: 0;
   padding-top: 62px;
-  height: 100%;
+  padding-bottom: 62px;
   position: fixed;
+  overflow: auto;
   background-color: var(--neutral-surface-navMenu);
   z-index: 150;
   border-top-right-radius: 30px;
   width: 85%;
   animation: 0.6s expand;
-
   p {
     font-size: 1.2em;
   }
@@ -202,6 +212,12 @@ const StyledLinkIcon = styled(HomeIcon)`
 `;
 
 const StyledGamesIcon = styled(BoltIcon)`
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+`;
+
+const StyledRostersIcon = styled(UserGroupIcon)`
   width: 20px;
   min-width: 20px;
   height: 20px;
