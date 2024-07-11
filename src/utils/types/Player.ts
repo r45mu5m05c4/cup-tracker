@@ -1,5 +1,5 @@
 export type Player = {
-  savePercent: number;
+  savePercent: number | undefined;
   _id: string;
   generatedId: string;
   name: string;

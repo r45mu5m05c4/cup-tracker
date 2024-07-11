@@ -1,6 +1,8 @@
 import { styled } from "styled-components";
 import { Player } from "../../utils/types/Player";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { logoItems } from "../../utils/Logos";
+import { Logo } from "../../utils/types/Logo";
 
 interface PlayerProfileProps {
   player: Player;
@@ -8,6 +10,21 @@ interface PlayerProfileProps {
 }
 
 export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
+  const logo = logoItems.find((l: Logo) => player.teamName === l.teamName);
+  const getFullPosition = (pos: string) => {
+    switch (pos) {
+      case "C":
+        return "Center";
+      case "LW":
+        return "Left Wing";
+      case "RW":
+        return "Right Wing";
+      case "D":
+        return "Defenseman";
+      case "G":
+        return "Goaltender";
+    }
+  };
   return (
     <>
       <Overlay onClick={() => setShowModal(false)} />
@@ -15,28 +32,54 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
         <CloseIcon onClick={() => setShowModal(false)} />
         {player.position === "G" ? (
           <Container>
-            <h2>{player.name}</h2>
-            <StatRow>Number: {player.jerseyNumber}</StatRow>
-            <StatRow>Position: {player.position}</StatRow>
-            <StatRow>Games played: {player.gamesPlayed}</StatRow>
-            <StatRow>Wins: {player.wins}</StatRow>
-            <StatRow>Save percentage: {player.savePercent}</StatRow>
-            <StatRow>
-              Goals against average:{" "}
-              {player.goalsAgainst
-                ? player.goalsAgainst / player.gamesPlayed
-                : 0}
-            </StatRow>
+            <SubColumn>
+              <h2>{player.name}</h2>{" "}
+              <img
+                src={logo?.logo}
+                alt=""
+                style={{ width: "54px", height: "54px" }}
+              />
+              <StatRow>
+                <h3>
+                  #{player.jerseyNumber}, {getFullPosition(player.position)}
+                </h3>
+              </StatRow>
+            </SubColumn>
+            <Divider />
+            <StatColumn>
+              <StatRow>Games played: {player.gamesPlayed}</StatRow>
+              <StatRow>Wins: {player.wins}</StatRow>
+              <StatRow>Save percentage: {player.savePercent}</StatRow>
+              <StatRow>
+                Goals against average:{" "}
+                {player.goalsAgainst
+                  ? player.goalsAgainst / player.gamesPlayed
+                  : 0}
+              </StatRow>
+            </StatColumn>
           </Container>
         ) : (
           <Container>
-            <h2>{player.name}</h2>
-            <StatRow>Number: {player.jerseyNumber}</StatRow>
-            <StatRow>Position: {player.position}</StatRow>
-            <StatRow>Games played: {player.gamesPlayed}</StatRow>
-            <StatRow>Goals: {player.goals}</StatRow>
-            <StatRow>Assists: {player.assists}</StatRow>
-            <StatRow>Penalty minutes: {player.penaltyMinutes}</StatRow>
+            <SubColumn>
+              <h2>{player.name}</h2>{" "}
+              <img
+                src={logo?.logo}
+                alt=""
+                style={{ width: "54px", height: "54px" }}
+              />
+              <StatRow>
+                <h3>
+                  #{player.jerseyNumber}, {getFullPosition(player.position)}
+                </h3>
+              </StatRow>
+            </SubColumn>
+            <Divider />
+            <StatColumn>
+              <StatRow>Games played: {player.gamesPlayed}</StatRow>
+              <StatRow>Goals: {player.goals}</StatRow>
+              <StatRow>Assists: {player.assists}</StatRow>
+              <StatRow>Penalty minutes: {player.penaltyMinutes}</StatRow>
+            </StatColumn>
           </Container>
         )}
       </Modal>
@@ -45,8 +88,21 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
 };
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+const Divider = styled.div`
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+    height: 2px;
+    width: 80%;
+  }
+  height: 250px;
+  width: 2px;
+  background-color: #fff;
 `;
 const CloseIcon = styled(XMarkIcon)`
   height: 38px;
@@ -58,7 +114,19 @@ const StatRow = styled.div`
   flex-direction: row;
   margin-bottom: 24px;
 `;
-
+const SubColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  align-items: center;
+  margin: auto;
+`;
+const StatColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  margin: auto;
+`;
 const Overlay = styled.div`
   cursor: default;
   position: fixed;
@@ -73,7 +141,7 @@ const Overlay = styled.div`
 const Modal = styled.div`
   top: 5%;
   left: 10%;
-  width: 80%;
+  width: 50%;
   z-index: 100;
   position: absolute;
   margin: auto;
