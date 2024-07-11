@@ -1,5 +1,5 @@
 export type Player = {
-  savePercent: ReactNode;
+  savePercent: number;
   _id: string;
   generatedId: string;
   name: string;
