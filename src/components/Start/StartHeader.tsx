@@ -24,37 +24,30 @@ export const StartHeader = () => {
     <Row>
       <Container>
         <div>
-          <Typography
-            variant="h1"
-            style={{ fontWeight: "bold", fontSize: "3.8em" }}
-          >
-            {competition?.location || ""}
-          </Typography>
-          <Typography
-            variant="h1"
-            style={{
-              fontWeight: "900",
-              fontSize: "6em",
-              color: "var(--decorative-brand-main)",
-              lineHeight: "78px",
-              paddingBottom: "12px",
-              marginTop: "-10px",
-            }}
-          >
-            {competition?.name === "MHL"
-              ? "Hockey League"
-              : "Folkets Cup" || ""}
-          </Typography>
-          <Typography
-            variant="h1"
-            style={{
-              fontWeight: "bold",
-              fontSize: "3.8em",
-              marginTop: "-8px",
-            }}
-          >
-            {getYearOfCompetition()}
-          </Typography>
+          <StyledCupInfoText>
+            <Typography variant="h1" style={{ fontSize: "3.6em" }}>
+              {competition?.location || ""}
+            </Typography>
+          </StyledCupInfoText>
+          <StyledCupName>
+            <Typography
+              variant="h1"
+              style={{
+                color: "var(--decorative-brand-main)",
+                lineHeight: "78px",
+                paddingBottom: "12px",
+              }}
+            >
+              {competition?.name === "MHL"
+                ? "Hockey League"
+                : "Folkets Cup" || ""}
+            </Typography>
+          </StyledCupName>
+          <StyledCupInfoText>
+            <Typography variant="h1" style={{ fontSize: "3.6em" }}>
+              {getYearOfCompetition()}
+            </Typography>
+          </StyledCupInfoText>
         </div>
         <div style={{ padding: "0 32px" }}>
           <Typography style={{ fontWeight: "500" }}>
@@ -104,12 +97,13 @@ const Container = styled.div`
     background-image: url(${HomePage});
     background-size: cover;
     background-position: center;
-    opacity: 0.15;
+    opacity: 0.2;
     z-index: -1;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
 
     @media (max-width: 768px) {
       background-image: url(${MobileHomePage});
+      opacity: 0.25;
     }
   }
 `;
@@ -120,4 +114,26 @@ const Row = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 14px;
+`;
+
+const StyledCupInfoText = styled.span`
+  font-weight: 900;
+  font-size: 1.2em;
+
+  @media (max-width: 768px) {
+    font-size: 0.9em;
+  }
+`;
+
+const StyledCupName = styled.span`
+  display: flex;
+  margin-top: -10px;
+  margin-bottom: -10px;
+  font-size: 2.2em;
+  font-weight: 900;
+
+  @media (max-width: 768px) {
+    margin: 6px 0;
+    font-size: 1.6em;
+  }
 `;
