@@ -118,7 +118,7 @@ const Row = styled.div`
 
 const StyledCupInfoText = styled.span`
   font-weight: 900;
-  font-size: 1.2em;
+  font-size: 1.1em;
 
   @media (max-width: 768px) {
     font-size: 0.9em;
@@ -129,7 +129,7 @@ const StyledCupName = styled.span`
   display: flex;
   margin-top: -10px;
   margin-bottom: -10px;
-  font-size: 2.2em;
+  font-size: 2.1em;
   font-weight: 900;
 
   @media (max-width: 768px) {
