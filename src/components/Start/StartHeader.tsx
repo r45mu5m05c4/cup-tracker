@@ -56,20 +56,16 @@ export const StartHeader = () => {
             {getYearOfCompetition()}
           </Typography>
         </div>
-        <Typography
-          style={{
-            fontWeight: "500",
-            marginBottom: "-20px",
-            padding: "0 32px 18px 32px",
-          }}
-        >
-          {competition?.name === "Folkets cup"
-            ? "Join us for an exciting event on November 15-17. Experience live updates and follow your favorite players and teams right here with us."
-            : "Welcome to the Malmö Hockey League (MHL), where local amateur teams come together to play hockey for the love of the game. Join us as we celebrate teamwork, passion, and the thrill of the ice!"}
-        </Typography>
-        {competition?.startDate && (
-          <Countdown targetDate={competition.startDate} />
-        )}
+        <div style={{ padding: "0 32px" }}>
+          <Typography style={{ fontWeight: "500" }}>
+            {competition?.name === "Folkets cup"
+              ? "Join us for an exciting event on November 15-17. Experience live updates and follow your favorite players and teams right here with us."
+              : "Welcome to the Malmö Hockey League (MHL), where local amateur teams come together to play hockey for the love of the game. Join us as we celebrate teamwork, passion, and the thrill of the ice!"}
+          </Typography>
+          {competition?.startDate && (
+            <Countdown targetDate={competition.startDate} />
+          )}
+        </div>
       </Container>
     </Row>
   );
@@ -108,7 +104,7 @@ const Container = styled.div`
     background-image: url(${HomePage});
     background-size: cover;
     background-position: center;
-    opacity: 0.1;
+    opacity: 0.15;
     z-index: -1;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
 
