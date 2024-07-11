@@ -52,13 +52,16 @@ export const TeamProfile = ({ team, setShowModal }: TeamProfileProps) => {
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <CloseIcon onClick={() => setShowModal(false)} />
+        <CloseIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowModal(false)}
+        />
         <Container>
           <h2>{team.name}</h2>
           <img
             src={team.logo}
             alt=""
-            style={{ width: "54px", height: "54px" }}
+            style={{ width: "74px", height: "74px", margin: 0 }}
           />
           <ForwardRow>
             <ForwardColumn>

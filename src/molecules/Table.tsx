@@ -156,10 +156,10 @@ export const Table = ({
           <tbody>
             {sortedData ? (
               sortedData.map((item, rowIndex) => (
-                <tr
-                  style={{ cursor: "pointer" }}
+                <TableRow
+                  small={small ? small : false}
                   key={rowIndex}
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => !small && handleItemClick(item)}
                 >
                   {columns.map((column, colIndex) => (
                     <TableCell
@@ -172,7 +172,7 @@ export const Table = ({
                         : item[column.key]}
                     </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             ) : (
               <NoDataText>No data</NoDataText>
@@ -242,7 +242,11 @@ const TableContainer = styled.table`
   font-size: 0.9em;
   padding: 6px;
 `;
-
+const TableRow = styled.tr.withConfig({
+  shouldForwardProp: (prop) => prop !== "small",
+})<{ small: boolean }>`
+  cursor: ${({ small }) => !small && "pointer"};
+`;
 const TableHeader = styled.th.withConfig({
   shouldForwardProp: (prop) => prop !== "sticky",
 })<{ sticky: boolean }>`

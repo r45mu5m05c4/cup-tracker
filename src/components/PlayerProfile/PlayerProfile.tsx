@@ -23,13 +23,18 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
         return "Defenseman";
       case "G":
         return "Goaltender";
+      default:
+        return "Unknown";
     }
   };
   return (
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <CloseIcon onClick={() => setShowModal(false)} />
+        <CloseIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowModal(false)}
+        />
         {player.position === "G" ? (
           <Container>
             <SubColumn>
