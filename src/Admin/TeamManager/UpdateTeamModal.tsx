@@ -81,7 +81,6 @@ export const UpdateTeamModal = ({
                     onChange={(e) => setUpdatedWins(parseInt(e.target.value))}
                   />
                 </Label>
-                <br />
                 <Label>
                   Draws
                   <input
@@ -90,7 +89,6 @@ export const UpdateTeamModal = ({
                     onChange={(e) => setUpdatedDraws(parseInt(e.target.value))}
                   />
                 </Label>
-                <br />
                 <Label>
                   Losses
                   <input
@@ -99,7 +97,6 @@ export const UpdateTeamModal = ({
                     onChange={(e) => setUpdatedLosses(parseInt(e.target.value))}
                   />
                 </Label>
-                <br />
                 <Label>
                   Overtime Losses
                   <input
@@ -110,7 +107,6 @@ export const UpdateTeamModal = ({
                     }
                   />
                 </Label>
-                <br />
                 <Label>
                   Points
                   <input
@@ -119,7 +115,6 @@ export const UpdateTeamModal = ({
                     onChange={(e) => setUpdatedPoints(parseInt(e.target.value))}
                   />
                 </Label>
-                <br />
                 <Label>
                   Goals:
                   <input
@@ -128,7 +123,6 @@ export const UpdateTeamModal = ({
                     onChange={(e) => setUpdatedGoals(parseInt(e.target.value))}
                   />
                 </Label>
-                <br />
                 <Label>
                   Goals against:
                   <input
@@ -139,7 +133,6 @@ export const UpdateTeamModal = ({
                     }
                   />
                 </Label>
-                <br />
                 <Label>
                   Games played:
                   <input
@@ -150,8 +143,6 @@ export const UpdateTeamModal = ({
                     }
                   />
                 </Label>
-                <br />
-                <br />
                 <Select
                   label="Group"
                   value={updatedGroup}
@@ -162,8 +153,6 @@ export const UpdateTeamModal = ({
                   ]}
                   onChange={(e) => setUpdatedGroup(e.target.value)}
                 />
-                <br />
-                <br />
                 <Select
                   label="Playoff group"
                   value={updatedPlayoffGroup}
@@ -174,12 +163,18 @@ export const UpdateTeamModal = ({
                   ]}
                   onChange={(e) => setUpdatedPlayoffGroup(e.target.value)}
                 />
-                <br />
-                <div style={{ marginTop: "24px" }}>
+                <ButtonContainer>
                   <Button type="submit" onClick={() => {}}>
                     Update Team
                   </Button>
-                </div>
+                  <Button
+                    onClick={() => {
+                      setShowModal(false);
+                    }}
+                  >
+                    Close
+                  </Button>
+                </ButtonContainer>
               </form>
             </div>
           )}
@@ -189,7 +184,15 @@ export const UpdateTeamModal = ({
     </>
   );
 };
-
+const ButtonContainer = styled.div`
+  margin: auto;
+  margin-top: 24px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -228,6 +231,7 @@ const Modal = styled.div`
 const Label = styled.div`
   display: flex;
   flex-direction: row;
+  margin-top: 24px;
   font-size: 1em;
   font-weight: 500;
   gap: 14px;
