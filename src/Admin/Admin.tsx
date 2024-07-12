@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
-import { AddTeamStats } from "./AddTeamStats";
-import { AddLogo } from "./AddLogo";
+import { TeamList } from "./TeamManager/TeamList";
 import { Tabs } from "../molecules/Tabs";
 import { Typography } from "../molecules/Typography";
 import { PlayerList } from "./PlayerManager/PlayerList";
@@ -21,11 +20,8 @@ export const Admin = () => {
       label: "Team",
       content: (
         <TabContentContainer>
-          <Typography variant="h4">Update a teams stats</Typography>
-          <AddTeamStats />
-          <Separator />
-          <Typography variant="h4">Update/add a teams logo</Typography>
-          <AddLogo />
+          <Typography variant="h4">Manage teams</Typography>
+          <TeamList />
         </TabContentContainer>
       ),
     },
@@ -70,10 +66,4 @@ const TabContentContainer = styled.div`
   gap: 24px;
   border-radius: 8px;
   padding: 8px;
-`;
-
-const Separator = styled("div")`
-  background-color: var(--neutral-border-onContrast);
-  margin: 24px 0;
-  height: 1px;
 `;

@@ -121,21 +121,21 @@ export const GameList = () => {
           </TopRow>
           <List>
             {filteredData.map((g) => (
-              <GameWrapper key={g.gameId}>
-                <GameCard key={g._id}>
-                  <GameCell>
-                    {g.awayTeam} @ {g.homeTeam}
-                  </GameCell>
-                  <GameCell>{g.gameStage}</GameCell>
-                  <GameCell>{format(g.startTime, "HH:mm dd/MM")}</GameCell>
+              <GameCard key={g._id}>
+                <GameCell>
+                  {g.awayTeam} @ {g.homeTeam}
+                </GameCell>
+                <GameCell>{g.gameStage}</GameCell>
+                <GameCell>{format(g.startTime, "HH:mm dd/MM")}</GameCell>
+                <CellButtonContainer>
                   <GameCell>
                     <Button onClick={() => liveGame(g)}>Live</Button>
                   </GameCell>
                   <GameCell>
                     <StyledTrashIcon onClick={() => removeGame(g)} />
                   </GameCell>
-                </GameCard>
-              </GameWrapper>
+                </CellButtonContainer>
+              </GameCard>
             ))}
           </List>
         </>
@@ -163,24 +163,27 @@ export const GameList = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
 `;
 
 const StyledTrashIcon = styled(TrashIcon)`
   height: 24px;
   cursor: pointer;
   color: var(--decorative-brand-light);
+  margin-left: 24px;
 `;
 
 const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-`;
-
-const GameWrapper = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: space-between;
+  width: 70%;
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    width: 100%;
+  }
 `;
 
 const TopRow = styled.div`
@@ -188,6 +191,7 @@ const TopRow = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 100%;
   margin-bottom: 14px;
   @media (max-width: 768px) {
     flex-direction: column;
@@ -201,6 +205,11 @@ const AddGameButtonContainer = styled.div`
     margin-right: 0;
   }
 `;
+const CellButtonContainer = styled.div`
+  display: flex;
+  margin-right: 10px;
+  margin-left: auto;
+`;
 const GameCard = styled.div`
   display: flex;
   flex-direction: row;
@@ -211,7 +220,6 @@ const GameCard = styled.div`
   width: 100%;
   @media (max-width: 768px) {
     font-size: 0.8em;
-    flex-direction: row;
   }
 `;
 const GameCell = styled.p`

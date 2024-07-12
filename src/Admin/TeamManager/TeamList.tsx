@@ -1,26 +1,24 @@
 import { styled } from "styled-components";
 
 import { useEffect, useMemo, useState } from "react";
-import { Team } from "../../utils/types/Team";
-import { getPlayers, getTeams } from "../../utils/queries";
+import { getTeams } from "../../utils/queries";
 import { useUser } from "../../utils/context/UserContext";
-import { Player } from "../../utils/types/Player";
+import { Team } from "../../utils/types/Team";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import RemovePlayerModal from "./RemovePlayerModal";
-import { UpdatePlayerModal } from "./UpdatePlayerModal";
+import RemoveTeamModal from "./RemoveTeamModal";
+import { AddTeamModal } from "./AddTeamModal";
 import { Typography } from "../../molecules/Typography";
 import { Select } from "../../molecules/Select";
 import { Button } from "../../molecules/Button";
-import { AddPlayerModal } from "./AddPlayerModal";
+import { UpdateTeamModal } from "./UpdateTeamModal";
 import { TrashIcon } from "@heroicons/react/20/solid";
 
-export const PlayerList = () => {
+export const TeamList = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[] | null>(null);
-  const [selectedPlayer, setSelectedPlayer] = useState<Player>();
+  const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
   const { user, refreshAccessToken } = useUser();
@@ -40,20 +38,7 @@ export const PlayerList = () => {
           console.error("Error fetching teams:", error);
         }
     };
-    const fetchAllPlayers = async () => {
-      if (user?.accessToken && competition)
-        try {
-          await refreshAccessToken();
-          const playersFromAPI = await getPlayers(
-            user.accessToken,
-            competition.name
-          );
-          setPlayers(playersFromAPI);
-        } catch (error) {
-          console.error("Error fetching players:", error);
-        }
-    };
-    fetchAllPlayers();
+
     fetchAllTeams();
   }, []);
 
@@ -63,33 +48,31 @@ export const PlayerList = () => {
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTeamFilter(event.target.value);
   };
-  const removePlayer = (p: Player) => {
-    setSelectedPlayer(p);
+  const removeTeam = (p: Team) => {
+    setSelectedTeam(p);
     setShowRemoveModal(true);
   };
-  const editPlayer = (p: Player) => {
-    setSelectedPlayer(p);
+  const editTeam = (p: Team) => {
+    setSelectedTeam(p);
     setShowUpdateModal(true);
   };
-  const addPlayer = () => {
+  const addTeam = () => {
     setShowAddModal(true);
   };
 
   const filteredData = useMemo(() => {
-    let filtered = players;
+    let filtered = teams;
 
     if (teamFilter && filtered) {
-      filtered = filtered.filter(
-        (item: Player) => item.teamName === teamFilter
-      );
+      filtered = filtered.filter((item: Team) => item.name === teamFilter);
     }
     if (searchQuery && filtered) {
-      filtered = filtered.filter((item: Player) =>
+      filtered = filtered.filter((item: Team) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     return filtered;
-  }, [players, teamFilter, searchQuery]);
+  }, [teams, teamFilter, searchQuery]);
 
   return (
     <Container>
@@ -109,46 +92,47 @@ export const PlayerList = () => {
           value={searchQuery}
           onChange={handleSearchChange}
         />
-        <AddPlayerButtonContainer>
-          <Button onClick={() => addPlayer()}>Add player</Button>
-        </AddPlayerButtonContainer>
+        <AddTeamButtonContainer>
+          <Button onClick={() => addTeam()}>Add team</Button>
+        </AddTeamButtonContainer>
       </TopRow>
       <List>
         {filteredData && filteredData.length > 0 ? (
-          filteredData.map((p: Player) => (
-            <PlayerCard key={p._id}>
-              <PlayerCell>{p.name}</PlayerCell>
-              <PlayerCell>{p.jerseyNumber}</PlayerCell>
-              <PlayerCell>{p.position}</PlayerCell>
+          filteredData.map((t: Team) => (
+            <TeamCard key={t._id}>
+              <TeamCell>{t.name}</TeamCell>
+              <TeamCell>
+                <img src={t.logo} />
+              </TeamCell>
               <CellButtonContainer>
-                <PlayerCell>
-                  <Button onClick={() => editPlayer(p)}>Edit</Button>
-                </PlayerCell>
-                <PlayerCell>
-                  <StyledTrashIcon onClick={() => removePlayer(p)} />
-                </PlayerCell>
+                <TeamCell>
+                  <Button onClick={() => editTeam(t)}>Edit</Button>
+                </TeamCell>
+                <TeamCell>
+                  <StyledTrashIcon onClick={() => removeTeam(t)} />
+                </TeamCell>
               </CellButtonContainer>
-            </PlayerCard>
+            </TeamCard>
           ))
         ) : (
           <Typography style={{ marginTop: "24px" }}>
-            {players === null ? "" : "No players yet."}
+            {teams === null ? "" : "No teams yet."}
           </Typography>
         )}
       </List>
-      {selectedPlayer && showRemoveModal && (
-        <RemovePlayerModal
-          player={selectedPlayer}
+      {selectedTeam && showRemoveModal && (
+        <RemoveTeamModal
+          team={selectedTeam}
           setShowModal={setShowRemoveModal}
         />
       )}
-      {selectedPlayer && showUpdateModal && (
-        <UpdatePlayerModal
-          player={selectedPlayer}
+      {selectedTeam && showUpdateModal && (
+        <UpdateTeamModal
+          team={selectedTeam}
           setShowModal={setShowUpdateModal}
         />
       )}
-      {showAddModal && <AddPlayerModal setShowModal={setShowAddModal} />}
+      {showAddModal && <AddTeamModal setShowModal={setShowAddModal} />}
     </Container>
   );
 };
@@ -182,14 +166,20 @@ const TopRow = styled.div`
     gap: 14px;
   }
 `;
-const AddPlayerButtonContainer = styled.div`
-  height: 50%;
+const StyledTrashIcon = styled(TrashIcon)`
+  height: 24px;
+  cursor: pointer;
+  color: var(--decorative-brand-light);
+  margin-left: 24px;
+`;
+const AddTeamButtonContainer = styled.div`
+  height: 50% !important;
   margin: auto;
   @media (min-width: 768px) {
     margin-right: 0;
   }
 `;
-const PlayerCard = styled.div`
+const TeamCard = styled.div`
   display: flex;
   flex-direction: row;
   align-items: left;
@@ -198,21 +188,18 @@ const PlayerCard = styled.div`
   padding: 10px;
   width: 100%;
 `;
-const StyledTrashIcon = styled(TrashIcon)`
-  height: 24px;
-  cursor: pointer;
-  color: var(--decorative-brand-light);
-  margin-left: 24px;
-`;
 const CellButtonContainer = styled.div`
   display: flex;
   margin-right: 10px;
   margin-left: auto;
 `;
-const PlayerCell = styled.p`
+const TeamCell = styled.div`
   margin: auto;
   margin-left: 10px;
-  width: 25%;
+
+  @media (min-width: 768px) {
+    width: 25%;
+  }
 `;
 const SearchInput = styled.input`
   padding: 8px;

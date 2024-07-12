@@ -6,6 +6,7 @@ import { Goal } from "./types/Game";
 import { Competition } from "./types/Competition";
 import { NewGame } from "../Admin/GameManager/ScheduleGameModal";
 import { NewPlayer } from "../Admin/PlayerManager/AddPlayerModal";
+import { NewTeam } from "../Admin/TeamManager/AddTeamModal";
 
 export const getCompetitions = async (accessToken: string) => {
   try {
@@ -263,6 +264,36 @@ export const removePlayerById = async (
     throw error;
   }
 };
+export const removeTeamById = async (
+  accessToken: string,
+  id: string,
+  competition: string
+) => {
+  try {
+    const data = {
+      collection: "teams",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      filter: { id: id, competition: competition },
+    };
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    console.log(response);
+    return response.data.document;
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    throw error;
+  }
+};
 export const getTeamByName = async (
   teamName: string,
   accessToken: string,
@@ -463,7 +494,45 @@ export const updatePlayerStats = async (
     throw error;
   }
 };
+export const addTeam = async (team: NewTeam, accessToken: string) => {
+  try {
+    const data = {
+      collection: "teams",
+      database: "folkets-cup",
+      dataSource: "folketsCup",
+      document: {
+        name: team.name,
+        draws: team.draws,
+        losses: team.losses,
+        overTimeLosses: team.overTimeLosses,
+        points: team.points,
+        goals: team.goals,
+        goalsAgainst: team.goalsAgainst,
+        gamesPlayed: team.gamesPlayed,
+        group: team.group,
+        playoffGroup: team.playoffGroup,
+        competition: team.competition,
+      },
+    };
 
+    const config = {
+      method: "post",
+      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: JSON.stringify(data),
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding player:", error);
+    throw error;
+  }
+};
 export const addPlayer = async (player: NewPlayer, accessToken: string) => {
   try {
     const data = {
