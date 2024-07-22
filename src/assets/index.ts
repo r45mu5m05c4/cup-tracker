@@ -11,8 +11,6 @@ import STARKALogo from "./STARKA.svg";
 import TortugasLogo from "./Tortugas_for dark backgrounds.svg";
 import VEDLogo from "./VED.svg";
 import TortugaBombLogo from "./HC Tortugas Bomb.svg";
-import FolketsPuckPoster from "./FolketsPuckPoster.png";
-import MHLLogo from "./MHL.logo.png";
 import BlackRavens from "./Black Ravens.svg";
 import WhiteRavens from "./White Ravens.svg";
 import Griparna from "./Griparna.svg";
@@ -27,8 +25,6 @@ export {
   Griparna,
   RRD,
   LBH,
-  MHLLogo,
-  FolketsPuckPoster,
   BAIFLogo,
   TortugaBombLogo,
   CPHFalconsLogo,

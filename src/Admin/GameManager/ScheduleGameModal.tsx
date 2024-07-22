@@ -40,13 +40,9 @@ export const ScheduleGameModal = ({ setShowModal }: ScheduleGameModalProps) => {
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);

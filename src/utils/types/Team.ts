@@ -1,6 +1,6 @@
 export type Team = {
   logo: string | undefined;
-  _id: string;
+  id: string;
   name: string;
   wins: number;
   draws: number;
@@ -12,5 +12,5 @@ export type Team = {
   gamesPlayed: number;
   group: string;
   playoffGroup: string;
-  competition: string;
+  competitionId: string;
 };

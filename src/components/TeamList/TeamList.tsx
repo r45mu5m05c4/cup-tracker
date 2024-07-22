@@ -18,13 +18,9 @@ export const TeamList = () => {
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           const teamLogoLoop = teamsFromAPI.map((t: Team) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
 

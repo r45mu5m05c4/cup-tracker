@@ -1,7 +1,6 @@
 export type Player = {
   savePercent: number | undefined;
-  _id: string;
-  generatedId: string;
+  id: string;
   name: string;
   goals: number;
   assists: number;

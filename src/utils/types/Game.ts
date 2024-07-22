@@ -5,18 +5,22 @@ export interface Goal {
   scoringTeamId: string;
   concedingTeamId: string;
   gameMinute: number;
+  competitionId: string;
+  gameId: string;
 }
 
 export interface Penalty {
   playerId: string;
   playerName: string;
   minutes: number;
-  team: string;
+  teamId: string;
   gameMinute: number;
   penaltyType: string;
+  competitionId: string;
+  gameId: string;
 }
 export interface Game {
-  _id?: string;
+  id?: string;
   gameId: string;
   homeTeam: string;
   awayTeam: string;

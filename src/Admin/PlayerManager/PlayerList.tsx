@@ -28,13 +28,9 @@ export const PlayerList = () => {
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -116,7 +112,7 @@ export const PlayerList = () => {
       <List>
         {filteredData && filteredData.length > 0 ? (
           filteredData.map((p: Player) => (
-            <PlayerCard key={p._id}>
+            <PlayerCard key={p.id}>
               <PlayerCell>{p.name}</PlayerCell>
               <PlayerCell>{p.jerseyNumber}</PlayerCell>
               <PlayerCell>{p.position}</PlayerCell>

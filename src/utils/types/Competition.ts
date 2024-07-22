@@ -6,4 +6,5 @@ export interface Competition {
   location: string;
   startDate: Date;
   endDate: Date;
+  logo: string;
 }

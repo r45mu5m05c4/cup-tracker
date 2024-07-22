@@ -5,11 +5,11 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import * as Realm from "realm-web";
+import supabase from "../supabase/server";
 
 interface UserContextType {
-  user: Realm.User | null;
-  setUser: (user: Realm.User | null) => void;
+  user: any | null;
+  setUser: (user: any | null) => void;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
 }
@@ -17,52 +17,44 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUserState] = useState<Realm.User | null>(null);
-  const app = new Realm.App({ id: "data-lcjxaso" });
+  const [user, setUserState] = useState<any | null>(null);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem("realmUserId");
-    if (storedUserId && app.currentUser) {
-      setUserState(app.currentUser);
-    } else {
-      loginAnonymously();
+    const storedUserId = localStorage.getItem("supabaseUserId");
+    if (storedUserId) {
+      const userData = JSON.parse(storedUserId);
+      setUserState(userData);
     }
   }, []);
 
-  const loginAnonymously = async () => {
-    const user = await app.logIn(Realm.Credentials.anonymous());
-    setUser(user);
-  };
-
-  const setUser = (user: Realm.User | null) => {
+  const setUser = (user: any | null) => {
     if (user) {
-      localStorage.setItem("realmUserId", user.id);
+      localStorage.setItem("supabaseUserId", JSON.stringify(user));
     } else {
-      localStorage.removeItem("realmUserId");
+      localStorage.removeItem("supabaseUserId");
     }
     setUserState(user);
   };
 
   const logout = async () => {
-    if (user) {
-      await user.logOut();
-      localStorage.removeItem("realmUserId");
-      const anonymousUser = await app.logIn(Realm.Credentials.anonymous());
-      setUser(anonymousUser);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error.message);
+      return;
     }
+    localStorage.removeItem("supabaseUserId");
   };
+
   const refreshAccessToken = async () => {
-    try {
-      if (user) {
-        await user.refreshAccessToken();
-        setUser(user);
-      }
-    } catch (error) {
-      console.error("Failed to refresh access token:", error);
-      // Handle token refresh failure gracefully, e.g., re-authenticate the user
-      logout(); // Example: Log out user if token refresh fails
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      setUserState(data.session.user);
+    } else {
+      console.error("No session found");
+      logout();
     }
   };
+
   return (
     <UserContext.Provider value={{ user, setUser, logout, refreshAccessToken }}>
       {children}

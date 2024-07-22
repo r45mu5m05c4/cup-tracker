@@ -1,4 +1,3 @@
-import { useUser } from "../../utils/context/UserContext";
 import { getTeams } from "../../utils/queries";
 import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
@@ -21,18 +20,13 @@ export const TeamTable = ({ small }: TeamTableProps) => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.name);
           const teamLogoLoop = teamsFromAPI.map((t: Team) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
             const pointPercent = calculatePointPercentage(
@@ -55,7 +49,7 @@ export const TeamTable = ({ small }: TeamTableProps) => {
     };
 
     fetchAllTeams();
-  }, [user]);
+  }, []);
 
   const teamColumns = small
     ? [

@@ -42,13 +42,9 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -59,7 +55,7 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
   }, []);
 
   const handleTeamSelect = (teamId: string) => {
-    const foundTeam = teams.find((team) => team._id === teamId);
+    const foundTeam = teams.find((team) => team.id === teamId);
     if (foundTeam) {
       setSelectedTeam(foundTeam);
     }
@@ -103,7 +99,7 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
         console.log(newPlayer);
         try {
           await refreshAccessToken();
-          await addPlayer(newPlayer, user?.accessToken);
+          await addPlayer(newPlayer);
           setMessage(`Successfully added ${newPlayer.name}`);
         } catch (e) {
           console.log(e);
@@ -127,7 +123,7 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
           label="Select a team to add a player to"
           placeholder="Select a team"
           options={teams.map((team) => ({
-            value: team._id,
+            value: team.id,
             label: team.name,
           }))}
           onChange={(e) => handleTeamSelect(e.target.value)}
