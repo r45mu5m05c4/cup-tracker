@@ -1,9 +1,7 @@
 import { styled } from "styled-components";
-
 import { useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { updateTeamStats } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { Select } from "../../molecules/Select";
 import { Button } from "../../molecules/Button";
 import { Typography } from "../../molecules/Typography";
@@ -28,31 +26,29 @@ export const UpdateTeamModal = ({
   const [updatedGroup, setUpdatedGroup] = useState<string>("");
   const [updatedPlayoffGroup, setUpdatedPlayoffGroup] = useState<string>("");
   const [message, setMessage] = useState("");
-  const { user } = useUser();
 
   const handleUpdateTeam = () => {
-    if (user?.accessToken)
-      if (team) {
-        const updatedTeam: Team = {
-          ...team,
-          wins: updatedWins,
-          draws: updatedDraws,
-          losses: updatedLosses,
-          overtimeLosses: updatedOvertimeLosses,
-          points: updatedPoints,
-          goals: updatedGoals,
-          goalsAgainst: updatedGoalsAgainst,
-          gamesPlayed: updatedGamesPlayed,
-          group: updatedGroup,
-          playoffGroup: updatedPlayoffGroup,
-        };
-        try {
-          updateTeamStats(updatedTeam, user?.accessToken);
-          setMessage(`Successfully updated ${team.name}`);
-        } catch (e) {
-          setMessage("Update failed");
-        }
+    if (team) {
+      const updatedTeam: Team = {
+        ...team,
+        wins: updatedWins,
+        draws: updatedDraws,
+        losses: updatedLosses,
+        overtimeLosses: updatedOvertimeLosses,
+        points: updatedPoints,
+        goals: updatedGoals,
+        goalsAgainst: updatedGoalsAgainst,
+        gamesPlayed: updatedGamesPlayed,
+        group: updatedGroup,
+        playoffGroup: updatedPlayoffGroup,
+      };
+      try {
+        updateTeamStats(updatedTeam);
+        setMessage(`Successfully updated ${team.name}`);
+      } catch (e) {
+        setMessage("Update failed");
       }
+    }
   };
 
   return (

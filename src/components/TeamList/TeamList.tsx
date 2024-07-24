@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Team } from "../../utils/types/Team";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import { useUser } from "../../utils/context/UserContext";
 import { getTeams } from "../../utils/queries";
 import { logoItems } from "../../utils/Logos";
 import { TeamProfile } from "../TeamProfile/TeamProfile";
@@ -13,7 +12,6 @@ export const TeamList = () => {
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [openTeam, setOpenTeam] = useState<Team>();
   const [showTeamModal, setShowTeamModal] = useState(false);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
@@ -39,7 +37,7 @@ export const TeamList = () => {
     };
 
     fetchAllTeams();
-  }, [user]);
+  }, []);
 
   const handleItemClick = (item: Team) => {
     setOpenTeam(item);

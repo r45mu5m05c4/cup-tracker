@@ -1,9 +1,7 @@
 import { styled } from "styled-components";
-
 import { useEffect, useMemo, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { getPlayers, getTeams } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import RemovePlayerModal from "./RemovePlayerModal";
@@ -23,7 +21,6 @@ export const PlayerList = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
@@ -37,13 +34,9 @@ export const PlayerList = () => {
         }
     };
     const fetchAllPlayers = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const playersFromAPI = await getPlayers(
-            user.accessToken,
-            competition.name
-          );
+          const playersFromAPI = await getPlayers(competition.id);
           setPlayers(playersFromAPI);
         } catch (error) {
           console.error("Error fetching players:", error);
@@ -76,7 +69,7 @@ export const PlayerList = () => {
 
     if (teamFilter && filtered) {
       filtered = filtered.filter(
-        (item: Player) => item.teamName === teamFilter
+        (item: Player) => item.teamId === parseInt(teamFilter)
       );
     }
     if (searchQuery && filtered) {
@@ -93,7 +86,7 @@ export const PlayerList = () => {
         <Select
           placeholder="Filter on team"
           options={teams.map((team) => ({
-            value: team.name,
+            value: team.id.toString(),
             label: team.name,
           }))}
           onChange={handleFilterChange}

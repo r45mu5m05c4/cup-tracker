@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../utils/context/UserContext";
 import { Team } from "../utils/types/Team";
-import { getTeams, uploadLogo } from "../utils/queries";
+import { getTeams } from "../utils/queries";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
 import { Select } from "../molecules/Select";
@@ -38,7 +37,7 @@ export const AddLogo = () => {
     }
   };
 
-  const handleTeamSelect = (teamId: string) => {
+  const handleTeamSelect = (teamId: number) => {
     const foundTeam = teams.length && teams.find((team) => team.id === teamId);
 
     if (foundTeam) {
@@ -94,10 +93,10 @@ export const AddLogo = () => {
         label="Team"
         placeholder="Select team"
         options={teams.map((team) => ({
-          value: team.id,
+          value: team.id.toString(),
           label: team.name,
         }))}
-        onChange={(e) => handleTeamSelect(e.target.value)}
+        onChange={(e) => handleTeamSelect(parseInt(e.target.value))}
       />
       {selectedTeam && (
         <>

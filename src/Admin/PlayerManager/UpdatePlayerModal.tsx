@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import React, { useState } from "react";
 import { updatePlayerStats } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { Player, PlayerPosition } from "../../utils/types/Player";
 import { Button } from "../../molecules/Button";
 import { Select } from "../../molecules/Select";
@@ -18,11 +17,7 @@ export const UpdatePlayerModal = ({
 }: UpdatePlayerModalProps) => {
   const [playerName, setPlayerName] = useState<string>(player.name);
   const [jerseyNumber, setJerseyNumber] = useState<number>(player.jerseyNumber);
-  const [goals, setGoals] = useState<number>(player.goals);
-  const [assists, setAssists] = useState<number>(player.assists);
-  const [penaltyMinutes, setPenaltyMinutes] = useState<number>(
-    player.penaltyMinutes
-  );
+
   const [gamesPlayed, setGamesPlayed] = useState<number>(player.gamesPlayed);
   const [position, setPosition] = useState<PlayerPosition>(player.position);
 
@@ -32,34 +27,26 @@ export const UpdatePlayerModal = ({
     player.goalsAgainst
   );
   const [message, setMessage] = useState("");
-  const { user } = useUser();
 
   const handleUpdatePlayer = () => {
-    if (user?.accessToken) {
-      const updatedPlayer: Player = {
-        _id: player._id,
-        generatedId: player.generatedId,
-        name: playerName,
-        goals: goals,
-        assists: assists,
-        points: goals + assists,
-        penaltyMinutes: penaltyMinutes,
-        gamesPlayed: gamesPlayed,
-        position: position,
-        jerseyNumber: jerseyNumber,
-        teamName: player.teamName,
-        competition: player.competition,
-        wins: wins,
-        saves: saves,
-        goalsAgainst: goalsAgainst,
-        savePercent: player.savePercent,
-      };
-      updatePlayerStats(updatedPlayer, user?.accessToken);
-      setMessage(`Successfully updated ${updatedPlayer.name}`);
-      setTimeout(() => {
-        setShowModal(false);
-      }, 5000);
-    }
+    const updatedPlayer: Player = {
+      id: player.id,
+      name: playerName,
+      gamesPlayed: gamesPlayed,
+      position: position,
+      jerseyNumber: jerseyNumber,
+      teamId: player.teamId,
+      competitionId: player.competitionId,
+      wins: wins,
+      saves: saves,
+      goalsAgainst: goalsAgainst,
+      savePercent: player.savePercent,
+    };
+    updatePlayerStats(updatedPlayer);
+    setMessage(`Successfully updated ${updatedPlayer.name}`);
+    setTimeout(() => {
+      setShowModal(false);
+    }, 5000);
   };
 
   const possiblePlayerPositions: PlayerPosition[] = [
@@ -104,33 +91,7 @@ export const UpdatePlayerModal = ({
                   }
                 />
               </Label>
-              <Label>
-                Goals:
-                <input
-                  type="number"
-                  value={goals}
-                  onChange={(e) => setGoals(parseInt(e.target.value))}
-                />
-              </Label>
-              <Label>
-                Assists:
-                <input
-                  type="number"
-                  value={assists}
-                  onChange={(e) => setAssists(parseInt(e.target.value))}
-                />
-              </Label>
-              <Label>
-                Points: <p>{goals + assists}</p>
-              </Label>
-              <Label>
-                Penalty Minutes:
-                <input
-                  type="number"
-                  value={penaltyMinutes}
-                  onChange={(e) => setPenaltyMinutes(parseInt(e.target.value))}
-                />
-              </Label>
+
               <Label>
                 Games Played:
                 <input

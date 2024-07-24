@@ -1,84 +1,124 @@
 import styled from "styled-components";
 import { useState, useEffect, useCallback } from "react";
-import { useUser } from "../../utils/context/UserContext";
-import { Game, Goal, Penalty } from "../../utils/types/Game";
-import { getGameById } from "../../utils/queries";
+import { GameMetaData, Goal, Penalty } from "../../utils/types/Game";
+import { getGameByIdWithMetaData, getPlayers } from "../../utils/queries";
 import { GameTimer } from "../../molecules/GameTimer";
+import { Player } from "../../utils/types/Player";
 
 interface GameModalProps {
-  game: Game;
+  game: GameMetaData;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameModal = ({ setShowModal, game }: GameModalProps) => {
-  const [activeGame, setActiveGame] = useState<Game>(game);
+  const [activeGame, setActiveGame] = useState<GameMetaData>(game);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, refreshAccessToken } = useUser();
+  const [homeGoals, setHomeGoals] = useState<Goal[]>([]);
+  const [awayGoals, setAwayGoals] = useState<Goal[]>([]);
+  const [homePenalties, setHomePenalties] = useState<Penalty[]>([]);
+  const [awayPenalties, setAwayPenalties] = useState<Penalty[]>([]);
 
   const refetchGame = useCallback(async () => {
-    if (!user?.accessToken || !game.gameId) return;
+    if (!game.id) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      await refreshAccessToken();
-      const gameFromAPI = await getGameById(
-        user.accessToken,
-        game.gameId,
-        game.competition
+      const gameFromAPI: GameMetaData = await getGameByIdWithMetaData(
+        game.id,
+        game.competitionId
       );
       setActiveGame(gameFromAPI);
       setLoading(false);
     } catch (error) {
       setError("Error fetching game data. Please try again.");
       console.error("Error fetching games:", error);
-      setLoading(false); // Ensure loading is set to false in case of an error
+      setLoading(false);
     }
-  }, [game.gameId, game.competition, user?.accessToken, refreshAccessToken]);
+  }, [game.id, game.competitionId]);
 
   useEffect(() => {
     if (!activeGame) {
       refetchGame();
     }
   }, [refetchGame, activeGame]);
-
+  useEffect(() => {
+    const getAllPlayers = async () => {
+      try {
+        const playersFromAPI: Player[] = await getPlayers(game.competitionId);
+        setPlayers(playersFromAPI);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching players data. Please try again.");
+        console.error("Error fetching players:", error);
+        setLoading(false);
+      }
+    };
+    getAllPlayers();
+    renderGoalsAndPenalties();
+  }, []);
   const handleClose = () => {
     setShowModal(false);
   };
+  const renderGoalsAndPenalties = () => {
+    let homeGoalsArray: Goal[] = [];
+    let awayGoalsArray: Goal[] = [];
+    if (game) {
+      game.goals.map((g: Goal) => {
+        g.scoringTeamId === game.homeTeamId
+          ? homeGoalsArray.push(g)
+          : awayGoalsArray.push(g);
+      });
+    }
+    setHomeGoals(homeGoalsArray);
+    setAwayGoals(awayGoalsArray);
 
+    let homePenatliesArray: Penalty[] = [];
+    let awayPenatliesArray: Penalty[] = [];
+    if (game) {
+      game.penalties.map((p: Penalty) => {
+        p.teamId === game.homeTeamId
+          ? homePenatliesArray.push(p)
+          : awayPenatliesArray.push(p);
+      });
+    }
+    setHomePenalties(homePenatliesArray);
+    setAwayPenalties(awayPenatliesArray);
+  };
+  const getPlayerName = (playerId: number) => {
+    const player = players.find((p: Player) => playerId === p.id);
+    if (player) return player.name;
+  };
   const eventRenderer = () => {
     if (!activeGame) return null;
+    const penalties = [...homePenalties, ...awayPenalties];
+    const goals = [...homeGoals, ...awayGoals];
 
-    const penalties = activeGame.penalty?.length
-      ? activeGame.penalty.map((p) => ({
+    const sortedPenalties = penalties.length
+      ? penalties.map((p: Penalty) => ({
           type: "penalty",
-          home: p.team === activeGame.homeTeam,
+          home: p.teamId === game.homeTeamId,
           ...p,
         }))
       : [];
-    const homeGoals =
-      activeGame.homeTeamGoals &&
-      activeGame.homeTeamGoals.map((g) => ({
+    const sortedGoals =
+      goals &&
+      goals.map((g: Goal) => ({
         type: "goal",
-        home: true,
+        home: g.scoringTeamId === game.homeTeamId,
         ...g,
       }));
-    const awayGoals =
-      activeGame.awayTeamGoals &&
-      activeGame.awayTeamGoals.map((g) => ({
-        type: "goal",
-        home: false,
-        ...g,
-      }));
-    const allEvents = [...penalties, ...homeGoals, ...awayGoals];
+
+    const allEvents = [...sortedPenalties, ...sortedGoals];
     allEvents.sort((a, b) => a.gameMinute - b.gameMinute);
     const isGoal = (event: Goal | Penalty): event is Goal => {
-      return (event as Goal).scorer !== undefined;
+      return (event as Goal).scorerId !== undefined;
     };
     const isPenalty = (event: Goal | Penalty): event is Penalty => {
-      return (event as Penalty).playerName !== undefined;
+      return (event as Penalty).playerId !== undefined;
     };
     const eventItems = allEvents.map((event, index) => {
       if (isGoal(event))
@@ -86,13 +126,14 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
           <EventsRow key={index} home={event.home}>
             <>
               <GoalHeader>
-                {event.gameMinute}' GOAL by {event.scorer}
+                {event.gameMinute}' GOAL by {getPlayerName(event.scorerId)}
               </GoalHeader>
               <EventText>
-                {event.primaryAssist !== "Unassisted"
-                  ? `Assisted by: ${event.primaryAssist}`
+                {event.primaryAssisterId
+                  ? `Assisted by: ${getPlayerName(event.primaryAssisterId)}`
                   : "Unassisted"}
-                {event.secondaryAssist && `, ${event.secondaryAssist}`}
+                {event.secondaryAssisterId &&
+                  `, ${getPlayerName(event.secondaryAssisterId)}`}
               </EventText>
             </>
           </EventsRow>
@@ -101,10 +142,10 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
         return (
           <EventsRow key={index} home={event.home}>
             <EventHeader>
-              {event.gameMinute}' Penalty for {event.playerName}
+              {event.gameMinute}' Penalty for {getPlayerName(event.playerId)}
             </EventHeader>
             <EventText>
-              {event.minutes} minutes, {event.penaltyType}
+              {event.penaltyMinutes} minutes, {event.penaltyType}
             </EventText>
           </EventsRow>
         );
@@ -117,17 +158,17 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
       <Overlay onClick={handleClose} />
       <Modal onClick={(e) => e.stopPropagation()}>
         <LiveGame>
-          <Header>{`${game.awayTeam} @ ${game.homeTeam}`}</Header>
+          <Header>{`${game.awayTeam.name} @ ${game.homeTeam.name}`}</Header>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <GoalsRow>
-            <AwayGoals>{activeGame?.awayTeamGoals.length}</AwayGoals>
+            <AwayGoals>{awayGoals.length}</AwayGoals>
             <GameTimeContainer>
               <GameTimer
                 startTime={new Date(game.startTime)}
                 ended={game.ended}
               />
             </GameTimeContainer>
-            <HomeGoals>{activeGame?.homeTeamGoals.length}</HomeGoals>
+            <HomeGoals>{homeGoals.length}</HomeGoals>
           </GoalsRow>
           <GoalsRow>
             <AwayShots>{activeGame?.awayTeamShots}</AwayShots>shots

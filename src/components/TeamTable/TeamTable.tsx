@@ -1,4 +1,4 @@
-import { getTeams } from "../../utils/queries";
+import { getTeamsWithMetaData } from "../../utils/queries";
 import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { styled } from "styled-components";
@@ -11,9 +11,15 @@ import { Logo } from "../../utils/types/Logo";
 import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Table } from "../../molecules/Table";
+import { Goal, Penalty } from "../../utils/types/Game";
 
 interface TeamTableProps {
   small: boolean;
+}
+export interface TeamMetaData extends Team {
+  goalsFor: Goal[];
+  goalsAgainst: Goal[];
+  penalties: Penalty[];
 }
 
 export const TeamTable = ({ small }: TeamTableProps) => {
@@ -26,16 +32,22 @@ export const TeamTable = ({ small }: TeamTableProps) => {
     const fetchAllTeams = async () => {
       if (competition)
         try {
-          const teamsFromAPI = await getTeams(competition.name);
-          const teamLogoLoop = teamsFromAPI.map((t: Team) => {
+          const teamsFromAPI = await getTeamsWithMetaData(competition.id);
+          const teamLogoLoop = teamsFromAPI.map((t: TeamMetaData) => {
             const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
-            const pointPercent = calculatePointPercentage(
-              t.points,
-              t.gamesPlayed
-            );
+
+            const gamesPlayed = t.wins + t.draws + t.losses + t.overtimeLosses;
+            const points = calculatePoints(t);
+            const pointPercent = calculatePointPercentage(points, gamesPlayed);
+            const goals = t.goalsFor.length;
+            const gAgainst = t.goalsAgainst.length;
             return {
               ...t,
               logo: teamLogo?.logo,
+              gamesPlayed: gamesPlayed,
+              goals: goals,
+              points,
+              goalsAgainst: gAgainst,
               pointPercentage: pointPercent,
             };
           });
@@ -50,7 +62,13 @@ export const TeamTable = ({ small }: TeamTableProps) => {
 
     fetchAllTeams();
   }, []);
-
+  const calculatePoints = (team: Team) => {
+    const winPoints = team.wins * 3;
+    const drawPoints = team.draws;
+    const OTLPoints = team.overtimeLosses;
+    const totalPoints = winPoints + drawPoints + OTLPoints;
+    return totalPoints;
+  };
   const teamColumns = small
     ? [
         {

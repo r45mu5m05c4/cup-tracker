@@ -8,15 +8,11 @@ import { Select } from "../../molecules/Select";
 
 export type NewTeam = {
   name: string;
-  goals: number;
   draws: number;
   overTimeLosses: number;
   losses: number;
-  points: number;
-  gamesPlayed: number;
-  competition_id: string;
+  competitionId: number;
   wins: number;
-  goalsAgainst: number;
   group: string;
   playoffGroup: string;
   logo: string | undefined;
@@ -36,21 +32,16 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
     if (competition) {
       const newTeam: NewTeam = {
         name: teamName,
-        goals: 0,
-        goalsAgainst: 0,
-        points: 0,
         wins: 0,
         draws: 0,
         losses: 0,
         overTimeLosses: 0,
-        gamesPlayed: 0,
         group: group,
         playoffGroup: playoffGroup,
-        competition_id: competition.id,
+        competitionId: competition.id,
         logo: undefined,
       };
 
-      console.log(newTeam);
       try {
         await addTeam(newTeam);
         setMessage(`Successfully added ${newTeam.name}`);

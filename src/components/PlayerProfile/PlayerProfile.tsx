@@ -1,16 +1,16 @@
 import { styled } from "styled-components";
-import { Player } from "../../utils/types/Player";
+import { PlayerMetaData } from "../../utils/types/Player";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { logoItems } from "../../utils/Logos";
 import { Logo } from "../../utils/types/Logo";
 
 interface PlayerProfileProps {
-  player: Player;
+  player: PlayerMetaData;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
-  const logo = logoItems.find((l: Logo) => player.teamName === l.teamName);
+  const logo = logoItems.find((l: Logo) => player.team.name === l.teamName);
   const getFullPosition = (pos: string) => {
     switch (pos) {
       case "C":
@@ -81,9 +81,12 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
             <Divider />
             <StatColumn>
               <StatRow>Games played: {player.gamesPlayed}</StatRow>
-              <StatRow>Goals: {player.goals}</StatRow>
-              <StatRow>Assists: {player.assists}</StatRow>
-              <StatRow>Penalty minutes: {player.penaltyMinutes}</StatRow>
+              <StatRow>Goals: {player.goals.length}</StatRow>
+              <StatRow>
+                Assists:
+                {player.assists.length + player.secondaryAssists.length}
+              </StatRow>
+              <StatRow>Penalty minutes: {player.penalties.length}</StatRow>
             </StatColumn>
           </Container>
         )}

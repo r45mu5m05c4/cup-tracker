@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../utils/context/UserContext";
-import { getPlayers } from "../../utils/queries";
+import { getPlayersWithMetaData } from "../../utils/queries";
 import { styled } from "styled-components";
-import { Player } from "../../utils/types/Player";
-import { Logo } from "../../utils/types/Logo";
-import { logoItems } from "../../utils/Logos";
+import { Player, PlayerMetaData } from "../../utils/types/Player";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Table } from "../../molecules/Table";
 import { Typography } from "../../molecules/Typography";
@@ -13,6 +10,7 @@ import {
   ChevronRightIcon,
   ArrowLongRightIcon,
 } from "@heroicons/react/20/solid";
+import { Penalty } from "../../utils/types/Game";
 
 interface PlayerTableProps {
   small: boolean;
@@ -22,45 +20,47 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [goalies, setGoalies] = useState<Player[]>([]);
   const [activePlayers, setActivePlayers] = useState<string>("Players");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllPlayers = async () => {
-      if (user?.accessToken && competition) {
+      if (competition) {
         try {
-          await refreshAccessToken();
-          const playersFromAPI = await getPlayers(
-            user.accessToken,
-            competition.name
-          );
-          const playersWithLogo = playersFromAPI.map((p: Player) => {
-            const teamLogo = logoItems.find(
-              (l: Logo) => p.teamName === l.teamName
-            );
-            return { ...p, logo: teamLogo?.logo };
-          });
-          const formattedPlayers = playersWithLogo.map((p: Player) => {
+          const playersFromAPI = await getPlayersWithMetaData(competition.id);
+
+          const formattedPlayers = playersFromAPI.map((p: PlayerMetaData) => {
+            const points =
+              p.goals.length + p.assists.length + p.secondaryAssists.length;
+            const ppg = calculatePointPerGame(points, p.gamesPlayed);
+            const totalAssists = p.assists.length + p.secondaryAssists.length;
+            const goals = p.goals.length;
+            const penaltyMinutes = p.penalties.length
+              ? getPenaltyMinutes(p.penalties)
+              : 0;
             if (
               p.position === "G" &&
               p.saves !== undefined &&
               p.goalsAgainst !== undefined
             ) {
-              const savePercent =
+              const savePercent: number =
                 p.goalsAgainst === 0
                   ? 100
-                  : ((p.saves / (p.saves + p.goalsAgainst)) * 100).toFixed(2);
-              return { ...p, savePercent };
+                  : parseInt(
+                      ((p.saves / (p.saves + p.goalsAgainst)) * 100).toFixed(2)
+                    );
+              return {
+                ...p,
+                savePercent,
+                goals,
+                points,
+                totalAssists,
+                penaltyMinutes,
+              };
             }
-            const ppg = calculatePointPerGame(p.points, p.gamesPlayed);
-            return { ...p, ppg };
+            return { ...p, points, goals, totalAssists, ppg, penaltyMinutes };
           });
-          setPlayers(
-            formattedPlayers.filter((p: Player) => p.position !== "G")
-          );
-          setGoalies(
-            formattedPlayers.filter((p: Player) => p.position === "G")
-          );
+          setPlayers(formattedPlayers.filter((p: any) => p.position !== "G"));
+          setGoalies(formattedPlayers.filter((p: any) => p.position === "G"));
         } catch (error) {
           console.error("Error fetching players:", error);
         }
@@ -69,11 +69,13 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
 
     fetchAllPlayers();
   }, []);
-
+  const getPenaltyMinutes = (penalties: Penalty[]) => {
+    return penalties.reduce((total, p) => total + p.penaltyMinutes, 0);
+  };
   const calculatePointPerGame = (points: number, gamesPlayed: number) => {
-    if (points === 0) return "-";
+    if (points === 0 || gamesPlayed === 0) return "-";
 
-    const pointPerGame = points / gamesPlayed;
+    const pointPerGame = (points / gamesPlayed).toFixed(2);
 
     return pointPerGame;
   };
@@ -111,8 +113,15 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
           ),
         },
         { key: "position", header: "Pos" },
-        { key: "goals", header: "G" },
-        { key: "assists", header: "A" },
+        {
+          key: "goals",
+          header: "G",
+          render: (goals: []) => (goals.length ? goals.length : 0),
+        },
+        {
+          key: "totalAssists",
+          header: "A",
+        },
         { key: "points", header: "P" },
         { key: "ppg", header: "PPG" },
         { key: "gamesPlayed", header: "GP" },
@@ -158,7 +167,7 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
         { key: "wins", header: "W" },
         { key: "gamesPlayed", header: "GP" },
         { key: "goals", header: "G" },
-        { key: "assists", header: "A" },
+        { key: "totalAssists", header: "A" },
         { key: "points", header: "P" },
         { key: "penaltyMinutes", header: "PIM" },
       ];
