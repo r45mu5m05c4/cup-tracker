@@ -1,69 +1,63 @@
 import { useEffect, useState } from "react";
 import { getGames } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
-import { Game } from "../../utils/types/Game";
+import { GameMetaData } from "../../utils/types/Game";
 import { styled } from "styled-components";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { GameModal } from "../Games/GameModal";
 import { GameItem } from "../../molecules/GameItem";
 
 export const Bracket = () => {
-  const [games, setGames] = useState<Game[]>();
-  const [semisA, setSemisA] = useState<Game[]>([]);
-  const [semisB, setSemisB] = useState<Game[]>([]);
-  const [finalA, setFinalA] = useState<Game>();
-  const [finalB, setFinalB] = useState<Game>();
-  const [thirdPlaceA, setThirdPlaceA] = useState<Game>();
-  const [thirdPlaceB, setThirdPlaceB] = useState<Game>();
-  const [openGame, setOpenGame] = useState<Game>();
+  const [games, setGames] = useState<GameMetaData[]>();
+  const [semisA, setSemisA] = useState<GameMetaData[]>([]);
+  const [semisB, setSemisB] = useState<GameMetaData[]>([]);
+  const [finalA, setFinalA] = useState<GameMetaData>();
+  const [finalB, setFinalB] = useState<GameMetaData>();
+  const [thirdPlaceA, setThirdPlaceA] = useState<GameMetaData>();
+  const [thirdPlaceB, setThirdPlaceB] = useState<GameMetaData>();
+  const [openGame, setOpenGame] = useState<GameMetaData>();
   const [showModal, setShowModal] = useState(false);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllGames = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const gamesFromAPI = await getGames(
-            user.accessToken,
-            competition.name
-          );
+          const gamesFromAPI = await getGames(competition.id);
 
-          const playoffGames: Game[] = gamesFromAPI.filter(
-            (g: Game) =>
+          const playoffGames: GameMetaData[] = gamesFromAPI.filter(
+            (g: GameMetaData) =>
               g.gameType === "a_playoff" || g.gameType === "b_playoff"
           );
           setGames(playoffGames);
           const poolAGames = playoffGames.filter(
-            (g: Game) => g.gameType === "a_playoff"
+            (g: GameMetaData) => g.gameType === "a_playoff"
           );
           const poolBGames = playoffGames.filter(
-            (g: Game) => g.gameType === "b_playoff"
+            (g: GameMetaData) => g.gameType === "b_playoff"
           );
           const poolASemis = poolAGames.filter(
-            (g: Game) => g.gameStage === "semi"
+            (g: GameMetaData) => g.gameStage === "semi"
           );
           setSemisA(poolASemis);
           const poolBSemis = poolBGames.filter(
-            (g: Game) => g.gameStage === "semi"
+            (g: GameMetaData) => g.gameStage === "semi"
           );
           setSemisB(poolBSemis);
 
           const poolAFinal = poolAGames.find(
-            (g: Game) => g.gameStage === "final"
+            (g: GameMetaData) => g.gameStage === "final"
           );
           setFinalA(poolAFinal);
           const poolBFinal = poolBGames.find(
-            (g: Game) => g.gameStage === "final"
+            (g: GameMetaData) => g.gameStage === "final"
           );
           setFinalB(poolBFinal);
           const poolAThirdPlace = poolAGames.find(
-            (g: Game) => g.gameStage === "third_place"
+            (g: GameMetaData) => g.gameStage === "third_place"
           );
           setThirdPlaceA(poolAThirdPlace);
           const poolBThirdPlace = poolBGames.find(
-            (g: Game) => g.gameStage === "third_place"
+            (g: GameMetaData) => g.gameStage === "third_place"
           );
           setThirdPlaceB(poolBThirdPlace);
         } catch (error) {
@@ -73,79 +67,82 @@ export const Bracket = () => {
 
     fetchAllGames();
   }, []);
-  const handleOpenGame = (gameId: string | undefined) => {
-    const foundGame = gameId && games?.find((g) => g._id === gameId);
+  const handleOpenGame = (gameId: number | undefined) => {
+    const foundGame = gameId && games?.find((g) => g.id === gameId);
     if (foundGame) {
       setOpenGame(foundGame);
       setShowModal(true);
     }
   };
-  const genTeamPlaceholder = (game: Game, semi1?: boolean): Game => {
-    if (game.homeTeam === "TBD" && semi1) {
+  const genTeamPlaceholder = (
+    game: GameMetaData,
+    semi1?: boolean
+  ): GameMetaData => {
+    if (!game.homeTeamId && semi1) {
       switch (game.gameStage) {
         case "semi":
-          game.homeTeam =
+          game.homeTeam.name =
             game.gameType === "a_playoff" ? "Group A 1st" : "Group A 3rd";
           break;
         case "third_place":
-          game.homeTeam = "Loser S1";
+          game.homeTeam.name = "Loser S1";
           break;
         case "final":
-          game.homeTeam = "Winner S1";
+          game.homeTeam.name = "Winner S1";
           break;
         default:
-          game.homeTeam = "TBD";
+          game.homeTeam.name = "TBD";
           break;
       }
     }
-    if (game.homeTeam === "TBD" && !semi1) {
+    if (!game.homeTeamId && !semi1) {
       switch (game.gameStage) {
         case "semi":
-          game.homeTeam =
+          game.homeTeam.name =
             game.gameType === "a_playoff" ? "Group B 1st" : "Group B 3rd";
           break;
         case "third_place":
-          game.homeTeam = "Loser S2";
+          game.homeTeam.name = "Loser S2";
           break;
         case "final":
-          game.homeTeam = "Winner S2";
+          game.homeTeam.name = "Winner S2";
           break;
         default:
-          game.homeTeam = "TBD";
+          game.homeTeam.name = "TBD";
           break;
       }
     }
-    if (game.awayTeam === "TBD" && semi1) {
+    if (!game.awayTeamId && semi1) {
       switch (game.gameStage) {
         case "semi":
-          game.homeTeam =
+          game.homeTeam.name =
             game.gameType === "b_playoff" ? "Group A 2nd" : "Group A 4th";
           break;
         case "third_place":
-          game.homeTeam = "Loser S1";
+          game.homeTeam.name = "Loser S1";
           break;
         case "final":
-          game.homeTeam = "Winner S1";
+          game.homeTeam.name = "Winner S1";
           break;
         default:
-          game.homeTeam = "TBD";
+          game.homeTeam.name = "TBD";
           break;
       }
     }
-    if (game.awayTeam === "TBD" && !semi1) {
+    if (!game.awayTeamId && !semi1) {
       switch (game.gameStage) {
         case "semi":
-          game.homeTeam =
+          game.homeTeam.name =
             game.gameType === "b_playoff" ? "Group B 2nd" : "Group B 4th";
           break;
         case "third_place":
-          game.homeTeam = "Loser S2";
+          game.homeTeam.name = "Loser S2";
           break;
         case "final":
-          game.homeTeam = "Winner S2";
+          game.homeTeam.name = "Winner S2";
           break;
         default:
-          game.homeTeam = "TBD";
+          game.homeTeam.name = "TBD";
           break;
       }
     }
@@ -160,13 +157,13 @@ export const Bracket = () => {
       <PlayoffA>
         {semisA.length > 0 ? (
           <SemiFinal>
-            {semisA.map((semi: Game, i) => (
-              <SemiFinalItem key={semi.gameId}>
+            {semisA.map((semi: GameMetaData, i) => (
+              <SemiFinalItem key={semi.id}>
                 Semi
                 <GameItem
-                  key={semi.gameId}
+                  key={semi.id}
                   game={
-                    semi.homeTeam !== "TBD" || semi.awayTeam !== "TBD"
+                    semi.homeTeam.name || semi.awayTeam.name
                       ? genTeamPlaceholder(semi, i === 0 ? true : false)
                       : semi
                   }
@@ -192,7 +189,7 @@ export const Bracket = () => {
           {thirdPlaceA ? (
             <GameItem
               game={
-                thirdPlaceA.homeTeam !== "TBD" || thirdPlaceA.awayTeam !== "TBD"
+                thirdPlaceA.homeTeam.name || thirdPlaceA.awayTeam.name
                   ? genTeamPlaceholder(thirdPlaceA)
                   : thirdPlaceA
               }
@@ -207,7 +204,7 @@ export const Bracket = () => {
           {finalA ? (
             <GameItem
               game={
-                finalA.homeTeam !== "TBD" || finalA.awayTeam !== "TBD"
+                finalA.homeTeam.name || finalA.awayTeam.name
                   ? genTeamPlaceholder(finalA)
                   : finalA
               }
@@ -222,13 +219,13 @@ export const Bracket = () => {
       <PlayoffB>
         {semisB.length > 0 ? (
           <SemiFinal>
-            {semisB.map((semi: Game, i) => (
-              <SemiFinalItem key={semi.gameId}>
+            {semisB.map((semi: GameMetaData, i) => (
+              <SemiFinalItem key={semi.id}>
                 Semi
                 <GameItem
-                  key={semi.gameId}
+                  key={semi.id}
                   game={
-                    semi.homeTeam !== "TBD" || semi.awayTeam !== "TBD"
+                    semi.homeTeam.name || semi.awayTeam.name
                       ? genTeamPlaceholder(semi, i === 0 ? true : false)
                       : semi
                   }
@@ -254,7 +251,7 @@ export const Bracket = () => {
           {thirdPlaceB ? (
             <GameItem
               game={
-                thirdPlaceB.homeTeam !== "TBD" || thirdPlaceB.awayTeam !== "TBD"
+                thirdPlaceB.homeTeam.name || thirdPlaceB.awayTeam.name
                   ? genTeamPlaceholder(thirdPlaceB)
                   : thirdPlaceB
               }
@@ -269,7 +266,7 @@ export const Bracket = () => {
           {finalB ? (
             <GameItem
               game={
-                finalB.homeTeam !== "TBD" || finalB.awayTeam !== "TBD"
+                finalB.homeTeam.name || finalB.awayTeam.name
                   ? genTeamPlaceholder(finalB)
                   : finalB
               }

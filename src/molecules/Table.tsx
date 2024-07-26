@@ -1,9 +1,9 @@
 import React, { ReactNode, useState, useMemo } from "react";
 import styled from "styled-components";
-import { Player } from "../utils/types/Player";
 import { Team } from "../utils/types/Team";
 import { TeamProfile } from "../components/TeamProfile/TeamProfile";
 import { PlayerProfile } from "../components/PlayerProfile/PlayerProfile";
+import { PlayerMetaData } from "../utils/types/Player";
 
 type TableColumn<T> = {
   key: keyof T;
@@ -38,7 +38,7 @@ export const Table = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
   const [openTeam, setOpenTeam] = useState<Team>();
-  const [openPlayer, setOpenPlayer] = useState<Player>();
+  const [openPlayer, setOpenPlayer] = useState<PlayerMetaData>();
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
 
@@ -94,10 +94,10 @@ export const Table = ({
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTeamFilter(event.target.value);
   };
-  const isTeam = (item: Team | Player): item is Team => {
+  const isTeam = (item: Team | PlayerMetaData): item is Team => {
     return (item as Team).group !== undefined;
   };
-  const handleItemClick = (item: Team | Player) => {
+  const handleItemClick = (item: Team | PlayerMetaData) => {
     if (isTeam(item)) {
       setOpenTeam(item);
       setShowTeamModal(true);

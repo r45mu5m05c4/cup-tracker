@@ -81,11 +81,7 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
               </Label>
               <Label>
                 Logo
-                <AddLogo
-                  newTeam={true}
-                  teamId={undefined}
-                  setLogoUrl={setLogoUrl}
-                />
+                <AddLogo setLogoUrl={setLogoUrl} />
               </Label>
               <Select
                 label="Group"

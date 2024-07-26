@@ -5,12 +5,10 @@ import { Button } from "../molecules/Button";
 import supabase from "../utils/supabase/server";
 
 interface AddLogoProps {
-  newTeam: boolean;
-  teamId: number | undefined;
   setLogoUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const AddLogo = ({ newTeam, teamId, setLogoUrl }: AddLogoProps) => {
+export const AddLogo = ({ setLogoUrl }: AddLogoProps) => {
   const [updatedLogo, setUpdatedLogo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +37,7 @@ export const AddLogo = ({ newTeam, teamId, setLogoUrl }: AddLogoProps) => {
     const { data, error } = await supabase.storage
       .from("team-logo")
       .upload(fileName, updatedLogo);
-
+    console.log(data);
     if (error) {
       setError(`Error uploading file: ${error.message}`);
       setUploading(false);

@@ -108,11 +108,7 @@ export const UpdateTeamModal = ({
                   {team.logo && (
                     <img src={team.logo} style={{ height: "44px" }} />
                   )}
-                  <AddLogo
-                    newTeam={false}
-                    teamId={team.id}
-                    setLogoUrl={setLogoUrl}
-                  />
+                  <AddLogo setLogoUrl={setLogoUrl} />
                 </Label>
 
                 <Select

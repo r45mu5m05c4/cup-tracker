@@ -30,7 +30,7 @@ export const Games = () => {
     fetchAllGames();
   }, []);
 
-  const handleOpenGame = (gameId: number | undefined) => {
+  const handleOpenGame = (gameId: number) => {
     const foundGame = gameId && games?.find((g) => g.id === gameId);
     if (foundGame) {
       setOpenGame(foundGame);

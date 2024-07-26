@@ -21,11 +21,9 @@ export const UpdatePlayerModal = ({
   const [gamesPlayed, setGamesPlayed] = useState<number>(player.gamesPlayed);
   const [position, setPosition] = useState<PlayerPosition>(player.position);
 
-  const [wins, setWins] = useState<number | undefined>(player.wins);
-  const [saves, setSaves] = useState<number | undefined>(player.saves);
-  const [goalsAgainst, setGoalsAgainst] = useState<number | undefined>(
-    player.goalsAgainst
-  );
+  const [wins, setWins] = useState<number>(player.wins);
+  const [saves, setSaves] = useState<number>(player.saves);
+  const [goalsAgainst, setGoalsAgainst] = useState<number>(player.goalsAgainst);
   const [message, setMessage] = useState("");
 
   const handleUpdatePlayer = () => {

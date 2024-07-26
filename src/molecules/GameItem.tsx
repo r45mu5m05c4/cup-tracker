@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import {  GameMetaData, Goal } from "../utils/types/Game";
+import { GameMetaData, Goal } from "../utils/types/Game";
 import { isBefore } from "date-fns";
 import { GameTimer } from "./GameTimer";
 
 interface GameItemProps {
   game: GameMetaData;
-  handleOpenGame: (gameId: string | undefined) => void;
+  handleOpenGame: (gameId: number) => void;
 }
 
 export const GameItem = ({ game, handleOpenGame }: GameItemProps) => {
