@@ -1,9 +1,8 @@
 import { styled } from "styled-components";
 import { Team } from "../../utils/types/Team";
 import { useEffect, useState } from "react";
-import { getPlayerByTeam } from "../../utils/queries";
+import { getPlayersByTeam } from "../../utils/queries";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import { useUser } from "../../utils/context/UserContext";
 import { Player } from "../../utils/types/Player";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 
@@ -14,18 +13,15 @@ interface TeamProfileProps {
 
 export const TeamProfile = ({ team, setShowModal }: TeamProfileProps) => {
   const [players, setPlayers] = useState<Player[]>([]);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const getPlayersInTeam = async () => {
-      if (user?.accessToken && competition?.name)
+      if (competition?.id)
         try {
-          await refreshAccessToken();
-          const playersFromAPI = await getPlayerByTeam(
-            team.name,
-            user.accessToken,
-            competition.name
+          const playersFromAPI = await getPlayersByTeam(
+            team.id,
+            competition.id
           );
           setPlayers(playersFromAPI);
         } catch (e) {

@@ -1,16 +1,13 @@
 import { styled } from "styled-components";
-import { Player } from "../../utils/types/Player";
+import { PlayerMetaData } from "../../utils/types/Player";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { logoItems } from "../../utils/Logos";
-import { Logo } from "../../utils/types/Logo";
 
 interface PlayerProfileProps {
-  player: Player;
+  player: PlayerMetaData;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
-  const logo = logoItems.find((l: Logo) => player.teamName === l.teamName);
   const getFullPosition = (pos: string) => {
     switch (pos) {
       case "C":
@@ -40,7 +37,7 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
             <SubColumn>
               <h2>{player.name}</h2>{" "}
               <img
-                src={logo?.logo}
+                src={player.team.logo}
                 alt=""
                 style={{ width: "54px", height: "54px" }}
               />
@@ -68,7 +65,7 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
             <SubColumn>
               <h2>{player.name}</h2>{" "}
               <img
-                src={logo?.logo}
+                src={player.team.logo}
                 alt=""
                 style={{ width: "54px", height: "54px" }}
               />
@@ -81,9 +78,12 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
             <Divider />
             <StatColumn>
               <StatRow>Games played: {player.gamesPlayed}</StatRow>
-              <StatRow>Goals: {player.goals}</StatRow>
-              <StatRow>Assists: {player.assists}</StatRow>
-              <StatRow>Penalty minutes: {player.penaltyMinutes}</StatRow>
+              <StatRow>Goals: {player.goals.length}</StatRow>
+              <StatRow>
+                Assists:
+                {player.assists.length + player.secondaryAssists.length}
+              </StatRow>
+              <StatRow>Penalty minutes: {player.penalties.length}</StatRow>
             </StatColumn>
           </Container>
         )}
@@ -108,6 +108,7 @@ const Divider = styled.div`
   height: 250px;
   width: 2px;
   background-color: #fff;
+  margin-right: 20px;
 `;
 const CloseIcon = styled(XMarkIcon)`
   height: 38px;

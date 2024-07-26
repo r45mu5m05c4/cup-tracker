@@ -1,1057 +1,771 @@
-import axios from "axios";
 import { Team } from "./types/Team";
-import { Player } from "./types/Player";
-import { Game, Penalty } from "./types/Game";
+import { Player, PlayerMetaData } from "./types/Player";
+import { Game, GameMetaData, Penalty } from "./types/Game";
 import { Goal } from "./types/Game";
 import { Competition } from "./types/Competition";
 import { NewGame } from "../Admin/GameManager/ScheduleGameModal";
 import { NewPlayer } from "../Admin/PlayerManager/AddPlayerModal";
 import { NewTeam } from "../Admin/TeamManager/AddTeamModal";
+import supabase from "./supabase/server";
+import { TeamMetaData } from "../components/TeamTable/TeamTable";
 
-export const getCompetitions = async (accessToken: string) => {
+export const getCompetitions = async () => {
   try {
-    const data = {
-      collection: "competitions",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-    };
+    const { data, error } = await supabase.from("competition").select("*");
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      console.error("Error fetching competitions:", error);
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    return data;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error fetching competitions:", error);
     throw error;
   }
 };
-export const updateCompetition = async (
-  competition: Competition,
-  accessToken: string
-) => {
+
+export const updateCompetition = async (competition: Competition) => {
   try {
-    const data = {
-      collection: "competitions",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { name: competition.name },
-      update: {
-        $set: {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("competition")
+      .update([
+        {
           name: competition.name,
           startDate: competition.startDate,
           endDate: competition.endDate,
         },
-      },
-    };
+      ])
+      .eq("id", competition.id);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
-    console.error("Error updating team:", error);
+    console.error("Error updating competition:", error);
     throw error;
   }
 };
-export const getTeams = async (accessToken: string, competition: string) => {
+export const getTeams = async (competitionId: number) => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { competition: competition },
-    };
+    const { data, error } = await supabase
+      .from("team")
+      .select("*")
+      .eq("competitionId", competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      console.error("Error fetching teams:", error);
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    return data;
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
   }
 };
-export const getAllLogos = async (accessToken: string, competition: string) => {
+export const getTeamsWithMetaData = async (
+  competitionId: number
+): Promise<TeamMetaData[]> => {
   try {
-    const data = {
-      collection: "logos",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { competition: competition },
-    };
+    const { data, error } = await supabase
+      .from("team")
+      .select(
+        `*,
+        goalsFor:goal!goals_teamId_fkey( * ),
+        goalsAgainst:goal!goals_concedingTeamId_fkey( * ),
+        penalties:penalty!penalty_teamId_fkey( * )`
+      )
+      .eq("competitionId", competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      console.error("Error fetching teams:", error);
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    return data as TeamMetaData[];
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
   }
 };
-export const getPlayers = async (accessToken: string, competition: string) => {
+export const getPlayers = async (competitionId: number): Promise<Player[]> => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { competition: competition },
-    };
+    const { data, error } = await supabase
+      .from("player")
+      .select("*")
+      .eq("competitionId", competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      console.error("Error fetching teams:", error);
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    return data as Player[];
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
   }
 };
-export const getGames = async (accessToken: string, competition: string) => {
+export const getPlayersWithMetaData = async (
+  competitionId: number
+): Promise<PlayerMetaData[]> => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { competition: competition },
-    };
+    const { data, error } = await supabase
+      .from("player")
+      .select(
+        `
+        *,
+        team:team!players_team_id_fkey ( * ),
+        goals:goal!goals_scorerId_fkey( * ),
+        assists:goal!goals_primaryAssisterId_fkey( * ),
+        secondaryAssists:goal!goals_secondaryAssisterId_fkey( * ),
+        penalties:penalty!penalty_playerId_fkey( * )
+      `
+      )
+      .eq("competitionId", competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      console.error("Error fetching teams:", error);
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    return data as PlayerMetaData[];
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
   }
 };
-export const getGameById = async (
-  accessToken: string,
-  gameId: string,
-  competition: string
-) => {
+export const getGames = async (
+  competitionId: number
+): Promise<GameMetaData[]> => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { gameId: gameId, competition: competition },
-    };
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/findOne",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    const session = await supabase.auth.getSession();
 
-    const response = await axios(config);
-    console.log(response);
-    return response.data.document;
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("game")
+      .select(
+        `
+        *,
+        homeTeam:team!games_homeTeamId_fkey ( * ),
+        awayTeam:team!games_awayTeamId_fkey ( * ),
+        goals:goal!goals_gameId_fkey( * ),
+        penalties:penalty!penalty_gameId_fkey( * )
+      `
+      )
+      .eq("competitionId", competitionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data as GameMetaData[];
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error finding games:", error);
     throw error;
   }
 };
-export const removeGameById = async (
-  accessToken: string,
-  gameId: string,
-  competition: string
-) => {
+export const getGoalsInGame = async (gameId: number) => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { gameId: gameId, competition: competition },
-    };
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    const session = await supabase.auth.getSession();
 
-    const response = await axios(config);
-    console.log(response);
-    return response.data.document;
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("goal")
+      .select("*")
+      .eq("gameId", gameId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error finding goals:", error);
+    throw error;
+  }
+};
+export const getPenaltiesInGame = async (gameId: number) => {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("penalty")
+      .select("*")
+      .eq("competitionId", gameId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error finding penalties:", error);
+    throw error;
+  }
+};
+export const getGameById = async (gameId: number, competitionId: number) => {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("game")
+      .select()
+      .eq("id", gameId)
+      .eq("competitionId", competitionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error finding game:", error);
+    throw error;
+  }
+};
+export const getGameByIdWithMetaData = async (
+  gameId: number,
+  competitionId: number
+): Promise<GameMetaData> => {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("game")
+      .select(
+        `
+        *,
+        homeTeam:team!games_homeTeamId_fkey ( * ),
+        awayTeam:team!games_awayTeamId_fkey ( * ),
+        goals:goal!goals_gameId_fkey( * ),
+        penalty:penalty!penalty_gameId_fkey ( * )
+      `
+      )
+      .eq("id", gameId)
+      .eq("competitionId", competitionId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as GameMetaData;
+  } catch (error) {
+    console.error("Error finding game:", error);
+    throw error;
+  }
+};
+export const removeGameById = async (gameId: number, competitionId: number) => {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("game")
+      .delete()
+      .eq("id", gameId)
+      .eq("competitionId", competitionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error removing game:", error);
     throw error;
   }
 };
 export const removePlayerById = async (
-  accessToken: string,
-  id: string,
-  competition: string
+  playerId: number,
+  competitionId: number
 ) => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { generatedId: id, competition: competition },
-    };
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    const session = await supabase.auth.getSession();
 
-    const response = await axios(config);
-    console.log(response);
-    return response.data.document;
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("player")
+      .delete()
+      .eq("id", playerId)
+      .eq("competitionId", competitionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error removing player:", error);
     throw error;
   }
 };
-export const removeTeamById = async (
-  accessToken: string,
-  id: string,
-  competition: string
-) => {
+export const getPlayerByIdWithMetaData = async (
+  playerId: number,
+  competitionId: number
+): Promise<PlayerMetaData> => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { id: id, competition: competition },
-    };
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/deleteOne",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    const session = await supabase.auth.getSession();
 
-    const response = await axios(config);
-    console.log(response);
-    return response.data.document;
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("player")
+      .select(
+        `
+        *,
+        team:team!players_teamId_fkey ( * ),
+        goals:goal!goals_scorerId_fkey( * ),
+        assists:goal!goals_primaryAssisterId_fkey( * ),
+        secondaryAssists:goal!goals_secondaryAssisterId_fkey( * ),
+        penalties:penalty!penalty_playerId_fkey( * )
+      `
+      )
+      .eq("id", playerId)
+      .eq("competitionId", competitionId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as PlayerMetaData;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error finding game:", error);
     throw error;
   }
 };
-export const getTeamByName = async (
-  teamName: string,
-  accessToken: string,
-  competition: string
-) => {
+export const removeTeamById = async (teamId: number, competitionId: number) => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { name: teamName, competition: competition },
-    };
+    const session = await supabase.auth.getSession();
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
 
-    const response = await axios(config);
-    return response.data.documents;
+    const { data, error } = await supabase
+      .from("team")
+      .delete()
+      .eq("id", teamId)
+      .eq("competitionId", competitionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error removing team:", error);
+    throw error;
+  }
+};
+export const getTeamById = async (
+  teamId: number,
+  competitionId: number
+): Promise<Team> => {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("team")
+      .select()
+      .eq("id", teamId)
+      .eq("competitionId", competitionId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as Team;
+  } catch (error) {
+    console.error("Error finding team:", error);
     throw error;
   }
 };
 
-export const updateTeamStats = async (team: Team, accessToken: string) => {
+export const updateTeamStats = async (team: Team) => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { name: team.name, competition: team.competition },
-      update: {
-        $set: {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+    const { data, error } = await supabase
+      .from("team")
+      .update([
+        {
+          name: team.name,
           wins: team.wins,
           draws: team.draws,
           losses: team.losses,
-          points: team.points,
-          goals: team.goals,
-          goalsAgainst: team.goalsAgainst,
-          gamesPlayed: team.gamesPlayed,
+          overtimeLosses: team.overtimeLosses,
           group: team.group,
           playoffGroup: team.playoffGroup,
+          competitionId: team.competitionId,
+          logo: team.logo,
         },
-      },
-    };
+      ])
+      .eq("id", team.id)
+      .eq("competitionId", team.competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error updating team:", error);
     throw error;
   }
 };
-export const uploadLogo = async (
-  teamName: string,
-  logo: Uint8Array,
-  accessToken: string,
-  competition: string
-) => {
-  try {
-    const data = {
-      collection: "logos",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      document: {
-        teamName: teamName,
-        logo: logo,
-        competition: competition,
-      },
-    };
+export const uploadLogo = async () => {};
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating team:", error);
-    throw error;
-  }
-};
 export const updateGoalieStatsAfterGame = async (
-  goalieId: string,
+  goalieId: number,
   wins: number,
   saves: number,
   goalsAgainst: number,
-  competition: string,
-  accessToken: string
+  gamesPlayed: number,
+  competitionId: number
 ) => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: {
-        generatedId: goalieId,
-        competition: competition,
-      },
-      update: {
-        $inc: {
-          gamesPlayed: 1,
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+    const { data, error } = await supabase
+      .from("player")
+      .update([
+        {
+          gamesPlayed: gamesPlayed,
           wins: wins,
           saves: saves,
           goalsAgainst: goalsAgainst,
         },
-      },
-    };
+      ])
+      .eq("id", goalieId)
+      .eq("competitionId", competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error updating player:", error);
     throw error;
   }
 };
-export const updatePlayerStats = async (
-  player: Player,
-  accessToken: string
-) => {
+export const updatePlayerStats = async (player: Player) => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: {
-        generatedId: player.generatedId,
-        competition: player.competition,
-      },
-      update: {
-        $set: {
-          goals: player.goals,
-          assists: player.assists,
-          points: player.points,
-          penaltyMinutes: player.penaltyMinutes,
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("player")
+      .update([
+        {
+          name: player.name,
           gamesPlayed: player.gamesPlayed,
           position: player.position,
-          teamName: player.teamName,
+          teamId: player.teamId,
           jerseyNumber: player.jerseyNumber,
+          competitionId: player.competitionId,
           wins: player.wins,
           saves: player.saves,
           goalsAgainst: player.goalsAgainst,
         },
-      },
-    };
+      ])
+      .eq("id", player.id)
+      .eq("competitionId", player.competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error updating player:", error);
     throw error;
   }
 };
-export const addTeam = async (team: NewTeam, accessToken: string) => {
+
+export const addTeam = async (team: NewTeam) => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      document: {
+    const session = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase.from("team").insert([
+      {
         name: team.name,
         draws: team.draws,
         losses: team.losses,
-        overTimeLosses: team.overTimeLosses,
-        points: team.points,
-        goals: team.goals,
-        goalsAgainst: team.goalsAgainst,
-        gamesPlayed: team.gamesPlayed,
+        overtimeLosses: team.overTimeLosses,
         group: team.group,
         playoffGroup: team.playoffGroup,
-        competition: team.competition,
+        competitionId: team.competitionId,
+        logo: team.logo,
       },
-    };
+    ]);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
-    console.error("Error adding player:", error);
+    console.error("Error adding team:", error);
     throw error;
   }
 };
-export const addPlayer = async (player: NewPlayer, accessToken: string) => {
+export const addPlayer = async (player: NewPlayer) => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      document: {
-        generatedId: player.generatedId,
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase.from("player").insert([
+      {
         name: player.name,
-        goals: player.goals,
-        assists: player.assists,
-        points: player.points,
-        penaltyMinutes: player.penaltyMinutes,
         gamesPlayed: player.gamesPlayed,
         position: player.position,
-        teamName: player.teamName,
+        teamId: player.teamId,
         jerseyNumber: player.jerseyNumber,
-        competition: player.competition,
+        competitionId: player.competitionId,
         wins: player.wins,
         saves: player.saves,
         goalsAgainst: player.goalsAgainst,
       },
-    };
+    ]);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error adding player:", error);
     throw error;
   }
 };
-export const getPlayerByTeam = async (
-  teamName: string,
-  accessToken: string,
-  competition: string
+
+export const getPlayersByTeam = async (
+  teamId: number,
+  competitionId: number
 ) => {
   try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { teamName: teamName, competition: competition },
-    };
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/find",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    const { data, error } = await supabase
+      .from("player")
+      .select()
+      .eq("teamId", teamId)
+      .eq("competitionId", competitionId);
 
-    const response = await axios(config);
-    return response.data.documents;
+    if (error) {
+      throw error;
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching teams:", error);
+    console.error("Error getting player:", error);
     throw error;
   }
 };
-export const addGame = async (game: NewGame, accessToken: string) => {
+export const addGame = async (game: NewGame) => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      document: {
-        gameId: game.gameId,
-        homeTeam: game.homeTeam,
-        awayTeam: game.awayTeam,
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase.from("game").insert([
+      {
+        homeTeamId: game.homeTeamId,
+        awayTeamId: game.awayTeamId,
         startTime: game.startTime,
-        homeTeamGoals: game.homeTeamGoals,
-        awayTeamGoals: game.awayTeamGoals,
         ended: game.ended,
         gameType: game.gameType,
         gameStage: game.gameStage,
-        competition: game.competition,
+        competitionId: game.competitionId,
       },
-    };
+    ]);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/insertOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error adding game:", error);
     throw error;
   }
 };
 
-export const updateGame = async (
-  game: Game,
-  accessToken: string,
-  competition: string
-) => {
+export const updateGame = async (game: Game) => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { gameId: game.gameId, competition: competition },
-      update: {
-        $set: {
-          homeTeam: game.homeTeam,
-          awayTeam: game.awayTeam,
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+
+    const { data, error } = await supabase
+      .from("game")
+      .update([
+        {
+          homeTeamId: game.homeTeamId,
+          awayTeamId: game.awayTeamId,
           startTime: game.startTime,
-          homeTeamGoals: game.homeTeamGoals,
-          awayTeamGoals: game.awayTeamGoals,
-          homeTeamShots: game.homeTeamShots,
-          awayTeamShots: game.awayTeamShots,
           ended: game.ended,
           gameType: game.gameType,
           gameStage: game.gameStage,
-          penalty: game.penalty,
+          competitionId: game.competitionId,
         },
-      },
-    };
+      ])
+      .eq("id", game.id)
+      .eq("competitionId", game.competitionId);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating player:", error);
-    throw error;
-  }
-};
-export const addSingularStatToPlayer = async (
-  playerName: string,
-  accessToken: string,
-  goal: boolean,
-  competition: string
-) => {
-  try {
-    const data = goal
-      ? {
-          collection: "players",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: playerName, competition: competition },
-          update: {
-            $inc: {
-              goals: 1,
-              points: 1,
-            },
-          },
-        }
-      : {
-          collection: "players",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: playerName, competition: competition },
-          update: {
-            $inc: {
-              assists: 1,
-              points: 1,
-            },
-          },
-        };
-
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating player:", error);
-    throw error;
-  }
-};
-export const addPenaltyToPlayer = async (
-  pims: number,
-  generatedId: string,
-  accessToken: string,
-  competition: string
-) => {
-  try {
-    const data = {
-      collection: "players",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { generatedId: generatedId, competition: competition },
-      update: {
-        $inc: {
-          penaltyMinutes: pims,
-        },
-      },
-    };
-
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating player:", error);
-    throw error;
-  }
-};
-export const addSingularStatToTeam = async (
-  goalFor: boolean,
-  teamName: string,
-  accessToken: string,
-  competition: string
-) => {
-  try {
-    const data = goalFor
-      ? {
-          collection: "teams",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: teamName, competition: competition },
-          update: {
-            $inc: {
-              goals: 1,
-            },
-          },
-        }
-      : {
-          collection: "teams",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { name: teamName, competition: competition },
-          update: {
-            $inc: {
-              goalsAgainst: 1,
-            },
-          },
-        };
-
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating player:", error);
-    throw error;
-  }
-};
-export const addWinOrLossToTeam = async (
-  win: boolean,
-  teamName: string,
-  accessToken: string,
-  competition: string,
-  overTimeLoss: boolean
-) => {
-  try {
-    let data;
-    if (win) {
-      data = {
-        collection: "teams",
-        database: "folkets-cup",
-        dataSource: "folketsCup",
-        filter: { name: teamName, competition: competition },
-        update: {
-          $inc: {
-            wins: 1,
-            points: 3,
-            gamesPlayed: 1,
-          },
-        },
-      };
-    } else if (overTimeLoss) {
-      data = {
-        collection: "teams",
-        database: "folkets-cup",
-        dataSource: "folketsCup",
-        filter: { name: teamName, competition: competition },
-        update: {
-          $inc: {
-            overtimeLosses: 1,
-            points: 1,
-            gamesPlayed: 1,
-          },
-        },
-      };
-    } else {
-      data = {
-        collection: "teams",
-        database: "folkets-cup",
-        dataSource: "folketsCup",
-        filter: { name: teamName, competition: competition },
-        update: {
-          $inc: {
-            losses: 1,
-            gamesPlayed: 1,
-          },
-        },
-      };
+    if (error) {
+      throw error;
     }
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
-    console.error("Error updating player:", error);
+    console.error("Error updating game:", error);
     throw error;
   }
 };
-export const addDrawToTeam = async (
-  teamName: string,
-  accessToken: string,
-  competition: string
-) => {
+
+export const addGoal = async (goal: Goal) => {
   try {
-    const data = {
-      collection: "teams",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { name: teamName, competition: competition },
-      update: {
-        $inc: {
-          draws: 1,
-          points: 1,
-          gamesPlayed: 1,
-        },
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+    const { data, error } = await supabase.from("goal").insert([
+      {
+        gameId: goal.gameId,
+        scoringTeamId: goal.scoringTeamId,
+        concedingTeamId: goal.concedingTeamId,
+        scorerId: goal.scorerId,
+        primaryAssisterId: goal.primaryAssisterId,
+        secondaryAssisterId: goal.secondaryAssisterId,
+        gameMinute: goal.gameMinute,
+        competitionId: goal.competitionId,
       },
-    };
+    ]);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating player:", error);
-    throw error;
-  }
-};
-export const addGoalToGame = async (
-  gameId: string,
-  goal: Goal,
-  homeTeam: boolean,
-  accessToken: string,
-  competition: string
-) => {
-  try {
-    const data = homeTeam
-      ? {
-          collection: "games",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { gameId: gameId, competition: competition },
-          update: {
-            $push: {
-              homeTeamGoals: goal,
-            },
-          },
-        }
-      : {
-          collection: "games",
-          database: "folkets-cup",
-          dataSource: "folketsCup",
-          filter: { gameId: gameId, competition: competition },
-          update: {
-            $push: {
-              awayTeamGoals: goal,
-            },
-          },
-        };
-
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
-
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error adding goal:", error);
     throw error;
   }
 };
-export const addShotToGame = async (game: Game, accessToken: string) => {
+export const addShotToGame = async (game: Game) => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { gameId: game.gameId, competition: game.competition },
-      update: {
-        $set: {
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+    const { data, error } = await supabase
+      .from("game")
+      .update([
+        {
           homeTeamShots: game.homeTeamShots,
           awayTeamShots: game.awayTeamShots,
         },
-      },
-    };
+      ])
+      .eq("id", game.id);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
     console.error("Error adding goal:", error);
     throw error;
   }
 };
-export const addPenaltyToGame = async (
-  gameId: string,
-  penalty: Penalty,
-  accessToken: string,
-  competition: string
-) => {
+export const addPenalty = async (penalty: Penalty) => {
   try {
-    const data = {
-      collection: "games",
-      database: "folkets-cup",
-      dataSource: "folketsCup",
-      filter: { gameId: gameId, competition: competition },
-      update: {
-        $push: {
-          penalty: penalty,
-        },
+    const session = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("User is not authenticated");
+    }
+    const { data, error } = await supabase.from("penalty").insert([
+      {
+        gameId: penalty.gameId,
+        teamId: penalty.teamId,
+        playerId: penalty.playerId,
+        gameMinute: penalty.gameMinute,
+        competitionId: penalty.competitionId,
+        penaltyType: penalty.penaltyType,
+        penaltyMinutes: penalty.penaltyMinutes,
       },
-    };
+    ]);
 
-    const config = {
-      method: "post",
-      url: "https://eu-central-1.aws.data.mongodb-api.com/app/data-lcjxaso/endpoint/data/v1/action/updateOne",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: JSON.stringify(data),
-    };
+    if (error) {
+      throw error;
+    }
 
-    const response = await axios(config);
-    return response.data;
+    return data;
   } catch (error) {
-    console.error("Error updating player:", error);
+    console.error("Error adding goal:", error);
     throw error;
   }
 };

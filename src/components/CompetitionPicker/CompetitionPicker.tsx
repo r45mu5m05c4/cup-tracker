@@ -1,51 +1,34 @@
 import { styled } from "styled-components";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import { useUser } from "../../utils/context/UserContext";
 import { useEffect, useState } from "react";
 import { getCompetitions } from "../../utils/queries";
 import { Competition } from "../../utils/types/Competition";
-import { competitionPosters } from "./../../utils/Logos";
 import { Typography } from "../../molecules/Typography";
-
-interface CompetitionWithLogo extends Competition {
-  logo: string;
-}
 
 export const CompetitionPicker = () => {
   const { setCompetition } = useCompetition();
-  const { user, refreshAccessToken } = useUser();
-  const [competitions, setCompetitions] = useState<
-    CompetitionWithLogo[] | null
-  >(null);
+  const [competitions, setCompetitions] = useState<Competition[] | null>(null);
 
   useEffect(() => {
     const fetchAllCompetitions = async () => {
-      if (user?.accessToken)
-        try {
-          await refreshAccessToken();
-          const allCompetitions = await getCompetitions(user.accessToken);
-          const compLogoLoop = allCompetitions.map((c: Competition) => {
-            const compLogo = competitionPosters.find(
-              (l: { compName: string; logo: string }) => c.name === l.compName
-            );
+      try {
+        const allCompetitions = await getCompetitions();
 
-            return { ...c, logo: compLogo?.logo };
-          });
-          setCompetitions(compLogoLoop);
-        } catch (error) {
-          console.error("Error adding teams:", error);
-        }
+        setCompetitions(allCompetitions);
+      } catch (error) {
+        console.error("Error adding teams:", error);
+      }
     };
 
     fetchAllCompetitions();
-  }, [refreshAccessToken, user]);
+  }, []);
 
   return (
     <Container>
       <Typography variant="h2">Change competition</Typography>
       <Typography>Choose the cup you would like to view.</Typography>
       <Row>
-        {competitions?.map((comp: CompetitionWithLogo, i) =>
+        {competitions?.map((comp: Competition, i) =>
           comp.logo ? (
             <ImgButton
               key={i}

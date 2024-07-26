@@ -1,25 +1,36 @@
 import styled from "styled-components";
-import { Game } from "../utils/types/Game";
+import {  GameMetaData, Goal } from "../utils/types/Game";
 import { isBefore } from "date-fns";
 import { GameTimer } from "./GameTimer";
 
 interface GameItemProps {
-  game: Game;
+  game: GameMetaData;
   handleOpenGame: (gameId: string | undefined) => void;
 }
 
 export const GameItem = ({ game, handleOpenGame }: GameItemProps) => {
   const $isActive = isBefore(game.startTime, new Date()) && !game.ended;
+
+  const renderGoals = () => {
+    let homeGoals = [];
+    let awayGoals = [];
+    if (game) {
+      game.goals.map((g: Goal) => {
+        g.scoringTeamId === game.homeTeamId
+          ? homeGoals.push(g)
+          : awayGoals.push(g);
+      });
+    }
+    return `${awayGoals.length} - ${homeGoals.length}`;
+  };
   return (
-    <GameItemCard key={game._id} onClick={() => handleOpenGame(game._id)}>
+    <GameItemCard key={game.id} onClick={() => handleOpenGame(game.id)}>
       <TeamsContainer>
-        <TeamName>{game.awayTeam}</TeamName>
-        <TeamName>{game.homeTeam}</TeamName>
+        <TeamName>{game.awayTeam.name}</TeamName>
+        <TeamName>{game.homeTeam.name}</TeamName>
       </TeamsContainer>
       <GameDetails>
-        <Score
-          $isActive={$isActive}
-        >{`${game.awayTeamGoals.length} - ${game.homeTeamGoals.length}`}</Score>
+        <Score $isActive={$isActive}>{renderGoals()}</Score>
         {game.ended ? (
           <Time>Final</Time>
         ) : (

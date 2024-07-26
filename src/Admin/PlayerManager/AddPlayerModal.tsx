@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { addPlayer, getTeams } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { PlayerPosition } from "../../utils/types/Player";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Typography } from "../../molecules/Typography";
@@ -10,17 +9,12 @@ import { Button } from "../../molecules/Button";
 import { Select } from "../../molecules/Select";
 
 export type NewPlayer = {
-  generatedId: string;
   name: string;
-  goals: number;
-  assists: number;
-  points: number;
-  penaltyMinutes: number;
   gamesPlayed: number;
   position: PlayerPosition;
   jerseyNumber: number;
-  teamName: string;
-  competition: string;
+  teamId: number;
+  competitionId: number;
   wins?: number;
   saves?: number;
   goalsAgainst?: number;
@@ -37,18 +31,13 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
   );
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -58,52 +47,40 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
     fetchAllTeams();
   }, []);
 
-  const handleTeamSelect = (teamId: string) => {
-    const foundTeam = teams.find((team) => team._id === teamId);
+  const handleTeamSelect = (teamId: number) => {
+    const foundTeam = teams.find((team) => team.id === teamId);
     if (foundTeam) {
       setSelectedTeam(foundTeam);
     }
   };
 
   const handleAddPlayer = async () => {
-    if (user?.accessToken && competition) {
+    if (competition) {
       if (selectedTeam && position) {
         const newPlayer: NewPlayer =
           position === "G"
             ? {
-                generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
                 name: playerName,
-                goals: 0,
-                assists: 0,
-                points: 0,
-                penaltyMinutes: 0,
                 gamesPlayed: 0,
                 position: position,
                 jerseyNumber: jerseyNumber,
-                teamName: selectedTeam.name,
-                competition: competition.name,
+                teamId: selectedTeam.id,
+                competitionId: competition.id,
                 wins: 0,
                 saves: 0,
                 goalsAgainst: 0,
               }
             : {
-                generatedId: `${playerName}${jerseyNumber}${selectedTeam.name}`,
                 name: playerName,
-                goals: 0,
-                assists: 0,
-                points: 0,
-                penaltyMinutes: 0,
                 gamesPlayed: 0,
                 position: position,
                 jerseyNumber: jerseyNumber,
-                teamName: selectedTeam.name,
-                competition: competition.name,
+                teamId: selectedTeam.id,
+                competitionId: competition.id,
               };
 
-        console.log(newPlayer);
         try {
-          await refreshAccessToken();
-          await addPlayer(newPlayer, user?.accessToken);
+          await addPlayer(newPlayer);
           setMessage(`Successfully added ${newPlayer.name}`);
         } catch (e) {
           console.log(e);
@@ -127,10 +104,10 @@ export const AddPlayerModal = ({ setShowModal }: AddPlayerModalProps) => {
           label="Select a team to add a player to"
           placeholder="Select a team"
           options={teams.map((team) => ({
-            value: team._id,
+            value: team.id.toString(),
             label: team.name,
           }))}
-          onChange={(e) => handleTeamSelect(e.target.value)}
+          onChange={(e) => handleTeamSelect(parseInt(e.target.value))}
         />
         {selectedTeam && (
           <div>

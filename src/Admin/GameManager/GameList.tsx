@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Game } from "../../utils/types/Game";
-import { useUser } from "../../utils/context/UserContext";
+import { Game, GameMetaData } from "../../utils/types/Game";
 import { getGames, getTeams } from "../../utils/queries";
 import { styled } from "styled-components";
 import { useCompetition } from "../../utils/context/CompetitionContext";
@@ -15,40 +14,31 @@ import { ScheduleGameModal } from "./ScheduleGameModal";
 import { RemoveGameModal } from "./RemoveGameModal";
 
 export const GameList = () => {
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<GameMetaData[]>([]);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedGame, setSelectedGame] = useState<Game>();
+  const [selectedGame, setSelectedGame] = useState<GameMetaData>();
   const [teams, setTeams] = useState<Team[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
-          setError(`Error fetching games: ${error}`);
+          console.error("Error fetching teams:", error);
         }
     };
     const fetchAllGames = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const gamesFromAPI = await getGames(
-            user.accessToken,
-            competition.name
-          );
+          const gamesFromAPI = await getGames(competition.id);
           setGames(gamesFromAPI);
         } catch (error) {
           setError(`Error fetching games: ${error}`);
@@ -57,18 +47,22 @@ export const GameList = () => {
 
     fetchAllTeams();
     fetchAllGames();
-  }, [user]);
+  }, []);
+  const getTeamName = (teamId: number) => {
+    const team = teams.find((t: Team) => t.id === teamId);
+    return team ? team.name : "";
+  };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTeamFilter(event.target.value);
   };
-  const removeGame = (g: Game) => {
+  const removeGame = (g: GameMetaData) => {
     setSelectedGame(g);
     setShowRemoveModal(true);
   };
-  const liveGame = (g: Game) => {
+  const liveGame = (g: GameMetaData) => {
     setSelectedGame(g);
     setShowUpdateModal(true);
   };
@@ -81,15 +75,21 @@ export const GameList = () => {
     if (teamFilter && filtered) {
       filtered = filtered.filter(
         (item: Game) =>
-          item.homeTeam.toLowerCase() === teamFilter.toLowerCase() ||
-          item.awayTeam.toLowerCase() === teamFilter.toLowerCase()
+          getTeamName(item.homeTeamId).toLowerCase() ===
+            teamFilter.toLowerCase() ||
+          getTeamName(item.awayTeamId).toLowerCase() ===
+            teamFilter.toLowerCase()
       );
     }
     if (searchQuery && filtered) {
       filtered = filtered.filter(
         (item: Game) =>
-          item.homeTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.awayTeam.toLowerCase().includes(searchQuery.toLowerCase())
+          getTeamName(item.homeTeamId)
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          getTeamName(item.awayTeamId)
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
       );
     }
     return filtered;
@@ -97,33 +97,33 @@ export const GameList = () => {
 
   return (
     <Container>
+      <TopRow>
+        <Select
+          placeholder="Filter on team"
+          options={teams.map((team) => ({
+            value: team.name,
+            label: team.name,
+          }))}
+          onChange={handleFilterChange}
+        />
+        <SearchInput
+          name="search-field"
+          type="text"
+          placeholder="Search by name"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+        <AddGameButtonContainer>
+          <Button onClick={() => addGame()}>Add game</Button>
+        </AddGameButtonContainer>
+      </TopRow>
       {games.length > 0 ? (
         <>
-          <TopRow>
-            <Select
-              placeholder="Filter on team"
-              options={teams.map((team) => ({
-                value: team.name,
-                label: team.name,
-              }))}
-              onChange={handleFilterChange}
-            />
-            <SearchInput
-              name="search-field"
-              type="text"
-              placeholder="Search by name"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            <AddGameButtonContainer>
-              <Button onClick={() => addGame()}>Add game</Button>
-            </AddGameButtonContainer>
-          </TopRow>
           <List>
             {filteredData.map((g) => (
-              <GameCard key={g._id}>
+              <GameCard key={g.id}>
                 <GameCell>
-                  {g.awayTeam} @ {g.homeTeam}
+                  {getTeamName(g.awayTeamId)} @ {getTeamName(g.homeTeamId)}
                 </GameCell>
                 <GameCell>{g.gameStage}</GameCell>
                 <GameCell>{format(g.startTime, "HH:mm dd/MM")}</GameCell>

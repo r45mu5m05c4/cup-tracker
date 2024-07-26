@@ -1,22 +1,26 @@
-export type Player = {
-  savePercent: number | undefined;
-  _id: string;
-  generatedId: string;
+import { Goal, Penalty } from "./Game";
+import { Team } from "./Team";
+
+export interface Player {
+  savePercent: number;
+  id: number;
   name: string;
-  goals: number;
-  assists: number;
-  points: number;
-  penaltyMinutes: number;
   gamesPlayed: number;
   position: PlayerPosition;
   jerseyNumber: number;
-  teamName: string;
-  competition: string;
-  wins?: number;
-  saves?: number;
-  goalsAgainst?: number;
-};
-
+  teamId: number;
+  competitionId: number;
+  wins: number;
+  saves: number;
+  goalsAgainst: number;
+}
+export interface PlayerMetaData extends Player {
+  goals: Goal[];
+  assists: Goal[];
+  secondaryAssists: Goal[];
+  penalties: Penalty[];
+  team: Team;
+}
 export enum PlayerPosition {
   Center = "C",
   Defense = "D",

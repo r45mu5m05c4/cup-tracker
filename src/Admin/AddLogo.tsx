@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react";
-import { useUser } from "../utils/context/UserContext";
-import { Team } from "../utils/types/Team";
-import { getTeams, uploadLogo } from "../utils/queries";
+import { useState } from "react";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
-import { Select } from "../molecules/Select";
 import { Button } from "../molecules/Button";
+import supabase from "../utils/supabase/server";
 
-export const AddLogo = () => {
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+interface AddLogoProps {
+  newTeam: boolean;
+  teamId: number | undefined;
+  setLogoUrl: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AddLogo = ({ newTeam, teamId, setLogoUrl }: AddLogoProps) => {
   const [updatedLogo, setUpdatedLogo] = useState<File | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
-
-  useEffect(() => {
-    const fetchAllTeams = async () => {
-      if (user?.accessToken && competition) {
-        try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
-          setTeams(teamsFromAPI);
-        } catch (error) {
-          console.error("Error fetching teams:", error);
-        }
-      }
-    };
-
-    fetchAllTeams();
-  }, [user]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -40,71 +23,55 @@ export const AddLogo = () => {
     }
   };
 
-  const handleTeamSelect = (teamId: string) => {
-    const foundTeam = teams.length && teams.find((team) => team._id === teamId);
+  const handleUpload = async () => {
+    if (!competition) return;
+    setUploading(true);
+    setError(null);
 
-    if (foundTeam) {
-      setSelectedTeam(foundTeam);
+    if (!updatedLogo) {
+      setError("Please select a file to upload");
+      setUploading(false);
+      return;
     }
-  };
 
-  const handleUpdateLogo = async () => {
-    if (updatedLogo && selectedTeam) {
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(updatedLogo);
-      reader.onloadend = async () => {
-        if (reader.readyState === FileReader.DONE && reader.result) {
-          const binary = new Uint8Array(reader.result as ArrayBuffer);
+    const fileName = `${Date.now()}_${updatedLogo.name}`;
 
-          try {
-            await refreshAccessToken();
-            const logoUpload =
-              user?.accessToken &&
-              competition &&
-              (await uploadLogo(
-                selectedTeam.name,
-                binary,
-                user.accessToken,
-                competition.name
-              ));
-            console.log(logoUpload);
-            setMessage("Logo updated");
-          } catch (error) {
-            console.error("Error uploading logo:", error);
-            setMessage("Failed to upload logo");
-          }
-        }
-      };
+    const { data, error } = await supabase.storage
+      .from("team-logo")
+      .upload(fileName, updatedLogo);
+
+    if (error) {
+      setError(`Error uploading file: ${error.message}`);
+      setUploading(false);
+      return;
     }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("team-logo")
+      .getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+
+    setLogoUrl(publicUrl);
+
+    setUploading(false);
+    setMessage("File uploaded successfully!");
   };
 
   return (
     <Container>
-      <Select
-        label="Team"
-        placeholder="Select team"
-        options={teams.map((team) => ({
-          value: team._id,
-          label: team.name,
-        }))}
-        onChange={(e) => handleTeamSelect(e.target.value)}
-      />
-      {selectedTeam && (
-        <>
-          <label>
-            Logo:
-            <input type="file" onChange={handleLogoChange} />
-          </label>
-          <br />
-          <div>
-            <Button disabled onClick={handleUpdateLogo}>
-              {/* ={!updatedLogo} */}
-              NOT YET IMPLEMENTED
-            </Button>
-          </div>
-          {message && <p>{message}</p>}
-        </>
-      )}
+      <>
+        <label>
+          <input type="file" onChange={handleLogoChange} />
+        </label>
+        <br />
+        <div>
+          <Button disabled={!updatedLogo} onClick={handleUpload}>
+            {uploading ? "Uploading..." : "Upload logo"}
+          </Button>
+        </div>
+        {message && <p>{message}</p>}
+        {error && <p>{error}</p>}
+      </>
     </Container>
   );
 };

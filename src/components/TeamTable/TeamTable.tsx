@@ -1,5 +1,4 @@
-import { useUser } from "../../utils/context/UserContext";
-import { getTeams } from "../../utils/queries";
+import { getTeamsWithMetaData } from "../../utils/queries";
 import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { styled } from "styled-components";
@@ -8,45 +7,48 @@ import {
   ChevronRightIcon,
   ArrowLongRightIcon,
 } from "@heroicons/react/20/solid";
-import { Logo } from "../../utils/types/Logo";
-import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Table } from "../../molecules/Table";
+import { Goal, Penalty } from "../../utils/types/Game";
 
 interface TeamTableProps {
   small: boolean;
+}
+export interface TeamMetaData extends Team {
+  goalsFor: Goal[];
+  goalsAgainst: Goal[];
+  penalties: Penalty[];
 }
 
 export const TeamTable = ({ small }: TeamTableProps) => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>("A");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
-          const teamLogoLoop = teamsFromAPI.map((t: Team) => {
-            const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
-            const pointPercent = calculatePointPercentage(
-              t.points,
-              t.gamesPlayed
-            );
+          const teamsFromAPI = await getTeamsWithMetaData(competition.id);
+          const teamStatsLoop = teamsFromAPI.map((t: TeamMetaData) => {
+            const gamesPlayed = t.wins + t.draws + t.losses + t.overtimeLosses;
+            const points = calculatePoints(t);
+            const pointPercent = calculatePointPercentage(points, gamesPlayed);
+            const goals = t.goalsFor.length;
+            const gAgainst = t.goalsAgainst.length;
+            console.log(t.logo);
             return {
               ...t,
-              logo: teamLogo?.logo,
+              gamesPlayed: gamesPlayed,
+              goals: goals,
+              points,
+              goalsAgainst: gAgainst,
               pointPercentage: pointPercent,
             };
           });
-          const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
-          const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
+          const teamATeams = teamStatsLoop.filter((t: Team) => t.group === "a");
+          const teamBTeams = teamStatsLoop.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
           setTeamsB(teamBTeams);
         } catch (error) {
@@ -55,8 +57,14 @@ export const TeamTable = ({ small }: TeamTableProps) => {
     };
 
     fetchAllTeams();
-  }, [user]);
-
+  }, []);
+  const calculatePoints = (team: Team) => {
+    const winPoints = team.wins * 3;
+    const drawPoints = team.draws;
+    const OTLPoints = team.overtimeLosses;
+    const totalPoints = winPoints + drawPoints + OTLPoints;
+    return totalPoints;
+  };
   const teamColumns = small
     ? [
         {

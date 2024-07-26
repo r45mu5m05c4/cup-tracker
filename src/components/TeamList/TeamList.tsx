@@ -2,39 +2,24 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Team } from "../../utils/types/Team";
 import { useCompetition } from "../../utils/context/CompetitionContext";
-import { useUser } from "../../utils/context/UserContext";
 import { getTeams } from "../../utils/queries";
-import { logoItems } from "../../utils/Logos";
 import { TeamProfile } from "../TeamProfile/TeamProfile";
-import { Logo } from "../../utils/types/Logo";
 
 export const TeamList = () => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
   const [teamsB, setTeamsB] = useState<Team[]>([]);
   const [openTeam, setOpenTeam] = useState<Team>();
   const [showTeamModal, setShowTeamModal] = useState(false);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
-          const teamLogoLoop = teamsFromAPI.map((t: Team) => {
-            const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
+          const teamsFromAPI = await getTeams(competition.id);
 
-            return {
-              ...t,
-              logo: teamLogo?.logo,
-            };
-          });
-          const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
-          const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
+          const teamATeams = teamsFromAPI.filter((t: Team) => t.group === "a");
+          const teamBTeams = teamsFromAPI.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
           setTeamsB(teamBTeams);
         } catch (error) {
@@ -43,7 +28,7 @@ export const TeamList = () => {
     };
 
     fetchAllTeams();
-  }, [user]);
+  }, []);
 
   const handleItemClick = (item: Team) => {
     setOpenTeam(item);

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useUser } from "../../utils/context/UserContext";
 import { removePlayerById } from "../../utils/queries";
 import { Player } from "../../utils/types/Player";
 import { Button } from "../../molecules/Button";
@@ -17,21 +16,15 @@ const RemovePlayerModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { user, refreshAccessToken } = useUser();
 
   const removePlayer = async () => {
-    if (!user?.accessToken || !player.generatedId) return;
+    if (!player.id) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      await refreshAccessToken();
-      await removePlayerById(
-        user.accessToken,
-        player.generatedId,
-        player.competition
-      );
+      await removePlayerById(player.id, player.competitionId);
       setMessage("Removed player");
       setLoading(false);
     } catch (error) {

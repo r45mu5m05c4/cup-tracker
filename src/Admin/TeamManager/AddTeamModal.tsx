@@ -1,59 +1,52 @@
 import { styled } from "styled-components";
 import { useState } from "react";
 import { addTeam } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Typography } from "../../molecules/Typography";
 import { Button } from "../../molecules/Button";
 import { Select } from "../../molecules/Select";
+import { AddLogo } from "../AddLogo";
 
 export type NewTeam = {
   name: string;
-  goals: number;
   draws: number;
   overTimeLosses: number;
   losses: number;
-  points: number;
-  gamesPlayed: number;
-  competition: string;
+  competitionId: number;
   wins: number;
-  goalsAgainst: number;
   group: string;
   playoffGroup: string;
+  logo: string | undefined;
 };
 interface AddTeamModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
   const [teamName, setTeamName] = useState<string>("");
+  const [logoUrl, setLogoUrl] = useState<string>("");
   const [group, setGroup] = useState<string>("");
   const [playoffGroup, setPlayoffGroup] = useState<string>("");
 
   const [message, setMessage] = useState("");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   const handleAddTeam = async () => {
-    if (user?.accessToken && competition) {
+    console.log(logoUrl);
+    if (competition) {
       const newTeam: NewTeam = {
         name: teamName,
-        goals: 0,
-        goalsAgainst: 0,
-        points: 0,
         wins: 0,
         draws: 0,
         losses: 0,
         overTimeLosses: 0,
-        gamesPlayed: 0,
         group: group,
         playoffGroup: playoffGroup,
-        competition: competition.name,
+        competitionId: competition.id,
+        logo: logoUrl,
       };
 
-      console.log(newTeam);
       try {
-        await refreshAccessToken();
-        await addTeam(newTeam, user?.accessToken);
+        await addTeam(newTeam);
         setMessage(`Successfully added ${newTeam.name}`);
       } catch (e) {
         console.log(e);
@@ -86,7 +79,14 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
                   onChange={(e) => setTeamName(e.target.value)}
                 />
               </Label>
-
+              <Label>
+                Logo
+                <AddLogo
+                  newTeam={true}
+                  teamId={undefined}
+                  setLogoUrl={setLogoUrl}
+                />
+              </Label>
               <Select
                 label="Group"
                 value={group}

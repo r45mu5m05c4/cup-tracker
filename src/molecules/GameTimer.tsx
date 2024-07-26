@@ -42,14 +42,14 @@ export const GameTimer = ({ startTime, ended }: GameTimerProps) => {
         clearInterval(timerRef.current);
       }
     };
-  }, [startTime]);
+  }, []);
 
   const getDateString = (date: Date) => {
     if (isYesterday(date))
       return `Yesterday ${format(new Date(date), "HH:mm")} `;
     if (isToday(date)) return `Today ${format(new Date(date), "HH:mm")} `;
     if (isTomorrow(date)) return `Tomorrow ${format(new Date(date), "HH:mm")} `;
-    else return format(new Date(date), "HH:mm - dd MMMM");
+    else return format(new Date(date), "HH:mm  dd/MM");
   };
   const $isActive = isBefore(startTime, new Date()) && !ended;
 

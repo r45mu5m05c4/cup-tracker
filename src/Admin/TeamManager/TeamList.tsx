@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 
 import { useEffect, useMemo, useState } from "react";
 import { getTeams } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
 import { Team } from "../../utils/types/Team";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import RemoveTeamModal from "./RemoveTeamModal";
@@ -21,18 +20,13 @@ export const TeamList = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [teamFilter, setTeamFilter] = useState<string>("");
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -99,10 +93,10 @@ export const TeamList = () => {
       <List>
         {filteredData && filteredData.length > 0 ? (
           filteredData.map((t: Team) => (
-            <TeamCard key={t._id}>
+            <TeamCard key={t.id}>
               <TeamCell>{t.name}</TeamCell>
               <TeamCell>
-                <img src={t.logo} />
+                <img src={t.logo} style={{ height: "24px", width: "24px" }} />
               </TeamCell>
               <CellButtonContainer>
                 <TeamCell>

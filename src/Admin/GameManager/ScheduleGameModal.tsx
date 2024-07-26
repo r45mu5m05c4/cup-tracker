@@ -3,8 +3,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { Team } from "../../utils/types/Team";
 import { addGame, getTeams } from "../../utils/queries";
-import { useUser } from "../../utils/context/UserContext";
-import { GameStage, GameType, Goal } from "../../utils/types/Game";
+import { GameStage, GameType } from "../../utils/types/Game";
 import DatePicker from "react-datepicker";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Typography } from "../../molecules/Typography";
@@ -12,41 +11,33 @@ import { Button } from "../../molecules/Button";
 import { Select } from "../../molecules/Select";
 
 export type NewGame = {
-  gameId: string;
-  homeTeam: string;
-  awayTeam: string;
-  startTime: string;
-  homeTeamGoals: Goal[];
-  awayTeamGoals: Goal[];
+  homeTeamId: number;
+  awayTeamId: number;
+  startTime: Date;
   ended: boolean;
   gameType: GameType;
   gameStage: GameStage;
-  competition: string;
+  competitionId: number;
 };
 interface ScheduleGameModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScheduleGameModal = ({ setShowModal }: ScheduleGameModalProps) => {
-  const [homeTeam, setHomeTeam] = useState<string | null>(null);
-  const [awayTeam, setAwayTeam] = useState<string | null>(null);
+  const [homeTeam, setHomeTeam] = useState<number | null>(null);
+  const [awayTeam, setAwayTeam] = useState<number | null>(null);
   const initialStartTime = new Date("2024-11-16T08:00:00"); // Hardcoded for MVP - start date of folkets cup
   const [startTime, setStartTime] = useState<Date | null>(initialStartTime);
   const [gameType, setGameType] = useState<GameType>();
   const [gameStage, setGameStage] = useState<GameStage>();
   const [message, setMessage] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllTeams = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const teamsFromAPI = await getTeams(
-            user.accessToken,
-            competition.name
-          );
+          const teamsFromAPI = await getTeams(competition.id);
           setTeams(teamsFromAPI);
         } catch (error) {
           console.error("Error fetching teams:", error);
@@ -56,11 +47,11 @@ export const ScheduleGameModal = ({ setShowModal }: ScheduleGameModalProps) => {
     fetchAllTeams();
   }, []);
 
-  const handleTeamSelect = (teamName: string, home: boolean) => {
-    if (teamName === "TBD") home ? setHomeTeam("TBD") : setAwayTeam("TBD");
-    const foundTeam = teams.find((team) => team.name === teamName);
+  const handleTeamSelect = (teamId: string, home: boolean) => {
+    if (teamId === null) home ? setHomeTeam(null) : setAwayTeam(null);
+    const foundTeam = teams.find((team) => team.id === parseInt(teamId));
     if (foundTeam) {
-      home ? setHomeTeam(foundTeam.name) : setAwayTeam(foundTeam.name);
+      home ? setHomeTeam(foundTeam.id) : setAwayTeam(foundTeam.id);
     }
   };
 
@@ -78,49 +69,39 @@ export const ScheduleGameModal = ({ setShowModal }: ScheduleGameModalProps) => {
   ];
 
   const handleAddGame = async () => {
-    console.log(awayTeam, "@", homeTeam);
-    if (user?.accessToken) {
-      console.log(startTime, gameType, gameStage);
-
-      if (
-        homeTeam &&
-        awayTeam &&
-        startTime &&
-        gameType &&
-        gameStage &&
-        competition
-      ) {
-        const generatedId = `${awayTeam}vs${homeTeam}${startTime.toString()}`;
-        const newGame: NewGame = {
-          gameId: generatedId,
-          homeTeam: homeTeam,
-          awayTeam: awayTeam,
-          startTime: startTime.toString(),
-          homeTeamGoals: [],
-          awayTeamGoals: [],
-          ended: false,
-          gameType: gameType,
-          gameStage: gameStage,
-          competition: competition.name,
-        };
-        try {
-          await refreshAccessToken();
-          await addGame(newGame, user?.accessToken);
-          setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);
-        } catch (e) {
-          console.log(e);
-          setMessage("Something went wrong, game not scheduled");
-        }
-      } else {
-        setMessage(`Fill in all fields`);
+    if (
+      homeTeam &&
+      awayTeam &&
+      startTime &&
+      gameType &&
+      gameStage &&
+      competition
+    ) {
+      const newGame: NewGame = {
+        homeTeamId: homeTeam,
+        awayTeamId: awayTeam,
+        startTime: startTime,
+        ended: false,
+        gameType: gameType,
+        gameStage: gameStage,
+        competitionId: competition.id,
+      };
+      try {
+        await addGame(newGame);
+        setMessage(`${awayTeam} @ ${homeTeam} has been scheduled`);
+      } catch (e) {
+        console.log(e);
+        setMessage("Something went wrong, game not scheduled");
       }
+    } else {
+      setMessage(`Fill in all fields`);
     }
   };
 
   const teamOptions = [
-    { value: "TBD", label: "TBD" },
+    { value: "", label: "TBD" },
     ...teams.map((team) => ({
-      value: team.name,
+      value: team.id.toString(),
       label: team.name,
     })),
   ];

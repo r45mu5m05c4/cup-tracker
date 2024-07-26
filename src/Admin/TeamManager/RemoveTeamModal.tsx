@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useUser } from "../../utils/context/UserContext";
 import { removeTeamById } from "../../utils/queries";
 import { Team } from "../../utils/types/Team";
 import { Button } from "../../molecules/Button";
@@ -14,17 +13,13 @@ const RemoveTeamModal = ({ team, setShowModal }: RemoveTeamModalProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { user, refreshAccessToken } = useUser();
 
   const removeTeam = async () => {
-    if (!user?.accessToken) return;
-
     setLoading(true);
     setError(null);
 
     try {
-      await refreshAccessToken();
-      await removeTeamById(user.accessToken, team._id, team.competition);
+      await removeTeamById(team.id, team.competitionId);
       setMessage("Removed team");
       setLoading(false);
     } catch (error) {

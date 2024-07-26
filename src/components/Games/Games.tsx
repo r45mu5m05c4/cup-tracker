@@ -1,30 +1,24 @@
 import { styled } from "styled-components";
-import { Game } from "../../utils/types/Game";
+import { GameMetaData } from "../../utils/types/Game";
 import { getGames } from "../../utils/queries";
 import { useEffect, useState } from "react";
-import { useUser } from "../../utils/context/UserContext";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { GameItem } from "../../molecules/GameItem";
 import { GameModal } from "./GameModal";
 
 export const Games = () => {
-  const [games, setGames] = useState<Game[]>();
-  const [openGame, setOpenGame] = useState<Game>();
+  const [games, setGames] = useState<GameMetaData[]>();
+  const [openGame, setOpenGame] = useState<GameMetaData>();
   const [showModal, setShowModal] = useState(false);
-  const { user, refreshAccessToken } = useUser();
   const { competition } = useCompetition();
 
   useEffect(() => {
     const fetchAllGames = async () => {
-      if (user?.accessToken && competition)
+      if (competition)
         try {
-          await refreshAccessToken();
-          const gamesFromAPI = await getGames(
-            user.accessToken,
-            competition.name
-          );
-          const sortedGames: Game[] = gamesFromAPI.sort(
-            (a: Game, b: Game) =>
+          const gamesFromAPI = await getGames(competition.id);
+          const sortedGames: GameMetaData[] = gamesFromAPI.sort(
+            (a: GameMetaData, b: GameMetaData) =>
               new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
           );
           setGames(sortedGames);
@@ -36,8 +30,8 @@ export const Games = () => {
     fetchAllGames();
   }, []);
 
-  const handleOpenGame = (gameId: string | undefined) => {
-    const foundGame = gameId && games?.find((g) => g._id === gameId);
+  const handleOpenGame = (gameId: number | undefined) => {
+    const foundGame = gameId && games?.find((g) => g.id === gameId);
     if (foundGame) {
       setOpenGame(foundGame);
       setShowModal(true);
@@ -46,12 +40,12 @@ export const Games = () => {
   return (
     <Container>
       {games?.length ? (
-        games.map((game: Game) => {
+        games.map((game: GameMetaData) => {
           return (
             <GameItem
-              key={game._id}
+              key={game.id}
               game={game}
-              handleOpenGame={handleOpenGame}
+              handleOpenGame={() => handleOpenGame(game.id)}
             />
           );
         })
