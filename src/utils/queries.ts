@@ -466,6 +466,7 @@ export const updateGoalieStatsAfterGame = async (
   wins: number,
   saves: number,
   goalsAgainst: number,
+  gamesPlayed: number,
   competitionId: number
 ) => {
   try {
@@ -473,12 +474,11 @@ export const updateGoalieStatsAfterGame = async (
     if (!session) {
       throw new Error("User is not authenticated");
     }
-
     const { data, error } = await supabase
       .from("player")
       .update([
         {
-          gamesPlayed: 1,
+          gamesPlayed: gamesPlayed,
           wins: wins,
           saves: saves,
           goalsAgainst: goalsAgainst,
@@ -721,7 +721,6 @@ export const addShotToGame = async (game: Game) => {
     if (!session) {
       throw new Error("User is not authenticated");
     }
-
     const { data, error } = await supabase
       .from("game")
       .update([

@@ -5,6 +5,7 @@ import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Typography } from "../../molecules/Typography";
 import { Button } from "../../molecules/Button";
 import { Select } from "../../molecules/Select";
+import { AddLogo } from "../AddLogo";
 
 export type NewTeam = {
   name: string;
@@ -22,6 +23,7 @@ interface AddTeamModalProps {
 }
 export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
   const [teamName, setTeamName] = useState<string>("");
+  const [logoUrl, setLogoUrl] = useState<string>("");
   const [group, setGroup] = useState<string>("");
   const [playoffGroup, setPlayoffGroup] = useState<string>("");
 
@@ -29,6 +31,7 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
   const { competition } = useCompetition();
 
   const handleAddTeam = async () => {
+    console.log(logoUrl);
     if (competition) {
       const newTeam: NewTeam = {
         name: teamName,
@@ -39,7 +42,7 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
         group: group,
         playoffGroup: playoffGroup,
         competitionId: competition.id,
-        logo: undefined,
+        logo: logoUrl,
       };
 
       try {
@@ -76,7 +79,14 @@ export const AddTeamModal = ({ setShowModal }: AddTeamModalProps) => {
                   onChange={(e) => setTeamName(e.target.value)}
                 />
               </Label>
-
+              <Label>
+                Logo
+                <AddLogo
+                  newTeam={true}
+                  teamId={undefined}
+                  setLogoUrl={setLogoUrl}
+                />
+              </Label>
               <Select
                 label="Group"
                 value={group}

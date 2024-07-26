@@ -5,6 +5,7 @@ import { updateTeamStats } from "../../utils/queries";
 import { Select } from "../../molecules/Select";
 import { Button } from "../../molecules/Button";
 import { Typography } from "../../molecules/Typography";
+import { AddLogo } from "../AddLogo";
 
 interface UpdateTeamModalProps {
   team: Team;
@@ -18,16 +19,18 @@ export const UpdateTeamModal = ({
   const [updatedWins, setUpdatedWins] = useState<number>(0);
   const [updatedDraws, setUpdatedDraws] = useState<number>(0);
   const [updatedLosses, setUpdatedLosses] = useState<number>(0);
-  const [updatedOvertimeLosses, setUpdatedOvertimeLosses] = useState<number>(0);
-  const [updatedPoints, setUpdatedPoints] = useState<number>(0);
-  const [updatedGoals, setUpdatedGoals] = useState<number>(0);
-  const [updatedGoalsAgainst, setUpdatedGoalsAgainst] = useState<number>(0);
-  const [updatedGamesPlayed, setUpdatedGamesPlayed] = useState<number>(0);
-  const [updatedGroup, setUpdatedGroup] = useState<string>("");
-  const [updatedPlayoffGroup, setUpdatedPlayoffGroup] = useState<string>("");
+  const [logoUrl, setLogoUrl] = useState<string>("");
+  const [updatedOvertimeLosses, setUpdatedOvertimeLosses] = useState<number>(
+    team.overtimeLosses
+  );
+  const [updatedGroup, setUpdatedGroup] = useState<string>(team.group);
+  const [updatedPlayoffGroup, setUpdatedPlayoffGroup] = useState<string>(
+    team.playoffGroup
+  );
   const [message, setMessage] = useState("");
 
   const handleUpdateTeam = () => {
+    console.log(logoUrl);
     if (team) {
       const updatedTeam: Team = {
         ...team,
@@ -35,12 +38,9 @@ export const UpdateTeamModal = ({
         draws: updatedDraws,
         losses: updatedLosses,
         overtimeLosses: updatedOvertimeLosses,
-        points: updatedPoints,
-        goals: updatedGoals,
-        goalsAgainst: updatedGoalsAgainst,
-        gamesPlayed: updatedGamesPlayed,
         group: updatedGroup,
         playoffGroup: updatedPlayoffGroup,
+        logo: logoUrl,
       };
       try {
         updateTeamStats(updatedTeam);
@@ -104,41 +104,17 @@ export const UpdateTeamModal = ({
                   />
                 </Label>
                 <Label>
-                  Points
-                  <input
-                    type="number"
-                    value={updatedPoints}
-                    onChange={(e) => setUpdatedPoints(parseInt(e.target.value))}
+                  {team.logo ? "Logo:" : "Upload logo"}
+                  {team.logo && (
+                    <img src={team.logo} style={{ height: "44px" }} />
+                  )}
+                  <AddLogo
+                    newTeam={false}
+                    teamId={team.id}
+                    setLogoUrl={setLogoUrl}
                   />
                 </Label>
-                <Label>
-                  Goals:
-                  <input
-                    type="number"
-                    value={updatedGoals}
-                    onChange={(e) => setUpdatedGoals(parseInt(e.target.value))}
-                  />
-                </Label>
-                <Label>
-                  Goals against:
-                  <input
-                    type="number"
-                    value={updatedGoalsAgainst}
-                    onChange={(e) =>
-                      setUpdatedGoalsAgainst(parseInt(e.target.value))
-                    }
-                  />
-                </Label>
-                <Label>
-                  Games played:
-                  <input
-                    type="number"
-                    value={updatedGamesPlayed}
-                    onChange={(e) =>
-                      setUpdatedGamesPlayed(parseInt(e.target.value))
-                    }
-                  />
-                </Label>
+
                 <Select
                   label="Group"
                   value={updatedGroup}

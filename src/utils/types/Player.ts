@@ -2,7 +2,7 @@ import { Goal, Penalty } from "./Game";
 import { Team } from "./Team";
 
 export interface Player {
-  savePercent?: number;
+  savePercent: number;
   id: number;
   name: string;
   gamesPlayed: number;
@@ -10,9 +10,9 @@ export interface Player {
   jerseyNumber: number;
   teamId: number;
   competitionId: number;
-  wins?: number;
-  saves?: number;
-  goalsAgainst?: number;
+  wins: number;
+  saves: number;
+  goalsAgainst: number;
 }
 export interface PlayerMetaData extends Player {
   goals: Goal[];

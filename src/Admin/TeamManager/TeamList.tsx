@@ -96,7 +96,7 @@ export const TeamList = () => {
             <TeamCard key={t.id}>
               <TeamCell>{t.name}</TeamCell>
               <TeamCell>
-                <img src={t.logo} />
+                <img src={t.logo} style={{ height: "24px", width: "24px" }} />
               </TeamCell>
               <CellButtonContainer>
                 <TeamCell>

@@ -3,9 +3,7 @@ import styled from "styled-components";
 import { Team } from "../../utils/types/Team";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { getTeams } from "../../utils/queries";
-import { logoItems } from "../../utils/Logos";
 import { TeamProfile } from "../TeamProfile/TeamProfile";
-import { Logo } from "../../utils/types/Logo";
 
 export const TeamList = () => {
   const [teamsA, setTeamsA] = useState<Team[]>([]);
@@ -19,16 +17,9 @@ export const TeamList = () => {
       if (competition)
         try {
           const teamsFromAPI = await getTeams(competition.id);
-          const teamLogoLoop = teamsFromAPI.map((t: Team) => {
-            const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
 
-            return {
-              ...t,
-              logo: teamLogo?.logo,
-            };
-          });
-          const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
-          const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
+          const teamATeams = teamsFromAPI.filter((t: Team) => t.group === "a");
+          const teamBTeams = teamsFromAPI.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
           setTeamsB(teamBTeams);
         } catch (error) {

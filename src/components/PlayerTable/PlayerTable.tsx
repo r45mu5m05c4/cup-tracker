@@ -50,6 +50,7 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
                     );
               return {
                 ...p,
+                logo: p.team.logo,
                 savePercent,
                 goals,
                 points,
@@ -57,7 +58,15 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
                 penaltyMinutes,
               };
             }
-            return { ...p, points, goals, totalAssists, ppg, penaltyMinutes };
+            return {
+              ...p,
+              points,
+              logo: p.team.logo,
+              goals,
+              totalAssists,
+              ppg,
+              penaltyMinutes,
+            };
           });
           setPlayers(formattedPlayers.filter((p: any) => p.position !== "G"));
           setGoalies(formattedPlayers.filter((p: any) => p.position === "G"));

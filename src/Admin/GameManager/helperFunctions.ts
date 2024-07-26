@@ -38,6 +38,47 @@ export const endMatch = async (game: Game, players: Player[]) => {
     console.error("Error ending match:", error);
   }
 };
+export const undoEndMatch = async (game: Game, players: Player[]) => {
+  try {
+    await updateGame(game);
+    players.map(async (p: Player) => {
+      p.gamesPlayed -= 1;
+      await updatePlayerStats(p);
+    });
+  } catch (error) {
+    console.error("Error ending match:", error);
+  }
+};
+export const removeWin = async (team: Team) => {
+  team.wins -= 1;
+  try {
+    const statUpdate = await updateTeamStats(team);
+    return statUpdate;
+  } catch (error) {
+    console.error("Error adding win:", error);
+  }
+};
+export const removeLoss = async (team: Team, ot: boolean) => {
+  ot
+    ? (team.overtimeLosses = team.overtimeLosses - 1)
+    : (team.losses = team.losses - 1);
+  try {
+    const statUpdate = await updateTeamStats(team);
+    return statUpdate;
+  } catch (error) {
+    console.error("Error adding loss:", error);
+  }
+};
+export const removeDraws = async (team1: Team, team2: Team) => {
+  team1.draws = team1.draws -= 1;
+  team2.draws = team2.draws -= 1;
+  try {
+    await updateTeamStats(team1);
+    await updateTeamStats(team2);
+  } catch (error) {
+    console.error("Error adding draws:", error);
+  }
+};
 export const giveWin = async (team: Team) => {
   team.wins += 1;
   try {
@@ -62,10 +103,8 @@ export const giveDraw = async (team1: Team, team2: Team) => {
   team1.draws = team1.draws += 1;
   team2.draws = team2.draws += 1;
   try {
-    const statUpdate1 = await updateTeamStats(team1);
-    console.log(statUpdate1);
-    const statUpdate2 = await updateTeamStats(team2);
-    console.log(statUpdate2);
+    await updateTeamStats(team1);
+    await updateTeamStats(team2);
   } catch (error) {
     console.error("Error adding draws:", error);
   }

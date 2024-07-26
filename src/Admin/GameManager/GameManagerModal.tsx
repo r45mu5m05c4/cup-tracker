@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { Player } from "../../utils/types/Player";
 import { Game, GameMetaData, Penalty } from "../../utils/types/Game";
@@ -17,12 +17,18 @@ import {
   giveDraw,
   giveLoss,
   giveWin,
+  removeDraws,
+  removeLoss,
+  removeWin,
+  undoEndMatch,
 } from "./helperFunctions";
 import { GameTimer } from "../../molecules/GameTimer";
 import { Typography } from "../../molecules/Typography";
 import { Select } from "../../molecules/Select";
 import { Button } from "../../molecules/Button";
 import { Team } from "../../utils/types/Team";
+import { IconButton } from "../../molecules/IconButton";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 
 interface GameManagerModalProps {
   pickedGame: GameMetaData;
@@ -32,6 +38,7 @@ export const GameManagerModal = ({
   pickedGame,
   setShowModal,
 }: GameManagerModalProps) => {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [game, setGame] = useState<GameMetaData>(pickedGame);
   const [homeTeam, setHomeTeam] = useState<Team>();
   const [awayTeam, setAwayTeam] = useState<Team>();
@@ -85,6 +92,7 @@ export const GameManagerModal = ({
   const [homePlayers, setHomePlayers] = useState<Player[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<Player[]>([]);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [message, setMessage] = useState("");
 
   const updateElapsedMinutes = () => {
     if (game) {
@@ -177,7 +185,9 @@ export const GameManagerModal = ({
       const goal: Goal = {
         scorerId: scorer,
         primaryAssisterId: home ? homeAssister : awayAssister,
-        secondaryAssisterId: home ? homeSecondaryAssister : awaySecondaryAssister,
+        secondaryAssisterId: home
+          ? homeSecondaryAssister
+          : awaySecondaryAssister,
         scoringTeamId: home ? game.homeTeamId : game.awayTeamId,
         concedingTeamId: home ? game.awayTeamId : game.homeTeamId,
         gameMinute: gameMinute,
@@ -193,6 +203,8 @@ export const GameManagerModal = ({
         setAwayGoals(updatedAwayGoals);
       }
       refetchGame();
+    } else {
+      setMessage("Fill in game minute and scorer");
     }
   };
 
@@ -221,10 +233,12 @@ export const GameManagerModal = ({
         setAwayPenalties(updatedAwayPenalties);
       }
       refetchGame();
+    } else {
+      setMessage("Fill in all fields");
     }
   };
   const endMatchHandler = async () => {
-    if (game && awayTeam && homeTeam) {
+    if (game && awayTeam && homeTeam && homeGoalie && awayGoalie) {
       game.ended = true;
       await endMatch(game, [...homePlayers, ...awayPlayers]);
       if (homeGoals.length === awayGoals.length) {
@@ -236,26 +250,123 @@ export const GameManagerModal = ({
         await giveWin(winner);
         await giveLoss(loser, isOverTime);
       }
-      if (homeGoalie && awayGoalie) {
-        const awayWinner = awayGoals.length > homeGoals.length;
-        const homeWinner = awayGoals.length < homeGoals.length;
+      const awayWinner = awayGoals.length > homeGoals.length;
+      const homeWinner = awayGoals.length < homeGoals.length;
+      const homeGoaliePlayer = homePlayers.find((p) => p.id === homeGoalie);
+      const awayGoaliePlayer = awayPlayers.find((p) => p.id === awayGoalie);
+      if (
+        homeGoaliePlayer &&
+        homeGoaliePlayer.saves !== undefined &&
+        homeGoaliePlayer.goalsAgainst !== undefined &&
+        homeGoaliePlayer.wins !== undefined &&
+        awayGoaliePlayer &&
+        awayGoaliePlayer.goalsAgainst !== undefined &&
+        awayGoaliePlayer.wins !== undefined &&
+        awayGoaliePlayer.saves !== undefined
+      ) {
+        homeGoaliePlayer.saves = homeGoaliePlayer.saves + awayShots;
+        homeGoaliePlayer.wins = homeWinner
+          ? (homeGoaliePlayer.wins += 1)
+          : homeGoaliePlayer.wins;
+        homeGoaliePlayer.goalsAgainst =
+          homeGoaliePlayer.goalsAgainst + awayGoals.length;
+        homeGoaliePlayer.gamesPlayed += 1;
+
+        awayGoaliePlayer.saves = awayGoaliePlayer.saves + homeShots;
+        awayGoaliePlayer.wins = awayWinner
+          ? (awayGoaliePlayer.wins += 1)
+          : awayGoaliePlayer.wins;
+        awayGoaliePlayer.goalsAgainst =
+          awayGoaliePlayer.goalsAgainst + homeGoals.length;
+        awayGoaliePlayer.gamesPlayed += 1;
         try {
           await updateGoalieStatsAfterGame(
             homeGoalie,
-            homeWinner ? 1 : 0,
-            game.awayTeamShots,
-            awayGoals.length,
+            homeGoaliePlayer.wins,
+            homeGoaliePlayer.saves,
+            homeGoaliePlayer.goalsAgainst,
+            homeGoaliePlayer.gamesPlayed,
             game.competitionId
           );
           await updateGoalieStatsAfterGame(
             awayGoalie,
-            awayWinner ? 1 : 0,
-            game.homeTeamShots,
-            homeGoals.length,
+            awayGoaliePlayer.wins,
+            awayGoaliePlayer.saves,
+            awayGoaliePlayer.goalsAgainst,
+            awayGoaliePlayer.gamesPlayed,
             game.competitionId
           );
         } catch (e) {
           console.log(e);
+        }
+      }
+    } else {
+      setMessage("Choose both goalies");
+    }
+  };
+  const undoEndMatchHandler = async () => {
+    if (game && awayTeam && homeTeam) {
+      game.ended = false;
+      await undoEndMatch(game, [...homePlayers, ...awayPlayers]);
+      if (homeGoals.length === awayGoals.length) {
+        await removeDraws(awayTeam, homeTeam);
+      } else {
+        const winner =
+          awayGoals.length > homeGoals.length ? awayTeam : homeTeam;
+        const loser = awayGoals.length < homeGoals.length ? awayTeam : homeTeam;
+        await removeWin(winner);
+        await removeLoss(loser, isOverTime);
+      }
+      if (homeGoalie && awayGoalie) {
+        const awayWinner = awayGoals.length > homeGoals.length;
+        const homeWinner = awayGoals.length < homeGoals.length;
+        const homeGoaliePlayer = homePlayers.find((p) => p.id === homeGoalie);
+        const awayGoaliePlayer = homePlayers.find((p) => p.id === awayGoalie);
+        if (
+          homeGoaliePlayer &&
+          homeGoaliePlayer.saves &&
+          homeGoaliePlayer.goalsAgainst &&
+          homeGoaliePlayer.wins &&
+          awayGoaliePlayer &&
+          awayGoaliePlayer.goalsAgainst &&
+          awayGoaliePlayer.wins &&
+          awayGoaliePlayer.saves
+        ) {
+          homeGoaliePlayer.saves = homeGoaliePlayer.saves + game.awayTeamShots;
+          homeGoaliePlayer.wins = homeWinner
+            ? (homeGoaliePlayer.wins -= 1)
+            : homeGoaliePlayer.wins;
+          homeGoaliePlayer.goalsAgainst =
+            homeGoaliePlayer.goalsAgainst - awayGoals.length;
+          homeGoaliePlayer.gamesPlayed -= 1;
+
+          awayGoaliePlayer.saves = awayGoaliePlayer.saves - game.homeTeamShots;
+          awayGoaliePlayer.wins = awayWinner
+            ? (awayGoaliePlayer.wins -= 1)
+            : awayGoaliePlayer.wins;
+          awayGoaliePlayer.goalsAgainst =
+            awayGoaliePlayer.goalsAgainst - homeGoals.length;
+          awayGoaliePlayer.gamesPlayed -= 1;
+          try {
+            await updateGoalieStatsAfterGame(
+              homeGoalie,
+              homeGoaliePlayer.wins,
+              homeGoaliePlayer.saves,
+              homeGoaliePlayer.goalsAgainst,
+              homeGoaliePlayer.gamesPlayed,
+              game.competitionId
+            );
+            await updateGoalieStatsAfterGame(
+              awayGoalie,
+              awayGoaliePlayer.wins,
+              awayGoaliePlayer.saves,
+              awayGoaliePlayer.goalsAgainst,
+              awayGoaliePlayer.gamesPlayed,
+              game.competitionId
+            );
+          } catch (e) {
+            console.log(e);
+          }
         }
       }
     }
@@ -306,7 +417,8 @@ export const GameManagerModal = ({
                 {event.gameMinute}' GOAL by {event.scorerId}
               </GoalHeader>
               <EventText>
-                Assisted by: {event.primaryAssisterId}, {event.secondaryAssisterId}
+                Assisted by: {event.primaryAssisterId},{" "}
+                {event.secondaryAssisterId}
               </EventText>
             </>
           </EventsRow>
@@ -376,13 +488,30 @@ export const GameManagerModal = ({
                     onChange={(e) => setGameMinute(parseInt(e.target.value))}
                   />
                 </div>
+
                 <div>
-                  <Typography>Shot counter</Typography>
-                  <input
-                    type="number"
-                    value={awayShots}
-                    onChange={(e) => setAwayShots(parseInt(e.target.value))}
-                  />
+                  <Typography>Shots</Typography>
+                  <ShotCounter>
+                    {!game.ended && (
+                      <IconButton
+                        ref={buttonRef}
+                        Icon={ChevronUpIcon}
+                        onClick={() =>
+                          setAwayShots((prevAwayShots) => prevAwayShots + 1)
+                        }
+                      />
+                    )}
+                    {awayShots}
+                    {!game.ended && (
+                      <IconButton
+                        ref={buttonRef}
+                        Icon={ChevronDownIcon}
+                        onClick={() =>
+                          setAwayShots((prevAwayShots) => prevAwayShots - 1)
+                        }
+                      />
+                    )}
+                  </ShotCounter>
                 </div>
                 <div>
                   <Select
@@ -499,12 +628,28 @@ export const GameManagerModal = ({
                   />
                 </div>
                 <div>
-                  <Typography>Shot counter</Typography>
-                  <input
-                    type="number"
-                    value={homeShots}
-                    onChange={(e) => setHomeShots(parseInt(e.target.value))}
-                  />
+                  <Typography>Shots</Typography>
+                  <ShotCounter>
+                    {!game.ended && (
+                      <IconButton
+                        ref={buttonRef}
+                        Icon={ChevronUpIcon}
+                        onClick={() =>
+                          setHomeShots((prevHomeShots) => prevHomeShots + 1)
+                        }
+                      />
+                    )}
+                    {homeShots}
+                    {!game.ended && (
+                      <IconButton
+                        ref={buttonRef}
+                        Icon={ChevronDownIcon}
+                        onClick={() =>
+                          setHomeShots((prevHomeShots) => prevHomeShots - 1)
+                        }
+                      />
+                    )}
+                  </ShotCounter>
                 </div>
                 <Select
                   label="Event"
@@ -599,9 +744,16 @@ export const GameManagerModal = ({
           )}
         </Container>
         <p>{isOverTime && "Overtime active"}</p>
+        <p> {message != "" && message}</p>
         <ButtonContainer>
           <Button onClick={() => setIsOverTime(!isOverTime)}>
             Toggle Overtime
+          </Button>
+          <Button
+            disabled={!game || !game?.ended}
+            onClick={() => undoEndMatchHandler()}
+          >
+            Undo End Game
           </Button>
           <Button
             disabled={!game || game?.ended}
@@ -615,6 +767,12 @@ export const GameManagerModal = ({
     </>
   );
 };
+const ShotCounter = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+`;
 const Overlay = styled.div`
   cursor: default;
   position: fixed;

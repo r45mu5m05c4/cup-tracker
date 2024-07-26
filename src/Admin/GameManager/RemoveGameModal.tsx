@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { Game } from "../../utils/types/Game";
-import { useUser } from "../../utils/context/UserContext";
+import { GameMetaData } from "../../utils/types/Game";
 import { removeGameById } from "../../utils/queries";
 import { styled } from "styled-components";
 import { Button } from "../../molecules/Button";
 import { format } from "date-fns";
 
 interface RemoveGameModalProps {
-  game: Game;
+  game: GameMetaData;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -17,14 +16,11 @@ export const RemoveGameModal = ({
 }: RemoveGameModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { user, refreshAccessToken } = useUser();
 
   const onRemoveGame = async () => {
-    if (!user?.accessToken) return;
     setError(null);
     try {
-      await refreshAccessToken();
-      await removeGameById(user.accessToken, game.gameId, game.competition);
+      await removeGameById(game.id, game.competitionId);
       setMessage("Removed game");
     } catch (error) {
       setError("Error removing game data. Please try again.");
@@ -36,11 +32,11 @@ export const RemoveGameModal = ({
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <Header>{`Removing ${game.awayTeam} @ ${game.homeTeam}`}</Header>
+        <Header>{`Removing ${game.awayTeam.name} @ ${game.homeTeam.name}`}</Header>
 
-        <GameCard key={game._id}>
+        <GameCard key={game.id}>
           <GameCell>
-            {game.awayTeam} @ {game.homeTeam}
+            {game.awayTeam.name} @ {game.homeTeam.name}
           </GameCell>
           <GameCell>
             {game.gameStage}, {game.gameType}

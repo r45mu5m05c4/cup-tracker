@@ -1,35 +1,21 @@
-import { useEffect, useState } from "react";
-import { Team } from "../utils/types/Team";
-import { getTeams } from "../utils/queries";
+import { useState } from "react";
 import styled from "styled-components";
 import { useCompetition } from "../utils/context/CompetitionContext";
-import { Select } from "../molecules/Select";
 import { Button } from "../molecules/Button";
 import supabase from "../utils/supabase/server";
 
-export const AddLogo = () => {
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+interface AddLogoProps {
+  newTeam: boolean;
+  teamId: number | undefined;
+  setLogoUrl: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AddLogo = ({ newTeam, teamId, setLogoUrl }: AddLogoProps) => {
   const [updatedLogo, setUpdatedLogo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]);
   const [message, setMessage] = useState("");
   const { competition } = useCompetition();
-
-  useEffect(() => {
-    const fetchAllTeams = async () => {
-      if (competition) {
-        try {
-          const teamsFromAPI = await getTeams(competition.id);
-          setTeams(teamsFromAPI);
-        } catch (error) {
-          console.error("Error fetching teams:", error);
-        }
-      }
-    };
-
-    fetchAllTeams();
-  }, []);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -37,14 +23,8 @@ export const AddLogo = () => {
     }
   };
 
-  const handleTeamSelect = (teamId: number) => {
-    const foundTeam = teams.length && teams.find((team) => team.id === teamId);
-
-    if (foundTeam) {
-      setSelectedTeam(foundTeam);
-    }
-  };
   const handleUpload = async () => {
+    if (!competition) return;
     setUploading(true);
     setError(null);
 
@@ -69,19 +49,9 @@ export const AddLogo = () => {
     const { data: publicUrlData } = supabase.storage
       .from("team-logo")
       .getPublicUrl(fileName);
-
     const publicUrl = publicUrlData.publicUrl;
 
-    // Save the file URL to your Supabase table
-    const { data: saveData, error: saveError } = await supabase
-      .from("team")
-      .insert([{ logo: publicUrl }]);
-    console.log(data, saveData);
-    if (saveError) {
-      setError("Error saving file URL: " + saveError.message);
-      setUploading(false);
-      return;
-    }
+    setLogoUrl(publicUrl);
 
     setUploading(false);
     setMessage("File uploaded successfully!");
@@ -89,31 +59,19 @@ export const AddLogo = () => {
 
   return (
     <Container>
-      <Select
-        label="Team"
-        placeholder="Select team"
-        options={teams.map((team) => ({
-          value: team.id.toString(),
-          label: team.name,
-        }))}
-        onChange={(e) => handleTeamSelect(parseInt(e.target.value))}
-      />
-      {selectedTeam && (
-        <>
-          <label>
-            Logo:
-            <input type="file" onChange={handleLogoChange} />
-          </label>
-          <br />
-          <div>
-            <Button disabled={!updatedLogo} onClick={handleUpload}>
-              {uploading ? "Uploading..." : "Upload logo"}
-            </Button>
-          </div>
-          {message && <p>{message}</p>}
-          {error && <p>{error}</p>}
-        </>
-      )}
+      <>
+        <label>
+          <input type="file" onChange={handleLogoChange} />
+        </label>
+        <br />
+        <div>
+          <Button disabled={!updatedLogo} onClick={handleUpload}>
+            {uploading ? "Uploading..." : "Upload logo"}
+          </Button>
+        </div>
+        {message && <p>{message}</p>}
+        {error && <p>{error}</p>}
+      </>
     </Container>
   );
 };

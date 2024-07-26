@@ -7,8 +7,6 @@ import {
   ChevronRightIcon,
   ArrowLongRightIcon,
 } from "@heroicons/react/20/solid";
-import { Logo } from "../../utils/types/Logo";
-import { logoItems } from "../../utils/Logos";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Table } from "../../molecules/Table";
 import { Goal, Penalty } from "../../utils/types/Game";
@@ -33,17 +31,15 @@ export const TeamTable = ({ small }: TeamTableProps) => {
       if (competition)
         try {
           const teamsFromAPI = await getTeamsWithMetaData(competition.id);
-          const teamLogoLoop = teamsFromAPI.map((t: TeamMetaData) => {
-            const teamLogo = logoItems.find((l: Logo) => t.name === l.teamName);
-
+          const teamStatsLoop = teamsFromAPI.map((t: TeamMetaData) => {
             const gamesPlayed = t.wins + t.draws + t.losses + t.overtimeLosses;
             const points = calculatePoints(t);
             const pointPercent = calculatePointPercentage(points, gamesPlayed);
             const goals = t.goalsFor.length;
             const gAgainst = t.goalsAgainst.length;
+            console.log(t.logo);
             return {
               ...t,
-              logo: teamLogo?.logo,
               gamesPlayed: gamesPlayed,
               goals: goals,
               points,
@@ -51,8 +47,8 @@ export const TeamTable = ({ small }: TeamTableProps) => {
               pointPercentage: pointPercent,
             };
           });
-          const teamATeams = teamLogoLoop.filter((t: Team) => t.group === "a");
-          const teamBTeams = teamLogoLoop.filter((t: Team) => t.group === "b");
+          const teamATeams = teamStatsLoop.filter((t: Team) => t.group === "a");
+          const teamBTeams = teamStatsLoop.filter((t: Team) => t.group === "b");
           setTeamsA(teamATeams);
           setTeamsB(teamBTeams);
         } catch (error) {
