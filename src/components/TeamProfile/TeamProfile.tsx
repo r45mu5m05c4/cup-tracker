@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { getPlayersByTeam } from "../../utils/queries";
 import { useCompetition } from "../../utils/context/CompetitionContext";
 import { Player } from "../../utils/types/Player";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { IconButton } from "../../molecules/IconButton";
 
 interface TeamProfileProps {
   team: Team;
@@ -48,18 +49,19 @@ export const TeamProfile = ({ team, setShowModal }: TeamProfileProps) => {
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <Row>
+        <div style={{ marginLeft: 0, marginRight: "auto" }}>
+          <IconButton
+            Icon={ArrowLeftIcon}
+            onClick={() => setShowModal(false)}
+          />
+        </div>
+        <Row style={{ alignItems: "center", margin: "auto" }}>
           <img
             src={team.logo}
             alt=""
             style={{ width: "74px", height: "74px", marginRight: "15px" }}
           />
           <h2 style={{ marginRight: "auto", marginLeft: 0 }}>{team.name}</h2>
-
-          <CloseIcon
-            style={{ cursor: "pointer", marginTop: 0 }}
-            onClick={() => setShowModal(false)}
-          />
         </Row>
         <Container>
           <ForwardRow>
@@ -124,11 +126,7 @@ const Container = styled.div`
     font-size: 0.8em;
   }
 `;
-const CloseIcon = styled(XMarkIcon)`
-  height: 38px;
-  margin: auto;
-  margin-right: 0;
-`;
+
 const ForwardRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -139,7 +137,6 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  align-items: left;
 `;
 const ForwardColumn = styled.div`
   display: flex;

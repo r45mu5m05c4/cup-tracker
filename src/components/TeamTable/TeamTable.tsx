@@ -37,7 +37,6 @@ export const TeamTable = ({ small }: TeamTableProps) => {
             const pointPercent = calculatePointPercentage(points, gamesPlayed);
             const goals = t.goalsFor.length;
             const gAgainst = t.goalsAgainst.length;
-            console.log(t.logo);
             return {
               ...t,
               gamesPlayed: gamesPlayed,
@@ -57,7 +56,7 @@ export const TeamTable = ({ small }: TeamTableProps) => {
     };
 
     fetchAllTeams();
-  }, []);
+  }, [competition]);
   const calculatePoints = (team: Team) => {
     const winPoints = team.wins * 3;
     const drawPoints = team.draws;

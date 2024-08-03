@@ -161,7 +161,7 @@ export const getGames = async (
         *,
         homeTeam:team!games_homeTeamId_fkey ( * ),
         awayTeam:team!games_awayTeamId_fkey ( * ),
-        goals:goal!goals_gameId_fkey( * ),
+        goals:goal!goal_gameId_fkey( * ),
         penalties:penalty!penalty_gameId_fkey( * )
       `
       )
@@ -265,7 +265,7 @@ export const getGameByIdWithMetaData = async (
         *,
         homeTeam:team!games_homeTeamId_fkey ( * ),
         awayTeam:team!games_awayTeamId_fkey ( * ),
-        goals:goal!goals_gameId_fkey( * ),
+        goals:goal!goal_gameId_fkey( * ),
         penalty:penalty!penalty_gameId_fkey ( * )
       `
       )
@@ -670,6 +670,8 @@ export const updateGame = async (game: Game) => {
           gameType: game.gameType,
           gameStage: game.gameStage,
           competitionId: game.competitionId,
+          homeTeamShots: game.homeTeamShots,
+          awayTeamShots: game.awayTeamShots,
         },
       ])
       .eq("id", game.id)

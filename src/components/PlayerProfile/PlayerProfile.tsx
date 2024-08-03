@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import { PlayerMetaData } from "../../utils/types/Player";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { IconButton } from "../../molecules/IconButton";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 interface PlayerProfileProps {
   player: PlayerMetaData;
@@ -28,12 +29,15 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
     <>
       <Overlay onClick={() => setShowModal(false)} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <CloseIcon
-          style={{ cursor: "pointer" }}
-          onClick={() => setShowModal(false)}
-        />
         {player.position === "G" ? (
           <Container>
+            <div style={{ marginLeft: 0, marginRight: "auto" }}>
+              <IconButton
+                Icon={ArrowLeftIcon}
+                onClick={() => setShowModal(false)}
+              />
+            </div>
+
             <SubColumn>
               <h2>{player.name}</h2>{" "}
               <img
@@ -62,6 +66,13 @@ export const PlayerProfile = ({ player, setShowModal }: PlayerProfileProps) => {
           </Container>
         ) : (
           <Container>
+            <div style={{ marginLeft: 0, marginRight: "auto" }}>
+              <IconButton
+                Icon={ArrowLeftIcon}
+                onClick={() => setShowModal(false)}
+              />
+            </div>
+
             <SubColumn>
               <h2>{player.name}</h2>{" "}
               <img
@@ -97,6 +108,7 @@ const Container = styled.div`
   align-items: center;
   @media (max-width: 768px) {
     flex-direction: column;
+    padding: 24px;
   }
 `;
 const Divider = styled.div`
@@ -110,11 +122,7 @@ const Divider = styled.div`
   background-color: #fff;
   margin-right: 20px;
 `;
-const CloseIcon = styled(XMarkIcon)`
-  height: 38px;
-  margin: auto;
-  margin-right: 0;
-`;
+
 const StatRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -148,7 +156,7 @@ const Modal = styled.div`
   top: 5%;
   left: 10%;
   width: 50%;
-  z-index: 100;
+  z-index: 50;
   position: absolute;
   margin: auto;
   display: flex;
@@ -158,8 +166,9 @@ const Modal = styled.div`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: var(--neutral-surface-contrast);
   @media (max-width: 768px) {
-    top: 10%;
+    top: 0;
     left: 0;
-    width: 90%;
+    width: 100%;
+    padding: 0;
   }
 `;

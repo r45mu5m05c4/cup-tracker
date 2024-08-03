@@ -28,7 +28,7 @@ export const Games = () => {
     };
 
     fetchAllGames();
-  }, []);
+  }, [competition]);
 
   const handleOpenGame = (gameId: number) => {
     const foundGame = gameId && games?.find((g) => g.id === gameId);

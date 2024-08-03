@@ -28,7 +28,7 @@ export const TeamList = () => {
     };
 
     fetchAllTeams();
-  }, []);
+  }, [competition]);
 
   const handleItemClick = (item: Team) => {
     setOpenTeam(item);

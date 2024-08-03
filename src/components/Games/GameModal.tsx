@@ -1,9 +1,12 @@
 import styled from "styled-components";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { GameMetaData, Goal, Penalty } from "../../utils/types/Game";
-import { getGameByIdWithMetaData, getPlayers } from "../../utils/queries";
+import { getPlayers } from "../../utils/queries";
 import { GameTimer } from "../../molecules/GameTimer";
 import { Player } from "../../utils/types/Player";
+import supabase from "../../utils/supabase/server";
+import { IconButton } from "../../molecules/IconButton";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 interface GameModalProps {
   game: GameMetaData;
@@ -13,53 +16,87 @@ interface GameModalProps {
 export const GameModal = ({ setShowModal, game }: GameModalProps) => {
   const [activeGame, setActiveGame] = useState<GameMetaData>(game);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [homeGoals, setHomeGoals] = useState<Goal[]>([]);
   const [awayGoals, setAwayGoals] = useState<Goal[]>([]);
   const [homePenalties, setHomePenalties] = useState<Penalty[]>([]);
   const [awayPenalties, setAwayPenalties] = useState<Penalty[]>([]);
 
-  const refetchGame = useCallback(async () => {
-    if (!game.id) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const gameFromAPI: GameMetaData = await getGameByIdWithMetaData(
-        game.id,
-        game.competitionId
-      );
-      setActiveGame(gameFromAPI);
-      setLoading(false);
-    } catch (error) {
-      setError("Error fetching game data. Please try again.");
-      console.error("Error fetching games:", error);
-      setLoading(false);
-    }
-  }, [game.id, game.competitionId]);
-
-  useEffect(() => {
-    if (!activeGame) {
-      refetchGame();
-    }
-  }, [refetchGame, activeGame]);
   useEffect(() => {
     const getAllPlayers = async () => {
       try {
         const playersFromAPI: Player[] = await getPlayers(game.competitionId);
         setPlayers(playersFromAPI);
-        setLoading(false);
       } catch (error) {
         setError("Error fetching players data. Please try again.");
         console.error("Error fetching players:", error);
-        setLoading(false);
       }
     };
     getAllPlayers();
     renderGoalsAndPenalties();
-  }, []);
+
+    const shotsSubscription = supabase
+      .channel(`game:id=eq.${game.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "game" },
+        (payload) => {
+          if (payload.new) {
+            setActiveGame((prevGame) => ({
+              ...prevGame,
+              homeTeamShots: payload.new.homeTeamShots,
+              awayTeamShots: payload.new.awayTeamShots,
+              ended: payload.new.ended,
+            }));
+          }
+        }
+      )
+      .subscribe();
+    // Subscribe to changes in the goals and penalties
+    const goalsSubscription = supabase
+      .channel(`goal:gameId=eq.${game.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "goal" },
+        (payload) => {
+          console.log(payload);
+          if (payload.new.scoringTeamId === game.homeTeamId) {
+            setHomeGoals((prevGoals) => [...prevGoals, payload.new as Goal]);
+          } else {
+            setAwayGoals((prevGoals) => [...prevGoals, payload.new as Goal]);
+          }
+        }
+      )
+      .subscribe();
+
+    const penaltiesSubscription = supabase
+      .channel(`penalty:gameId=eq.${game.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "penalty" },
+        (payload) => {
+          if (payload.new.teamId === game.homeTeamId) {
+            setHomePenalties((prevPenalties) => [
+              ...prevPenalties,
+              payload.new as Penalty,
+            ]);
+          } else {
+            setAwayPenalties((prevPenalties) => [
+              ...prevPenalties,
+              payload.new as Penalty,
+            ]);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscriptions on component unmount
+    return () => {
+      shotsSubscription.unsubscribe();
+      goalsSubscription.unsubscribe();
+      penaltiesSubscription.unsubscribe();
+    };
+  }, [game.id, game.homeTeamId]);
   const handleClose = () => {
     setShowModal(false);
   };
@@ -157,33 +194,35 @@ export const GameModal = ({ setShowModal, game }: GameModalProps) => {
     <>
       <Overlay onClick={handleClose} />
       <Modal onClick={(e) => e.stopPropagation()}>
-        <LiveGame>
-          <Header>{`${game.awayTeam.name} @ ${game.homeTeam.name}`}</Header>
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-          <GoalsRow>
-            <AwayGoals>{awayGoals.length}</AwayGoals>
-            <GameTimeContainer>
-              <GameTimer
-                startTime={new Date(game.startTime)}
-                ended={game.ended}
-              />
-            </GameTimeContainer>
-            <HomeGoals>{homeGoals.length}</HomeGoals>
-          </GoalsRow>
-          <GoalsRow>
-            <AwayShots>{activeGame?.awayTeamShots}</AwayShots>shots
-            <HomeShots>{activeGame?.homeTeamShots}</HomeShots>
-          </GoalsRow>
-          {eventRenderer()}
-        </LiveGame>
-        <Button onClick={refetchGame} disabled={loading}>
-          {loading ? "Refreshing..." : "Refresh"}
-        </Button>
-        <Button onClick={handleClose}>Close</Button>
+        <Container>
+          <IconButton Icon={ArrowLeftIcon} onClick={handleClose} />
+          <LiveGame>
+            <Header>{`${game.awayTeam.name} @ ${game.homeTeam.name}`}</Header>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+            <GoalsRow>
+              <AwayGoals>{awayGoals.length}</AwayGoals>
+              <GameTimeContainer>
+                <GameTimer
+                  startTime={new Date(game.startTime)}
+                  ended={game.ended}
+                />
+              </GameTimeContainer>
+              <HomeGoals>{homeGoals.length}</HomeGoals>
+            </GoalsRow>
+            <GoalsRow>
+              <AwayShots>{activeGame?.awayTeamShots}</AwayShots>shots
+              <HomeShots>{activeGame?.homeTeamShots}</HomeShots>
+            </GoalsRow>
+            {eventRenderer()}
+          </LiveGame>
+        </Container>
       </Modal>
     </>
   );
 };
+const Container = styled.div`
+  padding: 24px;
+`;
 const HomeShots = styled.p`
   width: 45%;
   margin-right: 5%;
@@ -195,24 +234,6 @@ const AwayShots = styled.p`
   margin-left: 5%;
   margin-right: auto;
   text-align: left;
-`;
-const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 24px;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 `;
 
 const GameTimeContainer = styled.div`
@@ -232,21 +253,19 @@ const Modal = styled.div`
   top: 5%;
   left: 25%;
   width: 50%;
-  z-index: 100;
+  z-index: 250;
   position: absolute;
   margin: auto;
   display: flex;
   flex-direction: column;
-  padding: 24px;
   background-color: var(--neutral-surface-base);
   border: none;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    top: 0;
-    left: 0;
-    width: 90%;
+    inset: 0;
+    width: 100%;
   }
 `;
 
@@ -255,6 +274,7 @@ const LiveGame = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
+  padding-top: 24px;
 `;
 
 const Header = styled.h2`

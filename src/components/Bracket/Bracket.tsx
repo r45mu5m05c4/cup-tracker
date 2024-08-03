@@ -66,7 +66,7 @@ export const Bracket = () => {
     };
 
     fetchAllGames();
-  }, []);
+  }, [competition]);
   const handleOpenGame = (gameId: number | undefined) => {
     const foundGame = gameId && games?.find((g) => g.id === gameId);
     if (foundGame) {

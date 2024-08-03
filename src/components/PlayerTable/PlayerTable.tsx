@@ -77,7 +77,7 @@ export const PlayerTable = ({ small }: PlayerTableProps) => {
     };
 
     fetchAllPlayers();
-  }, []);
+  }, [competition]);
   const getPenaltyMinutes = (penalties: Penalty[]) => {
     return penalties.reduce((total, p) => total + p.penaltyMinutes, 0);
   };
