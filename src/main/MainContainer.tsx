@@ -95,6 +95,7 @@ export const MainContainer = () => {
               <Route path={ROUTES.BRACKET} element={<Bracket />} />
               <Route path={ROUTES.MY_TEAM} element={<div />} />
               <Route path={ROUTES.MANAGE_CUP} element={<div />} />
+
               {user && user.providerType !== "anon-user" && (
                 <Route path={ROUTES.ADMIN} element={<Admin />} />
               )}
